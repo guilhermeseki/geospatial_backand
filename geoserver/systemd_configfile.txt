@@ -1,0 +1,29 @@
+[Unit]
+Description=GeoServer 2.28
+After=network.target
+
+[Service]
+Type=simple
+User=guilherme
+Group=guilherme
+Environment="GEOSERVER_HOME=/opt/geoserver"
+Environment="GEOSERVER_DATA_DIR=/mnt/workwork/geoserver_data"
+Environment="JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64"
+Environment="JAVA_OPTS=-Duser.timezone=GMT -Dorg.geotools.shapefile.datetime=true"
+ExecStart=/opt/geoserver/bin/startup.sh
+ExecStop=/opt/geoserver/bin/shutdown.sh
+Restart=on-failure
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+# indexer.properties
+TimeAttribute=ingestion
+# *** CHANGE: Use String instead of java.util.Date for Shapefile compatibility ***
+Schema=*the_geom:Polygon,location:String,ingestion:java.util.Date
+PropertyCollectors=TimestampFileNameExtractorSPI[timeregex](ingestion)
+~                                                                         

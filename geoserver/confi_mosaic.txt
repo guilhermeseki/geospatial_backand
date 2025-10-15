@@ -1,0 +1,11 @@
+vim timeregex.properties
+
+# timeregex.properties
+regex=.*([0-9]{8}).*
+format=yyyyMMdd
+
+vim indexer.properties
+
+TimeAttribute=ingestion
+Schema=*the_geom:Polygon,location:String,ingestion:java.util.Date
+PropertyCollectors=TimestampFileNameExtractorSPI[timeregex](ingestion)

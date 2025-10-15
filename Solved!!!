@@ -1,0 +1,87 @@
+#Steps to Resolve
+#https://docs.geoserver.org/latest/en/user/tutorials/imagemosaic_timeseries/imagemosaic_timeseries.html
+sudo tee /usr/share/geoserver-2.27.2/data_dir/data/chirps/timeregex.properties > /dev/null << 'EOF'
+regex=[0-9]{8}
+EOF
+#Test  regex:
+#echo "chirps_final_latam_20250705.tif" | grep -oE "[0-9]{8}"
+
+#Ensure it matches the tutorial’s structure, with ingestion as a java.util.Date:
+
+sudo tee /usr/share/geoserver-2.27.2/data_dir/data/chirps/indexer.properties > /dev/null << 'EOF'
+TimeAttribute=ingestion
+Schema=*the_geom:Polygon,location:String,ingestion:java.util.Date
+PropertyCollectors=TimestampFileNameExtractorSPI[timeregex](ingestion,yyyyMMdd)
+EOF
+
+
+#Crucial
+sudo vim /etc/systemd/system/geoserver.service
+#add this
+Environment="JAVA_OPTS=-Duser.timezone=GMT -Dorg.geotools.shapefile.datetime=true"
+
+#Confirm JVM Options:
+
+#Your geoserver.service includesc
+
+#Delete Index Files:
+
+#Remove existing index files to force GeoServer to rebuild:
+rm /usr/share/geoserver-2.27.2/data_dir/data/chirps/chirps.{shp,shx,dbf,qix,fix,properties}
+
+
+#Recreate ImageMosaic Store:
+
+#In GeoServer web interface (http://localhost:8080/geoserver):
+
+#Go to Stores, delete the existing chirps_final store.
+#Add a new ImageMosaic store:
+
+#Data Source Name: chirps_final
+#URL: file:/opt/geospatial_backend/data/chirps_final/ (ensure trailing /).
+
+sudo tee /opt/geospatial_backend/styles/precipitation_style.sld  > /dev/null << 'EOF'
+<StyledLayerDescriptor version="1.0.0"
+    xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd"
+    xmlns="http://www.opengis.net/sld"
+    xmlns:ogc="http://www.opengis.net/ogc"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <NamedLayer>
+    <Name>precipitation_style</Name>
+    <UserStyle>
+      <Title>Precipitation Style</Title>
+      <FeatureTypeStyle>
+        <Rule>
+          <RasterSymbolizer>
+            <ColorMap>
+              <ColorMapEntry color="#0000FF" quantity="0" label="No Data" opacity="0"/>
+              <ColorMapEntry color="#00FF00" quantity="10" label="Low"/>
+              <ColorMapEntry color="#FFFF00" quantity="50" label="Medium"/>
+              <ColorMapEntry color="#FF0000" quantity="100" label="High"/>
+            </ColorMap>
+          </RasterSymbolizer>
+        </Rule>
+      </FeatureTypeStyle>
+    </UserStyle>
+  </NamedLayer>
+</StyledLayerDescriptor>
+EOF
+
+curl -u admin:geoserver -X POST \
+  -H "Content-type: application/vnd.ogc.sld+xml" \
+  -d @/opt/geospatial_backend/styles/precipitation_style.sld \
+  "http://localhost:8080/geoserver/rest/styles?name=precipitation_style"
+
+#recalculate mosaic
+curl -u admin:geoserver -X POST \
+"http://localhost:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores/chirps_final_mosaic/external.imagemosaic?configure=all&recalculate=true"
+
+#aassign the style to your layer
+curl -u admin:geoserver -X PUT -H "Content-type: text/xml" \
+-d "<layer><defaultStyle><name>precipitation_style</name></defaultStyle></layer>" \
+"http://localhost:8080/geoserver/rest/layers/precipitation_ws:chirps_final"
+
+
+
+https://api.seki-tech.com/map/wms?service=WMS&version=1.3.0&request=GetMap&layers=precipitation_ws%3Achirps&width=1560&height=1200&format=image%2Fpng&transparent=true&time=2025-07-05&styles=precipitation_style&crs=EPSG%3A4326&bbox=-53.0%2C-94.0%2C25.0%2C-34.5

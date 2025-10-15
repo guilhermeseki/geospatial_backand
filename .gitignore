@@ -1,0 +1,5 @@
+# Ignore the entire data directory and everything inside it
+data/
+
+# Ignore the large log file
+prefect-agent.log

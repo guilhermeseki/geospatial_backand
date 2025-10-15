@@ -1,0 +1,10 @@
+# Exclude all data folders at any level
+**/data/
+
+# Optional: Additional exclusions for NetCDF files
+*.nc
+*.tif
+
+# Environment files
+.env
+.env.local

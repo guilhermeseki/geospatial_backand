@@ -1,0 +1,78 @@
+from osgeo import ogr
+import re
+from datetime import datetime
+
+# Open shapefile in write mode
+shp = ogr.Open("chirps_final.shp", 1)
+layer = shp.GetLayer()
+
+# Ensure timestamp field exists
+field_names = [layer.GetLayerDefn().GetFieldDefn(i).GetName() for i in range(layer.GetLayerDefn().GetFieldCount())]
+if "timestamp" not in field_names:
+    field_defn = ogr.FieldDefn("timestamp", ogr.OFTDate)
+    layer.CreateField(field_defn)
+
+# Fill timestamp from the filename in 'location' field
+for feat in layer:
+    location = feat.GetField("location")
+    m = re.search(r"chirps_(\d{8})\.tif", location)
+    if m:
+        date_str = m.group(1)
+        dt = datetime.strptime(date_str, "%Y%m%d")
+        feat.SetField("timestamp", dt.year, dt.month, dt.day, 0, 0, 0, 0)
+        layer.SetFeature(feat)
+
+# Close shapefile
+shp = None
+print("Timestamps updated successfully.")
+
+
+1
+✅ Useful after the coverage already has time.
+curl -u admin:geoserver -XPUT \
+  -H "Content-type: text/xml" \
+  -d "<layer><enabled>true</enabled><metadata>
+        <entry key='time'>
+          <dimensionInfo>
+            <enabled>true</enabled>
+            <presentation>LIST</presentation>
+            <defaultValue>
+              <strategy>MINIMUM</strategy>
+            </defaultValue>
+          </dimensionInfo>
+        </entry>
+      </metadata></layer>" \
+  "http://localhost:8080/geoserver/rest/layers/precipitation_ws:chirps_final"
+
+
+
+2
+Targets the coverage resource itself (the actual raster/ImageMosaic).
+
+Here, <coverage> is where time metadata is really defined for mosaics.
+
+curl -u admin:geoserver -XPUT \
+-H "Content-type: text/xml" \
+-d "<coverage>
+      <enabled>true</enabled>
+      <metadata>
+        <entry key='time'>
+          <dimensionInfo>
+            <enabled>true</enabled>
+            <presentation>LIST</presentation>
+            <units>days</units>
+            <defaultValue>
+              <strategy>MINIMUM</strategy>
+            </defaultValue>
+          </dimensionInfo>
+        </entry>
+      </metadata>
+    </coverage>" \
+"http://localhost:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores/chirps_final_mosaic/coverages/chirps_final"
+
+| Aspect                  | Layer (`/rest/layers`) 1                         | Coverage (`/rest/coverages`)   2                    |
+| ----------------------- | ------------------------------------------------ | --------------------------------------------------- |
+| What you update         | Published WMS/WCS layer settings                 | The actual raster/ImageMosaic data                  |
+| Where to enable time    | Layer metadata (wrapper)                         | Coverage metadata (actual time dimension)           |
+| Requirement for success | Coverage must already have time enabled          | Coverage must have a timestamp field or indexer     |
+| Common error            | “Cannot enable, no attribute of type Date found” | “Failed to create reader…” if files/indexer missing |

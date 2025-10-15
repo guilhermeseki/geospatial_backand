@@ -1,0 +1,260 @@
+#request fastapi
+curl -X POST https://api.seki-tech.com/map/precipitation -H "Content-Type: application/json" -d '{"source": "chirps", "date": "2025-07-05"}'
+
+#request image fastapi
+curl -X POST https://api.seki-tech.com/map/precipitation/image \
+  -H "Content-Type: application/json" \
+  -d '{"source": "chirps", "date": "2025-07-05"}' \
+  --output precipitation.png
+
+curl -o styled_map.png \
+http://localhost:8080/geoserver/precipitation_ws/wms?service=WMS&version=1.1.1&request=GetMap&layers=precipitation_ws:chirps&bbox=-94,-53,-34,25&width=800&height=600&srs=EPSG:4326&time=2025-07-05&styles=precipitation_style&format=image/png
+
+https://api.seki-tech.com/map/wms?service=WMS&version=1.1.1&request=GetMap&layers=precipitation_ws:chirps&bbox=-94,-53,-34,25&width=800&height=600&srs=EPSG:4326&time=2025-07-05&styles=precipitation_style&format=image/png
+#request image from geoserver
+curl -u admin:geoserver \
+"http://localhost:8080/geoserver/ows?service=WMS&version=1.3.0&request=GetMap&layers=precipitation_ws:chirps&styles=precipitation_style&format=image/png&transparent=true&time=2025-07-30&crs=EPSG:4326&bbox=-53.0,-94.0,25.05,-34.5&width=800&height=600" \
+--output map2.png
+
+#request history
+curl -X POST https://api.seki-tech.com/map/precipitation/history \
+  -H "Content-Type: application/json" \
+  -d '{
+    "source": "chirps",
+    "start_date": "2025-07-01",
+    "end_date": "2025-07-31",
+    "lat": -2.5,
+    "lon": -69.0
+  }'
+
+
+#featureinfo
+curl -X POST https://api.seki-tech.com/map/precipitation/featureinfo \
+  -H "Content-Type: application/json" \
+  -d '{
+    "source": "chirps",
+    "date": "2025-07-05",
+    "lat": -16.0,
+    "lon": -39.0
+  }'
+
+
+#refresh mosaic without usign file:/// cause this caused so much problem
+curl -u admin:geoserver -X POST "http://localhost:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores/chirps_final_mosaic/external.imagemosaic?reindex=true" -H "Content-Type: text/plain" -d "/opt/geoserver/data_dir"
+
+#Verify time dimension is populated
+curl -u admin:geoserver \
+"http://localhost:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores/chirps/coverages/chirps.xml" \
+| xmllint --format - \
+| grep -A 10 "<dimensionInfo>"
+
+
+#create mopsaic wih time
+curl -u admin:geoserver -X POST -H "Content-type: text/xml" \
+-d "<coverageStore>
+       <name>chirps_final_mosaic</name>
+       <type>ImageMosaic</type>
+       <enabled>true</enabled>
+       <workspace>precipitation_ws</workspace>
+     </coverageStore>" \
+"http://localhost:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores"
+
+
+
+# Delete coverage (layer)
+curl -u admin:geoserver -X DELETE \
+"http://localhost:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores/chirps/coverages/chirps?recurse=true"
+
+
+#check if there is a coverage
+curl -u admin:geoserver \
+"http://127.0.0.1:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores/chirps/coverages.json"
+
+#First i deleted indexer.properties
+#than datastore.properties
+#than executed
+
+# Delete coverage store (ImageMosaic)
+curl -u admin:geoserver -X DELETE \
+"http://localhost:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores/chirpsrecurse=true"
+
+#create coverage manually
+curl -u admin:geoserver -X POST -H "Content-type: text/xml" \
+-d "<coverage><name>chirps_final</name><nativeName>chirps_final</nativeName></coverage>" \
+"http://127.0.0.1:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores/chirps_final/coverages"
+
+
+curl -u admin:geoserver -X POST -H "Content-Type: text/plain" \
+-d "file:///opt/geoserver/data_dir/chirps_final" \
+"http://localhost:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores/chirps_final_mosaic/external.imagemosaic"
+
+
+#1Create the coverage store first and point it to a folder. For an ImageMosaic, you cannot create an empty XML store first — the store must exist with a URL to the folder.
+
+curl -u admin:geoserver -X POST -H "Content-type: text/xml" \
+-d "<coverageStore>
+       <name>chirps</name>
+       <type>ImageMosaic</type>
+       <enabled>true</enabled>
+       <workspace>precipitation_ws</workspace>
+       <url>file:/opt/geoserver/data_dir/chirps</url>
+     </coverageStore>" \
+"http://localhost:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores"
+
+#2Check that the store exists:
+curl -u admin:geoserver \
+"http://localhost:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores/chirps.json"
+
+
+curl -u admin:geoserver -X POST -H "Content-Type: text/plain" \
+-d "/opt/geoserver/data_dir/chirps_final" \
+"http://localhost:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores/chirps/external.imagemosaic"
+
+""""from here
+
+#1️⃣ Make sure the coverage store points to your data
+Since your store already exists, you can just update it (or delete/recreate) and set the path:
+
+##enable time dimension
+curl -u admin:geoserver -X PUT -H "Content-type: text/xml" \
+-d "<coverageStore>
+       <name>chirps_final_mosaic</name>
+       <type>ImageMosaic</type>
+       <enabled>true</enabled>
+       <workspace>precipitation_ws</workspace>
+       <url>file:/opt/geoserver/data_dir/chirps_final</url>
+     </coverageStore>" \
+"http://localhost:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores/chirps_final_mosaic"
+
+
+##alternative to enable time dimension This worked!!!
+curl -u admin:geoserver -XPUT -H "Content-Type: application/xml" \
+-d '<coverage><metadata><entry key="time"><dimensionInfo><enabled>true</enabled><presentation>LIST</presentation><units>ISO8601</units></dimensionInfo></entry></metadata></coverage>' \
+"http://localhost:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores/chirps_final_mosaic/coverages/chirps_final_mosaic.xml"
+
+
+
+curl -u admin:geoserver -X POST -H "Content-type: text/xml" \
+-d "<coverage>
+       <name>chirps_final</name>
+       <nativeName>chirps_final</nativeName>
+       <title>CHIRPS Final Mosaic</title>
+     </coverage>" \
+"http://localhost:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores/chirps_final_mosaic/coverages"
+
+
+
+curl -u admin:geoserver -X POST "http://localhost:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores/chirps_final_mosaic/external.imagemosaic?reindex=true" -H "Content-Type: text/plain" -d "/opt/geoserver/data_dir/chirps_final"
+
+        curl -u admin:Todosabordo25! -X POST \
+          -H "Content-Type: text/plain" \
+          "http://localhost:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores/merge/external.imagemosaic?recalculate=all"
+
+TimeAttribute=timestamp
+Schema=*the_geom:Polygon,location:String,timestamp:java.util.Date
+PropertyCollectors=TimestampFileNameExtractorSPI[timeregex](timestamp)
+Timeregex=.*_(\d{8})\.tif
+
+#check if there is time dimension
+curl -u admin:geoserver \
+"http://localhost:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores/chirps/coverages/chirps.json"
+
+#get dimension time vlaues
+curl "http://localhost:8080/geoserver/wms?service=WMS&version=1.3.0&request=GetCapabilities&layers=precipitation_ws:merge" | grep "Dimension name"
+
+  # Check if shapefile exists and has timestamps
+ogrinfo /usr/share/geoserver-2.27.2/data_dir/data/chirps/chirps.shp -al
+ 
+#reset mosaic time dimension
+curl -u admin:todosabordo25!  -X POST \
+  "http://localhost:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores/merge/reset"
+#
+curl -u admin:todosabordo25! -XPOST \
+"http://localhost:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores/merge/external.imagemosaic?recalculate=all"
+
+#reenalbe time dimension on the coverage
+curl -u admin:geoserver -X PUT \
+  -H "Content-Type: application/json" \
+  -d '{
+    "coverage": {
+      "metadata": {
+        "entry": [
+          {
+            "@key": "time",
+            "dimensionInfo": {
+              "enabled": true,
+              "presentation": "LIST",
+              "units": "ISO8601",
+              "defaultValue": {
+                "strategy": "MAXIMUM"
+              },
+              "nearestMatchEnabled": false,
+              "rawNearestMatchEnabled": false
+            }
+          }
+        ]
+      }
+    }
+  }' \
+  "http://localhost:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores/chirps/coverages/chirps.json"
+
+ #Then enable time dimension on the layer:
+
+ curl -u admin:geoserver -X PUT \
+  -H "Content-Type: application/json" \
+  -d '{
+    "layer": {
+      "metadata": {
+        "entry": [
+          {
+            "@key": "time",
+            "dimensionInfo": {
+              "enabled": true,
+              "presentation": "LIST",
+              "units": "ISO8601",
+              "defaultValue": {
+                "strategy": "MAXIMUM"
+              },
+              "nearestMatchEnabled": false,
+              "rawNearestMatchEnabled": false
+            }
+          }
+        ]
+      }
+    }
+  }' \
+  "http://localhost:8080/geoserver/rest/layers/precipitation_ws:chirps.json"
+
+
+
+
+404 Not Found
+/…/coveragestores/chirps_final_mosaic/reload
+  1. Global reload
+
+  You can reload all configuration via REST:
+curl -u admin:geoserver -XPOST \
+  "http://localhost:8080/geoserver/rest/reload"
+
+
+#Or more specifically, check the time values GeoServer recognizes:
+curl -u admin:geoserver \
+"http://localhost:8080/geoserver/ows?service=WMS&version=1.3.0&request=GetCapabilities" \
+| xmllint --format - \
+| grep -A 5 "chirps_final_mosaic" | grep -A 2 "<Dimension name=\"time\""
+
+
+curl -u admin:geoserver \
+  -X GET "http://localhost:8080/geoserver/rest/layers/precipitation_ws:chirps.json"
+
+
+
+curl -u admin:geoserver -X POST \
+  "http://localhost:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores/chirps/external.imagemosaic?recalculate=all&configure=first&update=overwrite" \
+  -H "Content-type: text/plain" \
+  -d "/usr/share/geoserver-2.27.2/data_dir/data/chirps/"
+
+
+curl -u admin:geoserver -XPOST \
+  "http://localhost:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores/chirps/external.imagemosaic?configure=none&recalculate=all"
+
