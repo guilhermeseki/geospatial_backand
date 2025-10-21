@@ -1,12 +1,12 @@
 """
-ERA5 Land Daily Flow - Uses pre-aggregated daily statistics from CDS
-Better resolution (9km) and no hourly processing needed!
+ERA5 Land Daily Flow - With Historical NetCDF Management
 """
 from datetime import date, timedelta
 from pathlib import Path
 from typing import List, Dict, Optional
 import cdsapi
 import xarray as xr
+import pandas as pd
 from prefect import flow, task, get_run_logger
 from .schemas import DataSource
 from config.settings import get_settings
@@ -26,18 +26,7 @@ VARIABLE_MAPPING = {
 
 
 def get_output_directory(variable: str, daily_statistic: str, settings) -> Path:
-    """
-    Get the appropriate output directory for a variable and statistic combination.
-    
-    Args:
-        variable: ERA5 variable name (e.g., '2m_temperature')
-        daily_statistic: Statistic type (e.g., 'daily_maximum')
-        settings: Application settings
-    
-    Returns:
-        Path to the output directory
-    """
-    # Check mapping first
+    """Get the appropriate output directory for a variable and statistic combination."""
     if variable in VARIABLE_MAPPING and daily_statistic in VARIABLE_MAPPING[variable]:
         dir_name = VARIABLE_MAPPING[variable][daily_statistic]
     else:
@@ -52,12 +41,92 @@ def get_output_directory(variable: str, daily_statistic: str, settings) -> Path:
         elif "precipitation" in variable:
             dir_name = "precipitation"
         else:
-            # Default fallback
             dir_name = f"{variable}_{daily_statistic}".replace("_", "-")
     
     output_dir = Path(settings.DATA_DIR) / dir_name
     output_dir.mkdir(parents=True, exist_ok=True)
     return output_dir
+
+
+@task
+def check_missing_dates(
+    start_date: date,
+    end_date: date,
+    variable: str,
+    daily_statistic: str
+) -> Dict[str, List[date]]:
+    """
+    Check which dates are missing from GeoTIFF and historical NetCDF separately.
+    
+    Returns:
+        Dictionary with 'geotiff' and 'historical' keys containing lists of missing dates
+    """
+    logger = get_run_logger()
+    settings = get_settings()
+    
+    # Generate list of requested dates
+    requested_dates = []
+    current = start_date
+    while current <= end_date:
+        requested_dates.append(current)
+        current += timedelta(days=1)
+    
+    logger.info(f"Checking for {len(requested_dates)} dates: {start_date} to {end_date}")
+    
+    # Get directories
+    dir_name = get_output_directory(variable, daily_statistic, settings).name
+    geotiff_dir = Path(settings.DATA_DIR) / dir_name
+    hist_dir = Path(settings.DATA_DIR) / f"{dir_name}_hist"
+    hist_file = hist_dir / "historical.nc"
+    
+    # Check GeoTIFF files
+    existing_geotiff_dates = set()
+    if geotiff_dir.exists():
+        for tif_file in geotiff_dir.glob(f"{dir_name}_*.tif"):
+            try:
+                date_str = tif_file.stem.split('_')[-1]
+                file_date = pd.to_datetime(date_str, format='%Y%m%d').date()
+                existing_geotiff_dates.add(file_date)
+            except Exception as e:
+                logger.warning(f"Could not parse date from {tif_file.name}: {e}")
+    
+    logger.info(f"Found {len(existing_geotiff_dates)} existing GeoTIFF files")
+    
+    # Check historical NetCDF
+    existing_hist_dates = set()
+    if hist_file.exists():
+        try:
+            ds = xr.open_dataset(hist_file, chunks='auto')
+            var_short_name = dir_name
+            if var_short_name in ds.data_vars:
+                existing_hist_dates = set(pd.to_datetime(ds[var_short_name].time.values).date)
+                logger.info(f"Found {len(existing_hist_dates)} dates in historical NetCDF")
+            ds.close()
+        except Exception as e:
+            logger.warning(f"Could not read historical file: {e}")
+    else:
+        logger.info("Historical NetCDF does not exist yet")
+    
+    # Calculate missing dates separately
+    requested_dates_set = set(requested_dates)
+    missing_geotiff = sorted(list(requested_dates_set - existing_geotiff_dates))
+    missing_historical = sorted(list(requested_dates_set - existing_hist_dates))
+    
+    # Dates to download = union (missing from either source)
+    missing_download = sorted(list(set(missing_geotiff) | set(missing_historical)))
+    
+    logger.info(f"Missing from GeoTIFF: {len(missing_geotiff)} dates")
+    logger.info(f"Missing from historical: {len(missing_historical)} dates")
+    logger.info(f"Need to download: {len(missing_download)} dates")
+    
+    if missing_download:
+        logger.info(f"  Download range: {min(missing_download)} to {max(missing_download)}")
+    
+    return {
+        'geotiff': missing_geotiff,
+        'historical': missing_historical,
+        'download': missing_download
+    }
 
 
 @task(retries=2, retry_delay_seconds=600, timeout_seconds=7200)
@@ -67,34 +136,39 @@ def download_era5_land_daily_batch(
     variable: str,
     daily_statistic: str,
     area: List[float],
-    convert_bbox: bool = True
+    convert_bbox: bool = False
 ) -> Path:
-    """
-    Download ERA5 Land Daily Statistics (pre-aggregated daily data).
-    Resolution: 9km (0.1°) - much better than ERA5 single levels!
-    
-    Args:
-        start_date: First date to download
-        end_date: Last date to download
-        variable: ERA5 variable name (e.g., '2m_temperature')
-        daily_statistic: Statistic to download ('daily_maximum', 'daily_minimum', 'daily_mean', 'daily_sum')
-        area: Bounding box - will be converted to CDS format [N, W, S, E]
-        convert_bbox: If True, convert from raster format (W, S, E, N) to CDS format (N, W, S, E)
-    
-    Returns:
-        Path to downloaded NetCDF file
-    """
+    """Download ERA5 Land Daily Statistics (pre-aggregated daily data)."""
     logger = get_run_logger()
     settings = get_settings()
     
-    # Convert bbox from raster format (W, S, E, N) to CDS format [N, W, S, E]
-    if convert_bbox and isinstance(area, (list, tuple)) and len(area) == 4:
-        # Input: (min_lon, min_lat, max_lon, max_lat) = (W, S, E, N)
-        # Output: [max_lat, min_lon, min_lat, max_lon] = [N, W, S, E]
-        cds_area = [area[3], area[0], area[1], area[2]]  # [N, W, S, E]
-        logger.info(f"Converted bbox from {area} to CDS format: {cds_area}")
-    else:
-        cds_area = area
+    # Area should already be in CDS format [N, W, S, E]
+    cds_area = list(area)
+    
+    # Validate bbox: North must be > South
+    north, west, south, east = cds_area[0], cds_area[1], cds_area[2], cds_area[3]
+    
+    if north <= south:
+        raise ValueError(f"Invalid bbox: North ({north}) must be > South ({south})")
+    
+    if west >= east:
+        raise ValueError(f"Invalid bbox: West ({west}) must be < East ({east})")
+    
+    logger.info(f"Using CDS bbox [N, W, S, E]: {cds_area}")
+    logger.info(f"  North: {north}, South: {south} (span: {north - south}°)")
+    logger.info(f"  West: {west}, East: {east} (span: {east - west}°)")
+    
+    # Validate dates - ERA5-Land has ~5-7 day lag
+    from datetime import date as dt
+    today = dt.today()
+    max_available_date = today - timedelta(days=7)
+    
+    if end_date > max_available_date:
+        logger.warning(f"End date {end_date} may not be available yet (max: ~{max_available_date})")
+        logger.warning(f"ERA5-Land typically has 5-7 day lag. Request may fail!")
+    
+    if start_date > end_date:
+        raise ValueError(f"Start date ({start_date}) must be <= end date ({end_date})")
     
     # Generate date list
     dates = []
@@ -121,77 +195,52 @@ def download_era5_land_daily_batch(
         logger.info(f"Batch already downloaded: {output_path}")
         return output_path
     
-    # Build CDS request for ERA5 Land Daily Statistics
-    # Area format: [North, West, South, East]
+    # Build CDS request
     request = {
-        "variable": [variable],  # Must be a list
+        "variable": [variable],
         "year": years,
         "month": months,
         "day": days,
         "daily_statistic": daily_statistic,
         "time_zone": "utc+00:00",
-        "frequency": "1_hourly",  # Input frequency for the statistic calculation
-        "area": cds_area  # [N, W, S, E]
+        "frequency": "6_hourly",
+        "area": cds_area
     }
     
     logger.info(f"Downloading ERA5 Land Daily: {start_date} to {end_date}")
     logger.info(f"Variable: {variable}, Statistic: {daily_statistic}")
     logger.info("=" * 80)
-    
-    # Debug: Check CDS API configuration
-    import os
-    logger.info("Checking CDS API configuration...")
-    cdsapi_rc = os.path.expanduser("~/.cdsapirc")
-    logger.info(f"Looking for config at: {cdsapi_rc}")
-    logger.info(f"Config file exists: {os.path.exists(cdsapi_rc)}")
-    
-    if 'CDSAPI_URL' in os.environ:
-        logger.info(f"CDSAPI_URL env var: {os.environ['CDSAPI_URL']}")
-    if 'CDSAPI_KEY' in os.environ:
-        logger.info(f"CDSAPI_KEY env var: {'*' * 20} (hidden)")
+    logger.info("CDS API REQUEST:")
+    logger.info("=" * 80)
     
     import json
-    logger.info("CDS API Request:")
-    logger.info(json.dumps(request, indent=2))
+    logger.info(json.dumps(request, indent=2, default=str))
+    
+    logger.info("=" * 80)
+    logger.info("REQUEST DETAILS:")
+    logger.info(f"  Dataset: derived-era5-land-daily-statistics")
+    logger.info(f"  Variable: {request['variable']}")
+    logger.info(f"  Daily statistic: {request['daily_statistic']}")
+    logger.info(f"  Time zone: {request['time_zone']}")
+    logger.info(f"  Frequency: {request['frequency']}")
+    logger.info(f"  Years: {request['year']}")
+    logger.info(f"  Months: {request['month']}")
+    logger.info(f"  Days: {request['day']}")
+    logger.info(f"  Area [N,W,S,E]: {request['area']}")
+    logger.info(f"  Area interpretation:")
+    logger.info(f"    North: {request['area'][0]}°")
+    logger.info(f"    West: {request['area'][1]}°")
+    logger.info(f"    South: {request['area'][2]}°")
+    logger.info(f"    East: {request['area'][3]}°")
     logger.info("=" * 80)
     
     try:
-        # Initialize client and log URL being used
-        import os
-        logger.info("Initializing CDS API client...")
-        
-        # Force reload credentials from file
-        cdsapi_rc = os.path.expanduser("~/.cdsapirc")
-        if os.path.exists(cdsapi_rc):
-            logger.info(f"✓ Config file found: {cdsapi_rc}")
-            
-            # Read and parse the config manually
-            with open(cdsapi_rc, 'r') as f:
-                config_lines = f.readlines()
-                for line in config_lines:
-                    if line.strip().startswith('url:'):
-                        url = line.split('url:')[1].strip()
-                        os.environ['CDSAPI_URL'] = url
-                        logger.info(f"✓ Set CDSAPI_URL to: {url}")
-                    elif line.strip().startswith('key:'):
-                        key = line.split('key:')[1].strip()
-                        os.environ['CDSAPI_KEY'] = key
-                        logger.info(f"✓ Set CDSAPI_KEY (length: {len(key)} chars)")
-        else:
-            logger.warning(f"✗ Config file not found: {cdsapi_rc}")
-        
         client = cdsapi.Client()
-        logger.info(f"✓ CDS Client initialized")
-        logger.info(f"✓ Using URL: {client.url}")
-        
         logger.info("Submitting request to CDS...")
         result = client.retrieve("derived-era5-land-daily-statistics", request)
-        
-        logger.info("Downloading result...")
         result.download(str(output_path))
         logger.info(f"✓ ERA5 Land Daily downloaded: {output_path}")
         return output_path
-        
     except Exception as e:
         logger.error(f"✗ Download failed: {e}")
         if output_path.exists():
@@ -204,103 +253,73 @@ def process_era5_land_daily_to_geotiff(
     netcdf_path: Path,
     variable: str,
     daily_statistic: str,
-    bbox: tuple
+    bbox: tuple,
+    dates_to_process: Optional[List[date]] = None
 ) -> List[Path]:
     """
     Convert ERA5 Land Daily NetCDF to daily GeoTIFFs.
-    Data is already daily - just need to split by day and convert format.
-    
-    Args:
-        netcdf_path: Path to downloaded batch NetCDF
-        variable: Variable name to extract (e.g., '2m_temperature')
-        daily_statistic: Statistic type (e.g., 'daily_maximum')
-        bbox: (minx, miny, maxx, maxy) or [N, W, S, E]
-    
-    Returns:
-        List of paths to processed daily GeoTIFFs
+    Only processes dates specified in dates_to_process (if provided).
     """
     logger = get_run_logger()
     settings = get_settings()
     
-    # Get the appropriate output directory
     output_dir = get_output_directory(variable, daily_statistic, settings)
     logger.info(f"Saving {variable} ({daily_statistic}) to: {output_dir}")
+    
+    if dates_to_process:
+        logger.info(f"Processing only {len(dates_to_process)} specific dates")
     
     processed_paths = []
     
     try:
-        # Open the NetCDF file
         ds = xr.open_dataset(netcdf_path)
         logger.info(f"NetCDF variables: {list(ds.data_vars)}")
-        logger.info(f"NetCDF dimensions: {list(ds.dims)}")
-        logger.info(f"NetCDF coordinates: {list(ds.coords)}")
         
-        # Find the variable in the dataset
-        # ERA5 Land uses different naming conventions
+        # Find the variable
         var_name = None
         if variable in ds.data_vars:
             var_name = variable
         else:
-            # Try common variations
             possible_names = [
                 variable,
                 variable.replace("_", ""),
-                f"{variable}_{daily_statistic.replace('daily_', '')}",
-                # Temperature variations
                 "t2m", "2t", "temperature_2m",
-                # Check all variables that contain key parts
                 *[v for v in ds.data_vars if any(part in v for part in variable.split("_"))]
             ]
-            
             for name in possible_names:
                 if name in ds.data_vars:
                     var_name = name
-                    logger.info(f"Found variable as: {var_name}")
                     break
         
         if not var_name:
-            raise ValueError(
-                f"Variable '{variable}' not found in dataset. "
-                f"Available variables: {list(ds.data_vars)}"
-            )
+            raise ValueError(f"Variable '{variable}' not found. Available: {list(ds.data_vars)}")
         
         da = ds[var_name]
         
-        # Convert bbox format if needed: (minx, miny, maxx, maxy) or [N, W, S, E]
+        # Convert bbox format if needed
         if isinstance(bbox, list):
-            # Assume [N, W, S, E] format, convert to (minx, miny, maxx, maxy)
             bbox = (bbox[1], bbox[2], bbox[3], bbox[0])  # [W, S, E, N]
         
-        # Process each day
-        if 'time' not in da.dims:
-            logger.warning("No time dimension found - processing as single day")
-            time_values = [da.coords.get('time', date.today())]
-        else:
-            time_values = da.time.values
-        
-        # Check for different time dimension names
+        # Find time dimension
         time_dim = None
         for possible_time_dim in ['time', 'valid_time', 'datetime']:
             if possible_time_dim in da.dims:
                 time_dim = possible_time_dim
-                logger.info(f"Using time dimension: {time_dim}")
                 break
         
         if time_dim:
             time_values = da[time_dim].values
         else:
-            logger.warning(f"No recognized time dimension found in {da.dims}")
             time_values = [date.today()]
         
+        # Process each day
         for time_val in time_values:
-            # Get data for this specific day
             if time_dim and time_dim in da.dims:
                 daily_data = da.sel({time_dim: time_val})
             else:
                 daily_data = da
             
-            # Convert numpy datetime to Python date
-            import pandas as pd
+            # Convert time to date
             if isinstance(time_val, (pd.Timestamp, date)):
                 day_date = pd.Timestamp(time_val).date()
             else:
@@ -308,9 +327,13 @@ def process_era5_land_daily_to_geotiff(
                     day_date = pd.Timestamp(time_val).date()
                 except:
                     day_date = date.today()
-                    logger.warning(f"Could not parse date, using today: {day_date}")
             
-            # Rename coordinates if needed (ERA5 Land uses various conventions)
+            # Skip if not in dates_to_process (if specified)
+            if dates_to_process and day_date not in dates_to_process:
+                logger.debug(f"Skipping {day_date} (already exists)")
+                continue
+            
+            # Rename coordinates
             coord_mapping = {}
             for coord in daily_data.dims:
                 coord_lower = coord.lower()
@@ -322,26 +345,20 @@ def process_era5_land_daily_to_geotiff(
             if coord_mapping:
                 daily_data = daily_data.rename(coord_mapping)
             
-            # Set CRS
+            # Convert temperature from Kelvin to Celsius
+            if "temperature" in variable.lower() or "t2m" in var_name.lower():
+                daily_data = daily_data - 273.15
+            
             daily_data = daily_data.rio.write_crs("EPSG:4326")
             
-            # Clip to bbox
             try:
                 daily_data = daily_data.rio.clip_box(*bbox)
             except Exception as e:
-                logger.warning(f"Could not clip to bbox: {e}. Using full extent.")
+                logger.warning(f"Could not clip to bbox: {e}")
             
-            # Generate output filename
             output_path = output_dir / f"{output_dir.name}_{day_date.strftime('%Y%m%d')}.tif"
             
-            # Save as Cloud Optimized GeoTIFF
-            # Note: COG driver handles tiling and overviews automatically
-            daily_data.rio.to_raster(
-                output_path,
-                driver="COG",
-                compress="LZW"
-            )
-
+            daily_data.rio.to_raster(output_path, driver="COG", compress="LZW")
             processed_paths.append(output_path)
             logger.info(f"✓ Processed: {day_date} -> {output_path.name}")
         
@@ -349,15 +366,205 @@ def process_era5_land_daily_to_geotiff(
         return processed_paths
         
     except Exception as e:
-        logger.error(f"✗ Failed to process ERA5 Land Daily batch: {e}")
-        import traceback
-        logger.error(traceback.format_exc())
+        logger.error(f"✗ Failed to process: {e}")
         raise
+
+
+@task
+def append_to_historical_netcdf(
+    source_netcdf: Path,
+    variable: str,
+    daily_statistic: str,
+    bbox: tuple,
+    dates_to_append: Optional[List[date]] = None
+) -> Path:
+    """
+    Append processed daily data directly from source NetCDF to historical NetCDF.
+    Only appends dates specified in dates_to_append (if provided).
+    """
+    logger = get_run_logger()
+    settings = get_settings()
+    
+    dir_name = get_output_directory(variable, daily_statistic, settings).name
+    hist_dir_name = f"{dir_name}_hist"
+    hist_dir = Path(settings.DATA_DIR) / hist_dir_name
+    hist_dir.mkdir(parents=True, exist_ok=True)
+    
+    hist_file = hist_dir / "historical.nc"
+    logger.info(f"Appending data from {source_netcdf.name} to {hist_file}")
+    
+    if dates_to_append:
+        logger.info(f"Appending only {len(dates_to_append)} specific dates")
+    
+    try:
+        # Open source NetCDF
+        ds = xr.open_dataset(source_netcdf)
+        logger.info(f"Source NetCDF variables: {list(ds.data_vars)}")
+        
+        # Find the variable
+        var_name = None
+        if variable in ds.data_vars:
+            var_name = variable
+        else:
+            possible_names = [
+                variable,
+                variable.replace("_", ""),
+                "t2m", "2t", "temperature_2m",
+                *[v for v in ds.data_vars if any(part in v for part in variable.split("_"))]
+            ]
+            for name in possible_names:
+                if name in ds.data_vars:
+                    var_name = name
+                    break
+        
+        if not var_name:
+            raise ValueError(f"Variable '{variable}' not found. Available: {list(ds.data_vars)}")
+        
+        da = ds[var_name]
+        
+        # Find time dimension
+        time_dim = None
+        for possible_time_dim in ['time', 'valid_time', 'datetime']:
+            if possible_time_dim in da.dims:
+                time_dim = possible_time_dim
+                break
+        
+        if not time_dim:
+            raise ValueError(f"No time dimension found in {da.dims}")
+        
+        # Standardize dimension names
+        coord_mapping = {}
+        for coord in da.dims:
+            coord_lower = coord.lower()
+            if coord_lower in ['longitude', 'lon', 'long']:
+                coord_mapping[coord] = 'longitude'
+            elif coord_lower in ['latitude', 'lat']:
+                coord_mapping[coord] = 'latitude'
+        
+        if coord_mapping:
+            da = da.rename(coord_mapping)
+        
+        # Rename time dimension to 'time'
+        if time_dim != 'time':
+            da = da.rename({time_dim: 'time'})
+        
+        # Convert temperature from Kelvin to Celsius
+        if "temperature" in variable.lower() or "t2m" in var_name.lower():
+            logger.info("Converting temperature from Kelvin to Celsius")
+            da = da - 273.15
+        
+        # Clip to bbox
+        if isinstance(bbox, list):
+            bbox = (bbox[1], bbox[2], bbox[3], bbox[0])  # [W, S, E, N]
+        
+        try:
+            # Clip using coordinate selection
+            west, south, east, north = bbox
+            da = da.sel(
+                longitude=slice(west, east),
+                latitude=slice(north, south)  # Note: latitude is typically descending
+            )
+            logger.info(f"Clipped to bbox: {bbox}")
+        except Exception as e:
+            logger.warning(f"Could not clip to bbox: {e}. Using full extent.")
+        
+        # Rename variable to standardized name
+        var_short_name = dir_name  # temp_max, temp_min, temp
+        da.name = var_short_name
+        da.attrs.update({
+            'long_name': f'{variable} {daily_statistic}',
+            'units': 'degrees_celsius' if 'temp' in var_short_name else 'unknown',
+            'source': 'ERA5-Land',
+            'statistic': daily_statistic
+        })
+        
+        # Get dates from new data
+        new_dates = set(pd.to_datetime(da.time.values).date)
+        logger.info(f"Source NetCDF contains {len(new_dates)} dates")
+        
+        # Filter to only dates_to_append if specified
+        if dates_to_append:
+            dates_to_append_set = set(dates_to_append)
+            da = da.sel(time=da.time.isin([pd.Timestamp(d) for d in dates_to_append_set]))
+            new_dates = dates_to_append_set & new_dates
+            logger.info(f"Filtered to {len(new_dates)} dates to append")
+        
+        # Append to existing or create new
+        if hist_file.exists():
+            logger.info("Historical file exists, checking for duplicates...")
+            try:
+                existing_data = xr.open_dataset(hist_file, chunks='auto')
+                existing_da = existing_data[var_short_name]
+                
+                existing_dates = set(pd.to_datetime(existing_da.time.values).date)
+                dates_to_add = new_dates - existing_dates
+                
+                if not dates_to_add:
+                    logger.info("All dates already exist in historical file")
+                    existing_data.close()
+                    ds.close()
+                    return hist_file
+                
+                logger.info(f"Adding {len(dates_to_add)} new dates (skipping {len(new_dates - dates_to_add)} duplicates)")
+                
+                # Filter new data to only new dates
+                da_filtered = da.sel(time=da.time.isin([pd.Timestamp(d) for d in dates_to_add]))
+                
+                # Combine existing and new data
+                combined = xr.concat([existing_da, da_filtered], dim='time').sortby('time')
+                existing_data.close()
+                
+            except Exception as e:
+                logger.warning(f"Could not append to existing file: {e}. Creating new file.")
+                combined = da
+        else:
+            logger.info("Creating new historical file")
+            combined = da
+        
+        ds.close()
+        
+        # Convert to Dataset
+        hist_ds = combined.to_dataset()
+        
+        # Efficient chunking: 1 day per chunk, 20x20 spatial chunks
+        encoding = {
+            var_short_name: {
+                'chunksizes': (1, 20, 20),
+                'zlib': True,
+                'complevel': 5,
+                'dtype': 'float32'
+            }
+        }
+        
+        logger.info("Saving with chunks: time=1, lat=20, lon=20")
+        hist_ds.to_netcdf(hist_file, mode='w', encoding=encoding, engine='netcdf4')
+        
+        logger.info(f"✓ Historical file updated: {hist_file}")
+        logger.info(f"  Time range: {combined.time.min().values} to {combined.time.max().values}")
+        logger.info(f"  Total days: {len(combined.time)}")
+        
+        return hist_file
+        
+    except Exception as e:
+        logger.error(f"✗ Failed to append to historical: {e}")
+        raise
+
+
+@task
+def cleanup_raw_files(netcdf_path: Path):
+    """Delete raw NetCDF file after processing."""
+    logger = get_run_logger()
+    try:
+        if netcdf_path.exists():
+            netcdf_path.unlink()
+            logger.info(f"✓ Cleaned up: {netcdf_path.name}")
+    except Exception as e:
+        logger.warning(f"Could not delete {netcdf_path}: {e}")
 
 
 @flow(
     name="process-era5-land-daily",
-    description="Download and process ERA5 Land Daily Statistics (9km resolution)",
+    description="Download and process ERA5 Land Daily with historical archiving",
     retries=1,
     retry_delay_seconds=600
 )
@@ -367,45 +574,26 @@ def era5_land_daily_flow(
     start_date: Optional[date] = None,
     end_date: Optional[date] = None
 ):
-    """
-    ERA5 Land Daily processing flow - downloads pre-aggregated daily data.
-    No hourly processing needed! Better resolution (9km vs 31km).
-    
-    Args:
-        batch_days: Number of days to download per batch (default: 31 for monthly)
-        variables_config: List of dicts with 'variable' and 'statistic' keys
-                         Example: [
-                             {'variable': '2m_temperature', 'statistic': 'daily_maximum'},
-                             {'variable': '2m_temperature', 'statistic': 'daily_minimum'}
-                         ]
-        start_date: Start date (default: first day of last month)
-        end_date: End date (default: 3 days ago, accounting for ERA5 lag)
-    """
+    """ERA5 Land Daily processing with historical NetCDF management."""
     logger = get_run_logger()
     settings = get_settings()
     
-    # Default variable configuration
     if variables_config is None:
         variables_config = [
             {'variable': '2m_temperature', 'statistic': 'daily_maximum'},
             {'variable': '2m_temperature', 'statistic': 'daily_minimum'},
         ]
     
-    # Define date range
     if start_date is None or end_date is None:
         today = date.today()
         if end_date is None:
-            end_date = today - timedelta(days=3)  # ERA5 Land has ~3 day lag
+            end_date = today - timedelta(days=7)  # ERA5 Land has ~5-7 day lag
         if start_date is None:
-            # First day of last month
             start_date = (today.replace(day=1) - timedelta(days=1)).replace(day=1)
     
-    logger.info(f"Processing ERA5 Land Daily from {start_date} to {end_date}")
-    logger.info(f"Variables config: {variables_config}")
-    
+    logger.info(f"Processing from {start_date} to {end_date}")
     all_processed = []
     
-    # Process each variable+statistic combination
     for var_config in variables_config:
         variable = var_config['variable']
         statistic = var_config['statistic']
@@ -414,58 +602,139 @@ def era5_land_daily_flow(
         logger.info(f"Processing: {variable} - {statistic}")
         logger.info(f"{'='*80}")
         
-        # Download in batches
-        current_start = start_date
-        while current_start <= end_date:
-            current_end = min(current_start + timedelta(days=batch_days - 1), end_date)
+        # Initialize variables
+        missing_download = []
+        missing_geotiff = []
+        missing_historical = []
+        
+        # Check which dates are missing
+        try:
+            missing_info = check_missing_dates(
+                start_date=start_date,
+                end_date=end_date,
+                variable=variable,
+                daily_statistic=statistic
+            )
+            missing_download = missing_info.get('download', [])
+            missing_geotiff = missing_info.get('geotiff', [])
+            missing_historical = missing_info.get('historical', [])
+        except Exception as e:
+            logger.error(f"Failed to check missing dates: {e}")
+            continue
+        
+        if not missing_download or len(missing_download) == 0:
+            logger.info(f"✓ All data already exists for {variable} - {statistic}")
+            continue
+        
+        # Group missing dates into contiguous batches
+        date_batches = []
+        if len(missing_download) > 0:
+            current_batch_start = missing_download[0]
+            current_batch_end = missing_download[0]
             
-            try:
-                # Download batch - use CDS format bbox
-                batch_path = download_era5_land_daily_batch(
-                    start_date=current_start,
-                    end_date=current_end,
-                    variable=variable,
-                    daily_statistic=statistic,
-                    area=settings.latam_bbox_cds  # Use CDS format: [N, W, S, E]
-                )
-                
-                # Process to GeoTIFFs - use raster format bbox
-                processed = process_era5_land_daily_to_geotiff(
-                    netcdf_path=batch_path,
-                    variable=variable,
-                    daily_statistic=statistic,
-                    bbox=settings.latam_bbox_raster  # Use raster format: (W, S, E, N)
-                )
-                
-                all_processed.extend(processed)
-                logger.info(f"✓ Completed batch: {current_start} to {current_end}")
-                
-            except Exception as e:
-                logger.error(f"✗ Failed batch {current_start} to {current_end}: {e}")
+            for i in range(1, len(missing_download)):
+                if missing_download[i] == current_batch_end + timedelta(days=1):
+                    current_batch_end = missing_download[i]
+                else:
+                    date_batches.append((current_batch_start, current_batch_end))
+                    current_batch_start = missing_download[i]
+                    current_batch_end = missing_download[i]
             
-            current_start = current_end + timedelta(days=1)
+            date_batches.append((current_batch_start, current_batch_end))
+        
+        if not date_batches:
+            logger.info(f"✓ No batches to process for {variable} - {statistic}")
+            continue
+        
+        logger.info(f"Organized into {len(date_batches)} download batch(es)")
+        
+        # Process each batch of missing dates
+        for batch_start, batch_end in date_batches:
+            current_start = batch_start
+            while current_start <= batch_end:
+                current_end = min(current_start + timedelta(days=batch_days - 1), batch_end)
+                
+                # Get the specific dates in this chunk
+                chunk_dates = []
+                d = current_start
+                while d <= current_end:
+                    chunk_dates.append(d)
+                    d += timedelta(days=1)
+                
+                # Which dates need GeoTIFF processing?
+                geotiff_dates_in_chunk = [d for d in chunk_dates if d in missing_geotiff]
+                
+                # Which dates need historical appending?
+                hist_dates_in_chunk = [d for d in chunk_dates if d in missing_historical]
+                
+                try:
+                    logger.info(f"\nDownloading batch: {current_start} to {current_end}")
+                    logger.info(f"  Will process {len(geotiff_dates_in_chunk)} GeoTIFFs")
+                    logger.info(f"  Will append {len(hist_dates_in_chunk)} to historical")
+                    
+                    # Download batch
+                    batch_path = download_era5_land_daily_batch(
+                        start_date=current_start,
+                        end_date=current_end,
+                        variable=variable,
+                        daily_statistic=statistic,
+                        area=settings.latam_bbox_cds
+                    )
+                    
+                    # Process to GeoTIFFs (only missing dates)
+                    if geotiff_dates_in_chunk:
+                        processed = process_era5_land_daily_to_geotiff(
+                            netcdf_path=batch_path,
+                            variable=variable,
+                            daily_statistic=statistic,
+                            bbox=settings.latam_bbox_raster,
+                            dates_to_process=geotiff_dates_in_chunk
+                        )
+                        all_processed.extend(processed)
+                    else:
+                        logger.info("  Skipping GeoTIFF processing (all exist)")
+                    
+                    # Append to historical NetCDF (only missing dates)
+                    if hist_dates_in_chunk:
+                        hist_file = append_to_historical_netcdf(
+                            source_netcdf=batch_path,
+                            variable=variable,
+                            daily_statistic=statistic,
+                            bbox=settings.latam_bbox_raster,
+                            dates_to_append=hist_dates_in_chunk
+                        )
+                        logger.info(f"✓ Updated historical: {hist_file}")
+                    else:
+                        logger.info("  Skipping historical append (all exist)")
+                    
+                    # Clean up raw file
+                    cleanup_raw_files(batch_path)
+                    
+                    logger.info(f"✓ Completed batch: {current_start} to {current_end}")
+                    
+                except Exception as e:
+                    logger.error(f"✗ Failed batch {current_start} to {current_end}: {e}")
+                
+                current_start = current_end + timedelta(days=1)
     
     # Refresh GeoServer mosaics
     if all_processed:
         from .tasks import refresh_mosaic_shapefile
         from collections import defaultdict
         
-        # Group files by directory
         files_by_dir = defaultdict(list)
         for path in all_processed:
             files_by_dir[path.parent].append(path)
         
         logger.info(f"\n{'='*80}")
         logger.info("Refreshing GeoServer mosaics")
-        logger.info(f"{'='*80}")
         
         for dir_path, files in files_by_dir.items():
             logger.info(f"Refreshing {dir_path.name}: {len(files)} files")
             try:
-                # Use ERA5 data source for all ERA5 Land data
                 refresh_mosaic_shapefile(DataSource.ERA5)
             except Exception as e:
-                logger.error(f"Failed to refresh mosaic for {dir_name}: {e}")
+                logger.error(f"Failed to refresh mosaic: {e}")
         
         logger.info(f"\n✓ Successfully processed {len(all_processed)} total files")
     

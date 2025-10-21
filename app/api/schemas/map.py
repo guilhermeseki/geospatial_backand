@@ -5,7 +5,7 @@ from typing import Optional
 class MapRequest(BaseModel):
     source: str
     date: str
-    width: Optional[int] = 1200
+    width: Optional[int] = 12001
     height: Optional[int] = 1560
     lat: Optional[float] = None
     lon: Optional[float] = None

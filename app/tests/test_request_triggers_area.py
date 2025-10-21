@@ -10,7 +10,7 @@ URL = f"{BASE_URL}{ENDPOINT}"
 HEADERS = {"Content-Type": "application/json"}
 
 # --- BODY PAYLOAD (UPDATED) ---
-RADIUS_KM = 150.0  # Radius in kilometers
+RADIUS_KM = 100.0  # Radius in kilometers
 
 PAYLOAD = {
     "source": "chirps",
@@ -55,7 +55,9 @@ try:
             # Print high-level summary
             total_exceedances = data.get('total_exceedances', 'N/A')
             print(f"Total Exceedances Found: {total_exceedances}")
-
+            
+            total_trigger_dates = data.get('total_trigger_dates', 'N/A')
+            print(f"Total total_trigger_dates Found: {total_trigger_dates}")
             # Print only the first 5 events for brevity
             exceedances_list = data.get('exceedances_list', [])
             if exceedances_list:
