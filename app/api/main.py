@@ -1,19 +1,19 @@
-#app/api/main.py
+# app/api/main.py
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from app.services.geoserver import GeoServerService
+from app.services.climate_data import initialize_climate_data, shutdown_climate_data, get_available_sources, get_dask_client_info
 from app.config.settings import get_settings
 import logging
 from logging.handlers import RotatingFileHandler
 import os
 import asyncio
-from app.api.routers import map, georisk
+from app.api.routers import temperature, precipitation, georisk
 from pathlib import Path
 from datetime import datetime
 import httpx
-
 
 settings = get_settings()  # Initialize settings
 
@@ -33,9 +33,11 @@ try:
 except Exception as e:
     print(f"Failed to initialize log file {log_file}: {e}")
 
+
 class HealthCheckFilter(logging.Filter):
     def filter(self, record):
         return "/health" not in record.getMessage()
+
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -60,83 +62,15 @@ INIT_RETRIES = 3
 INIT_RETRY_DELAY = 2
 
 
-
-
-
-
-# @asynccontextmanager
-# async def lifespan(app: FastAPI):
-#     app_state.initialization_start = datetime.now()
-#     geoserver = GeoServerService()
-#     # List all sources you want to ensure mosaics for
-#     sources = ["chirps_final"]
-
-    # In async context
-    #await geoserver.ensure_all_mosaics(sources)
-
-    # try:
-    #     logger.info("🔗 Connecting to GeoServer...")
-    #     for attempt in range(1, INIT_RETRIES + 1):
-    #         if await geoserver.check_geoserver_alive():
-    #             break
-    #         await asyncio.sleep(INIT_RETRY_DELAY)
-    #     else:
-    #         logger.error("GeoServer connection failed after retries")
-    #         app_state.ready = True
-    #         yield
-    #         return
-    #     logger.info("✅ GeoServer connection verified")
-
-    #     data_path = Path(settings.DATA_DIR)
-    #     logger.debug(f"Checking data directory: {data_path}")
-    #     if not data_path.exists():
-    #         logger.error(f"Data directory not found: {data_path}")
-    #         app_state.ready = True
-    #         yield
-    #         return
-    #     logger.info(f"✅ Data directory found: {data_path}")
-
-    #     async with httpx.AsyncClient(auth=geoserver.auth) as client:
-    #         for source in CONFIG_SOURCES:
-    #             logger.info(f"⚙️ Checking ImageMosaic layer for {source}...")
-    #             response = await client.get(
-    #                 f"{geoserver.base_url}/rest/workspaces/{geoserver.workspace}/coveragestores/{source}_mosaic/coverages/{source}"
-    #             )
-    #             if response.status_code in (200, 201, 202):
-    #                 logger.info(f"✅ Layer {source}_mosaic already exists")
-    #                 continue
-    #             for attempt in range(1, INIT_RETRIES + 1):
-    #                 try:
-    #                     #await geoserver.ensure_layer_exists(source, "2025-07-02")
-    #                     logger.info(f"✅ ImageMosaic layer initialized for {source}")
-    #                     break
-    #                 except Exception as e:
-    #                     logger.warning(f"⚠️ ImageMosaic layer attempt {attempt} failed for {source}: {str(e)}")
-    #                     if attempt == INIT_RETRIES:
-    #                         logger.error(f"ImageMosaic layer failed for {source}: {str(e)}")
-    #                         break
-    #                     await asyncio.sleep(INIT_RETRY_DELAY)
-
-    #     app_state.ready = True
-    #     app_state.initialization_end = datetime.now()
-    #     logger.info(f"🟢 Application initialized in {(app_state.initialization_end - app_state.initialization_start).total_seconds()}s")
-    #     yield
-    # except Exception as e:
-    #     app_state.failure_reason = str(e)
-    #     logger.critical(f"🔴 Initialization failed: {str(e)}")
-    #     app_state.ready = True
-    #     yield
-
 app = FastAPI(
-    title="Geospatial Backend",
-    description="API for geospatial data processing",
-    version="1.0.0",
-    #lifespan=lifespan
+    title="Geospatial Backend - Climate Data API",
+    description="Unified API for precipitation and temperature data with shared Dask processing",
+    version="2.0.0",
 )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],#settings.ALLOWED_ORIGINS,
+    allow_origins=["*"],  # settings.ALLOWED_ORIGINS,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -144,38 +78,105 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def startup_event():
-    app_state.ready = True
+    """
+    Initialize application with shared climate data service.
+    This replaces the old separate Dask clients in each router.
+    """
+    logger.info("=" * 80)
+    logger.info("🚀 Starting Geospatial Backend - Climate Data API")
+    logger.info("=" * 80)
+    
+    app_state.initialization_start = datetime.now()
+    
+    try:
+        # Initialize shared climate data service
+        # This creates ONE Dask client and loads ALL datasets (precipitation + temperature)
+        logger.info("📊 Initializing shared climate data service...")
+        initialize_climate_data()
+        
+        # Log what was loaded
+        precip_sources = get_available_sources('precipitation')
+        temp_sources = get_available_sources('temperature')
+        dask_info = get_dask_client_info()
+        
+        logger.info("")
+        logger.info("=" * 80)
+        logger.info("📋 Climate Data Service Status")
+        logger.info("=" * 80)
+        logger.info(f"Precipitation sources: {len(precip_sources)} - {precip_sources}")
+        logger.info(f"Temperature sources: {len(temp_sources)} - {temp_sources}")
+        
+        if dask_info:
+            logger.info(f"Dask client: RUNNING")
+            logger.info(f"  Scheduler: {dask_info['scheduler_address']}")
+            logger.info(f"  Workers: {dask_info['num_workers']}")
+            logger.info(f"  Dashboard: {dask_info['dashboard_link']}")
+        else:
+            logger.warning("Dask client: NOT AVAILABLE (running without parallelization)")
+        
+        logger.info("=" * 80)
+        
+        app_state.ready = True
+        app_state.initialization_end = datetime.now()
+        init_time = (app_state.initialization_end - app_state.initialization_start).total_seconds()
+        
+        logger.info("")
+        logger.info(f"✅ Application initialized successfully in {init_time:.2f}s")
+        logger.info(f"🌐 API ready at http://0.0.0.0:8000")
+        logger.info(f"📚 Docs available at http://0.0.0.0:8000/docs")
+        logger.info("=" * 80)
+        
+    except Exception as e:
+        app_state.failure_reason = str(e)
+        logger.critical(f"🔴 Initialization failed: {str(e)}")
+        logger.exception(e)
+        app_state.ready = True  # Set ready anyway to allow health checks
 
-# @app.on_event("startup")
-# async def startup_event():
-#     geoserver = GeoServerService()
-#     logger.info("⏳ Waiting for GeoServer to be alive...")
 
-#     for attempt in range(5):
-#         if await geoserver.check_geoserver_alive():
-#             logger.info("✅ GeoServer is alive, fixing ingestion shapefile...")
-#             success = fix_ingestion_field()
-#             if success:
-#                 logger.info("📂 Ingestion shapefile fixed, recalculating mosaic...")
-#              #   await recalc_geoserver_mosaic()
-#             break
-#         else:
-#             logger.warning("GeoServer not ready yet, retrying...")
-#             await asyncio.sleep(5)
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Cleanup resources on shutdown"""
+    logger.info("🛑 Shutting down application...")
+    shutdown_climate_data()
+    logger.info("✅ Shutdown complete")
+
+
 @app.get("/health", include_in_schema=False)
 async def health_check():
+    """Basic health check endpoint"""
     return {"status": "healthy"}
 
-# @app.middleware("http")
-# async def readiness_check(request, call_next):
-#     if not app_state.ready and request.url.path != "/health":
-#         return JSONResponse(
-#             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-#             content={"detail": f"Service initializing: {app_state.failure_reason or 'Not ready'}"}
-#         )
-#     return await call_next(request)
+
+@app.get("/status")
+async def status_check():
+    """Detailed status check with climate data information"""
+    precip_sources = get_available_sources('precipitation')
+    temp_sources = get_available_sources('temperature')
+    dask_info = get_dask_client_info()
+    
+    return {
+        "status": "ready" if app_state.ready else "initializing",
+        "version": "2.0.0",
+        "climate_data": {
+            "precipitation_sources": precip_sources,
+            "temperature_sources": temp_sources,
+            "total_datasets": len(precip_sources) + len(temp_sources)
+        },
+        "dask_client": {
+            "available": dask_info is not None,
+            "info": dask_info
+        },
+        "initialization_time": (
+            (app_state.initialization_end - app_state.initialization_start).total_seconds()
+            if app_state.initialization_end and app_state.initialization_start
+            else None
+        )
+    }
+
+
 @app.middleware("http")
 async def readiness_check(request, call_next):
+    """Middleware to check if service is ready and handle CORS"""
     # Handle CORS preflight requests
     if request.method == "OPTIONS":
         return JSONResponse(
@@ -189,7 +190,7 @@ async def readiness_check(request, call_next):
         )
 
     # Check readiness for all non-health routes
-    if not app_state.ready and request.url.path != "/health":
+    if not app_state.ready and request.url.path not in ["/health", "/status"]:
         return JSONResponse(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             content={"detail": f"Service initializing: {app_state.failure_reason or 'Not ready'}"},
@@ -208,10 +209,34 @@ async def readiness_check(request, call_next):
     response.headers["Access-Control-Allow-Methods"] = "*"
     response.headers["Access-Control-Allow-Headers"] = "*"
     return response
-    
-#app.include_router(test.router)
-#app.include_router(data.router)
-#app.include_router(precipitation.router)
-app.include_router(map.router)
-#app.include_router(health.router)
+
+
+@app.get("/")
+async def root():
+    """API root endpoint"""
+    return {
+        "title": "Geospatial Backend - Climate Data API",
+        "version": "2.0.0",
+        "description": "Unified API for precipitation and temperature data",
+        "endpoints": {
+            "precipitation": "/precipitation",
+            "temperature": "/temperature",
+            "georisk": "/georisk"
+        },
+        "documentation": {
+            "swagger": "/docs",
+            "redoc": "/redoc"
+        },
+        "status": {
+            "health": "/health",
+            "detailed_status": "/status"
+        }
+    }
+
+
+# Include routers
+app.include_router(precipitation.router)
+app.include_router(temperature.router)
 app.include_router(georisk.router)
+
+logger.info("🔌 Routers registered: precipitation, temperature, georisk")

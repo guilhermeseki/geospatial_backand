@@ -4,10 +4,11 @@ from urllib.parse import urlencode
 from pathlib import Path
 import logging
 import textwrap
+import subprocess
+import time
 from app.config.settings import get_settings
 import asyncio
 import platform
-#from app.services.precipitation import update_shp_date_index_chirps
 
 settings = get_settings()
 logger = logging.getLogger(__name__)
@@ -82,17 +83,15 @@ class GeoServerService:
         self.max_retries = 3
         logger.info(f"GeoServer configured at {self.base_url}")
 
-    # async def reindex_time(self) -> bool:
-    #     sudo rm /mnt/workwork/geoserver_data/merge/merge.* && \
-    #     sudo systemctl restart geoserver && \
-    #     sleep 15 && \
-    #    curl -u settings.GEOSERVER_ADMIN_USER:settings.GEOSERVER_ADMIN_PASSWORD -X POST \
-    #      -H "Content-Type: text/plain" \
-    #      "http://localhost:8080/geoserver/rest/workspaces/precipitation_ws/coveragestores/merge/external.imagemosaic?recalculate=all"
-    #     update_shp_date_index_chirps()
-    #     curl -u admin:todosabordo25! -XPOST \
-
     async def reindex_time(self) -> bool:
+        """
+        Reindex ImageMosaic time dimension.
+        Steps:
+        1. Delete old index files
+        2. Restart GeoServer
+        3. Recalculate ImageMosaic index
+        4. Update shapefile date index
+        """
         try:
             # Step 1 — Delete old index files (.fix, .idx, etc.)
             index_path = Path(self.data_dir) / "merge"
@@ -106,7 +105,7 @@ class GeoServerService:
             logger.info("Restarting GeoServer...")
             subprocess.run(["sudo", "systemctl", "restart", "geoserver"], check=True)
             logger.info("GeoServer restarted. Waiting 15 seconds...")
-            time.sleep(15)
+            await asyncio.sleep(15)  # Use async sleep in async function
 
             # Step 3 — Recalculate ImageMosaic index
             reindex_url = (
@@ -121,9 +120,10 @@ class GeoServerService:
                     return False
                 logger.info("ImageMosaic reindex request submitted successfully.")
 
-            # Step 4 — Update shapefile index
-            logger.info("Updating shapefile date index...")
-            #update_shp_date_index_chirps()
+            # Step 4 — Update shapefile index (if needed)
+            # Uncomment if you have this function:
+            # logger.info("Updating shapefile date index...")
+            # update_shp_date_index_chirps()
 
             return True
         except Exception as e:
@@ -145,17 +145,18 @@ class GeoServerService:
             headers = {"Content-Type": "application/vnd.ogc.sld+xml"}
             url = f"{self.base_url}/rest/styles?name={style_name}"
             response = await client.post(url, headers=headers, content=sld_path.read_bytes())
-            if is_success(response.status_code):
+            if not is_success(response.status_code):  # Fixed: was checking if IS success
                 raise HTTPException(
                     status_code=502,
                     detail=f"Failed to upload SLD {style_name}: {response.text}"
                 )
             logger.info(f"SLD {style_name} uploaded successfully")
 
-    """If wanna create a new mosaic add at least two .tif files with different dates in the folder, then restart FastAPI.
-        
-    """
     async def ensure_layer_exists(self, source: str, date: str = None) -> str:
+        """
+        If you want to create a new mosaic, add at least two .tif files 
+        with different dates in the folder, then restart FastAPI.
+        """
         try:
             data_dir = Path(self.data_dir) / source
             tif_files = sorted(data_dir.glob(f"{source}_latam_*.tif"))
@@ -171,16 +172,7 @@ class GeoServerService:
                 geotiff_file = tif_files[0]
 
             # --- Ensure mosaic config files exist ---
-            #datastore_props = data_dir / "datastore.properties"
             indexer_props = data_dir / "indexer.properties"
-
-            # if not datastore_props.exists():
-            #     datastore_props.write_text(
-            #         "SPI=org.geotools.data.imagemosaic.ImageMosaicFormatFactory\n"
-            #         "URL=file:.\n"
-            #         "recursive=true\n"
-            #     )
-            #     logger.info(f"Created {datastore_props}")
 
             if not indexer_props.exists():
                 indexer_props.write_text(
@@ -191,7 +183,6 @@ class GeoServerService:
                     "timeformat=yyyyMMdd\n"
                 )
                 logger.info(f"Created {indexer_props}")
-
 
             store_name = f"{source}_mosaic"
             layer_name = f"{source}_mosaic"
@@ -224,7 +215,7 @@ class GeoServerService:
                 url = f"{self.base_url}/rest/layers/{self.workspace}:{layer_name}"
                 payload = {"layer": {"defaultStyle": {"name": "precipitation_style"}}}
                 response = await client.put(url, headers={"Content-Type": "application/json"}, json=payload)
-                if is_success(response.status_code):
+                if not is_success(response.status_code):  # Fixed: was checking if IS success
                     logger.warning(f"Failed to apply SLD to {layer_name}: {response.text}")
 
             logger.info(f"Layer {layer_name} ensured with {geotiff_file.name}")
@@ -267,7 +258,7 @@ class GeoServerService:
                     }
                 }
             )
-            if is_success(create_res.status_code):
+            if not is_success(create_res.status_code):  # Fixed: was checking if IS success
                 raise HTTPException(
                     status_code=502,
                     detail=f"Failed to create coverage store: {create_res.text}"
@@ -298,7 +289,7 @@ class GeoServerService:
                     }
                 }
             )
-            if is_success(response.status_code):
+            if not is_success(response.status_code):  # Fixed: was checking if IS success
                 raise HTTPException(
                     status_code=502,
                     detail=f"Failed to publish layer: {response.text}"
@@ -346,3 +337,13 @@ class GeoServerService:
                 time += "T00:00:00Z"
             params["time"] = time
         return f"{self.base_url}/wms?{urlencode(params)}"
+
+    async def check_geoserver_alive(self) -> bool:
+        """Check if GeoServer is responsive"""
+        try:
+            async with httpx.AsyncClient(auth=self.auth, timeout=5) as client:
+                response = await client.get(f"{self.base_url}/rest/about/version.json")
+                return response.status_code == 200
+        except Exception as e:
+            logger.warning(f"GeoServer health check failed: {e}")
+            return False
