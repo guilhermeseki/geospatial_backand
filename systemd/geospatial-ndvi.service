@@ -1,0 +1,14 @@
+[Unit]
+Description=MODIS NDVI Data Daily Update
+After=network.target
+
+[Service]
+Type=oneshot
+User=guilherme
+WorkingDirectory=/opt/geospatial_backend
+ExecStart=/home/guilherme/miniconda3/envs/horus/bin/python app/run_ndvi.py
+StandardOutput=append:/opt/geospatial_backend/logs/ndvi-daily.log
+StandardError=append:/opt/geospatial_backend/logs/ndvi-daily.log
+
+[Install]
+WantedBy=multi-user.target

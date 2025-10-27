@@ -11,11 +11,12 @@ import xarray as xr
 import pandas as pd
 import rasterio
 from rasterio.windows import from_bounds
-from rasterio.warp import reproject, Resampling, calculate_default_transform
+from rasterio.warp import reproject, Resampling, calculate_default_transform, transform_bounds
 from rasterio.transform import from_bounds as transform_from_bounds
+from rasterio.crs import CRS
 from prefect import flow, task, get_run_logger
 from .schemas import DataSource
-from config.settings import get_settings
+from app.config.settings import get_settings
 
 # Microsoft Planetary Computer imports (FREE, NO AUTH!)
 try:
@@ -355,14 +356,32 @@ def download_sentinel2_batch(
                 'provider': 'Microsoft Planetary Computer'
             }
         )
-        
-        ds.to_netcdf(output_path)
+
+        # FUSE FIX: Write to /tmp first, then copy to FUSE filesystem
+        import tempfile
+        import shutil
+        temp_dir = Path(tempfile.mkdtemp(prefix="ndvi_s2_"))
+        temp_file = temp_dir / output_path.name
+
+        logger.info(f"Writing to temp file (FUSE-safe): {temp_file}")
+        ds.to_netcdf(str(temp_file))
+
+        logger.info(f"Copying to final location: {output_path}")
+        shutil.copy2(temp_file, output_path)
+        shutil.rmtree(temp_dir, ignore_errors=True)
+
         logger.info(f"✓ Sentinel-2 NDVI saved: {output_path}")
-        
+
         return output_path
-        
+
     except Exception as e:
         logger.error(f"✗ Download failed: {e}")
+        # Cleanup
+        try:
+            if 'temp_dir' in locals() and temp_dir.exists():
+                shutil.rmtree(temp_dir, ignore_errors=True)
+        except:
+            pass
         if output_path.exists():
             output_path.unlink()
         raise
@@ -453,23 +472,63 @@ def download_modis_batch(
         logger.info(f"Common grid: {n_lat} x {n_lon} pixels (~250m)")
         
         for i, item in enumerate(items):
-            logger.info(f"Processing composite {i+1}/{len(items)}")
+            logger.info(f"Processing composite {i+1}/{len(items)}: {item.id}")
             
             try:
                 ndvi_href = planetary_computer.sign(item.assets["250m_16_days_NDVI"].href)
                 
                 with rasterio.open(ndvi_href) as src:
-                    window = from_bounds(west, south, east, north, src.transform)
+                    # MODIS uses sinusoidal projection - need to transform bbox
+                    src_crs = src.crs
+                    logger.info(f"  MODIS CRS: {src_crs}")
+                    
+                    # Transform our WGS84 bbox to MODIS CRS
+                    modis_bbox = transform_bounds(
+                        CRS.from_epsg(4326),  # WGS84
+                        src_crs,               # MODIS sinusoidal
+                        west, south, east, north
+                    )
+                    
+                    modis_west, modis_south, modis_east, modis_north = modis_bbox
+                    logger.info(f"  Transformed bbox: W={modis_west:.0f}, S={modis_south:.0f}, E={modis_east:.0f}, N={modis_north:.0f}")
+                    
+                    # Get scene bounds
+                    scene_bounds = src.bounds
+                    logger.info(f"  Scene bounds: W={scene_bounds.left:.0f}, S={scene_bounds.bottom:.0f}, E={scene_bounds.right:.0f}, N={scene_bounds.top:.0f}")
+                    
+                    # Calculate intersection in MODIS coordinates
+                    intersect_west = max(modis_west, scene_bounds.left)
+                    intersect_south = max(modis_south, scene_bounds.bottom)
+                    intersect_east = min(modis_east, scene_bounds.right)
+                    intersect_north = min(modis_north, scene_bounds.top)
+                    
+                    # Check if there's actual intersection
+                    if intersect_west >= intersect_east or intersect_south >= intersect_north:
+                        logger.warning(f"  No intersection, skipping")
+                        continue
+                    
+                    logger.info(f"  Intersection found: {intersect_east-intersect_west:.0f}m x {intersect_north-intersect_south:.0f}m")
+                    
+                    window = from_bounds(intersect_west, intersect_south,
+                                        intersect_east, intersect_north,
+                                        src.transform)
+                    
+                    if window.width <= 0 or window.height <= 0:
+                        logger.warning(f"  Invalid window, skipping")
+                        continue
+                    
                     ndvi_src = src.read(1, window=window).astype(np.float32)
                     src_transform = src.window_transform(window)
                     src_crs = src.crs
-                    
+
+                    logger.info(f"  Read {ndvi_src.shape[0]}x{ndvi_src.shape[1]} pixels")
+
                     # Skip if empty
                     if ndvi_src.size == 0:
-                        logger.warning(f"  Composite has no data in bbox, skipping")
+                        logger.warning(f"  Empty data, skipping")
                         continue
-                    
-                    # Reproject to common grid
+
+                    # Reproject to common grid (WGS84)
                     ndvi_raw = np.empty((n_lat, n_lon), dtype=np.float32)
                     reproject(
                         source=ndvi_src,
@@ -477,7 +536,7 @@ def download_modis_batch(
                         src_transform=src_transform,
                         src_crs=src_crs,
                         dst_transform=common_transform,
-                        dst_crs=src_crs,
+                        dst_crs=CRS.from_epsg(4326),  # Reproject to WGS84
                         resampling=Resampling.bilinear
                     )
                 
@@ -506,7 +565,7 @@ def download_modis_batch(
             raise RuntimeError("All composites failed")
         
         ndvi_array = np.stack(ndvi_data_list)
-        
+
         ds = xr.Dataset(
             {'ndvi': (['time', 'latitude', 'longitude'], ndvi_array)},
             coords={
@@ -520,14 +579,32 @@ def download_modis_batch(
                 'provider': 'Microsoft Planetary Computer'
             }
         )
-        
-        ds.to_netcdf(output_path)
+
+        # FUSE FIX: Write to /tmp first, then copy to FUSE filesystem
+        import tempfile
+        import shutil
+        temp_dir = Path(tempfile.mkdtemp(prefix="ndvi_modis_"))
+        temp_file = temp_dir / output_path.name
+
+        logger.info(f"Writing to temp file (FUSE-safe): {temp_file}")
+        ds.to_netcdf(str(temp_file))
+
+        logger.info(f"Copying to final location: {output_path}")
+        shutil.copy2(temp_file, output_path)
+        shutil.rmtree(temp_dir, ignore_errors=True)
+
         logger.info(f"✓ MODIS NDVI saved: {output_path}")
-        
+
         return output_path
-        
+
     except Exception as e:
         logger.error(f"✗ Download failed: {e}")
+        # Cleanup
+        try:
+            if 'temp_dir' in locals() and temp_dir.exists():
+                shutil.rmtree(temp_dir, ignore_errors=True)
+        except:
+            pass
         if output_path.exists():
             output_path.unlink()
         raise
@@ -599,14 +676,27 @@ def append_to_historical_netcdf(
     bbox: tuple,
     dates_to_append: Optional[List[date]] = None
 ) -> Path:
-    """Append NDVI data to historical NetCDF."""
+    """
+    Append NDVI data to historical NetCDF.
+
+    FUSE FILESYSTEM FIX: Writes to /tmp first, then copies to final location.
+    """
     logger = get_run_logger()
     settings = get_settings()
-    
+
     dir_name = get_output_directory(source, settings).name
     hist_dir = Path(settings.DATA_DIR) / f"{dir_name}_hist"
     hist_dir.mkdir(parents=True, exist_ok=True)
     hist_file = hist_dir / "historical.nc"
+
+    # FUSE FIX: Use /tmp for temporary writes
+    import tempfile
+    import shutil
+    temp_dir = Path(tempfile.mkdtemp(prefix="ndvi_hist_"))
+    temp_hist_file = temp_dir / "historical.nc"
+
+    logger.info(f"Appending to: {hist_file}")
+    logger.info(f"Using temp file: {temp_hist_file} (FUSE-safe write)")
     
     try:
         ds = xr.open_dataset(source_netcdf)
@@ -624,32 +714,41 @@ def append_to_historical_netcdf(
         if coord_mapping:
             da = da.rename(coord_mapping)
         
-        # Filter dates
+        # Filter dates - compare dates directly
         if dates_to_append:
-            da = da.sel(time=da.time.isin([pd.Timestamp(d) for d in dates_to_append]))
+            dates_to_keep = set(dates_to_append)
+            time_mask = [pd.Timestamp(t).date() in dates_to_keep for t in da.time.values]
+            da = da.isel(time=time_mask)
         
         # Append or create
         if hist_file.exists():
-            existing = xr.open_dataset(hist_file, chunks='auto')
+            # FUSE FIX: Copy existing file to temp location first
+            logger.info(f"Copying existing historical file to temp for safe processing...")
+            shutil.copy2(hist_file, temp_hist_file)
+
+            existing = xr.open_dataset(temp_hist_file, chunks='auto')
             existing_dates = set(pd.to_datetime(existing['ndvi'].time.values).date)
             new_dates = set(pd.to_datetime(da.time.values).date)
             dates_to_add = new_dates - existing_dates
-            
+
             if dates_to_add:
-                da_filtered = da.sel(time=da.time.isin([pd.Timestamp(d) for d in dates_to_add]))
+                dates_to_add_set = set(dates_to_add)
+                time_mask = [pd.Timestamp(t).date() in dates_to_add_set for t in da.time.values]
+                da_filtered = da.isel(time=time_mask)
                 combined = xr.concat([existing['ndvi'], da_filtered], dim='time').sortby('time')
             else:
                 logger.info("All dates exist")
                 existing.close()
                 ds.close()
+                shutil.rmtree(temp_dir, ignore_errors=True)
                 return hist_file
-            
+
             existing.close()
         else:
             combined = da
-        
+
         ds.close()
-        
+
         hist_ds = combined.to_dataset(name='ndvi')
         encoding = {
             'ndvi': {
@@ -657,16 +756,202 @@ def append_to_historical_netcdf(
                 'zlib': True,
                 'complevel': 5,
                 'dtype': 'float32'
+            },
+            'time': {
+                'units': 'days since 1970-01-01',
+                'calendar': 'proleptic_gregorian',
+                'dtype': 'float64'
             }
         }
-        
-        hist_ds.to_netcdf(hist_file, mode='w', encoding=encoding, engine='netcdf4')
+
+        # FUSE FIX: Write to temp file first
+        logger.info(f"Writing to temp file (FUSE-safe): {temp_hist_file}")
+        hist_ds.to_netcdf(temp_hist_file, mode='w', encoding=encoding, engine='netcdf4')
+
+        # FUSE FIX: Copy completed file to final location
+        logger.info(f"Copying to final location: {hist_file}")
+        shutil.copy2(temp_hist_file, hist_file)
+
+        # Cleanup temp directory
+        shutil.rmtree(temp_dir, ignore_errors=True)
+
         logger.info(f"✓ Historical updated: {hist_file}")
-        
+
         return hist_file
-        
+
     except Exception as e:
         logger.error(f"✗ Failed: {e}")
+        # Cleanup temp directory on error
+        try:
+            if 'temp_dir' in locals():
+                shutil.rmtree(temp_dir, ignore_errors=True)
+        except:
+            pass
+        raise
+
+
+@task
+def append_to_yearly_historical_ndvi(
+    source_netcdf: Path,
+    source: str,
+    bbox: tuple,
+    dates_to_append: Optional[List[date]] = None
+) -> List[Path]:
+    """
+    Append NDVI data to YEARLY historical NetCDF files.
+    Creates separate files for each year: {source}_2015.nc, {source}_2016.nc, etc.
+
+    FUSE FILESYSTEM FIX: Writes to /tmp first, then copies to final location.
+    """
+    logger = get_run_logger()
+    settings = get_settings()
+    import tempfile
+    import shutil
+    from collections import defaultdict
+
+    dir_name = get_output_directory(source, settings).name
+    hist_dir = Path(settings.DATA_DIR) / f"{dir_name}_hist"
+    hist_dir.mkdir(parents=True, exist_ok=True)
+
+    logger.info(f"📦 Appending data from {source_netcdf.name} to yearly historical files")
+
+    if dates_to_append:
+        logger.info(f"  Processing {len(dates_to_append)} specific dates")
+    else:
+        logger.info(f"  Processing all dates in source file")
+
+    updated_files = []
+
+    try:
+        # Open source NetCDF
+        ds = xr.open_dataset(source_netcdf)
+        da = ds['ndvi']
+
+        # Standardize coordinates
+        coord_mapping = {}
+        for coord in da.dims:
+            coord_lower = coord.lower()
+            if coord_lower in ['longitude', 'lon', 'long']:
+                coord_mapping[coord] = 'longitude'
+            elif coord_lower in ['latitude', 'lat']:
+                coord_mapping[coord] = 'latitude'
+        if coord_mapping:
+            da = da.rename(coord_mapping)
+
+        # Get and filter dates
+        all_dates = set(pd.to_datetime(da.time.values).date)
+        if dates_to_append:
+            all_dates = all_dates & set(dates_to_append)
+            # Filter to only dates we want to append - compare dates directly
+            dates_to_keep = set(all_dates)
+            time_mask = [pd.Timestamp(t).date() in dates_to_keep for t in da.time.values]
+            da = da.isel(time=time_mask)
+
+        logger.info(f"  Processing {len(all_dates)} dates")
+
+        # Group dates by year
+        dates_by_year = defaultdict(list)
+        for d in all_dates:
+            dates_by_year[d.year].append(d)
+
+        logger.info(f"  Dates span {len(dates_by_year)} year(s): {sorted(dates_by_year.keys())}")
+
+        # Process each year
+        for year, year_dates in sorted(dates_by_year.items()):
+            logger.info(f"\n  📅 Processing year {year} ({len(year_dates)} dates)")
+
+            year_file = hist_dir / f"{dir_name}_{year}.nc"
+
+            # FUSE FIX: Create temp directory for this year
+            temp_dir = Path(tempfile.mkdtemp(prefix=f"ndvi_{year}_"))
+            temp_file = temp_dir / f"{dir_name}_{year}.nc"
+
+            try:
+                # Extract data for this year - compare dates directly
+                year_dates_set = set(year_dates)
+                year_time_mask = [pd.Timestamp(t).date() in year_dates_set for t in da.time.values]
+                year_da = da.isel(time=year_time_mask)
+
+                # Check if yearly file already exists
+                if year_file.exists():
+                    logger.info(f"    Year file exists, checking for duplicates...")
+                    # FUSE FIX: Copy to temp for safe processing
+                    shutil.copy2(year_file, temp_file)
+                    existing = xr.open_dataset(temp_file, chunks='auto')
+                    existing_da = existing['ndvi']
+
+                    existing_dates = set(pd.to_datetime(existing_da.time.values).date)
+                    new_dates = set(year_dates) - existing_dates
+
+                    if not new_dates:
+                        logger.info(f"    All {len(year_dates)} dates already exist, skipping")
+                        existing.close()
+                        shutil.rmtree(temp_dir, ignore_errors=True)
+                        continue
+
+                    logger.info(f"    Adding {len(new_dates)} new dates")
+                    new_dates_set = set(new_dates)
+                    new_dates_mask = [pd.Timestamp(t).date() in new_dates_set for t in year_da.time.values]
+                    year_da_filtered = year_da.isel(time=new_dates_mask)
+                    combined = xr.concat([existing_da, year_da_filtered], dim='time').sortby('time')
+                    existing.close()
+                else:
+                    logger.info(f"    Creating new year file with {len(year_dates)} dates")
+                    combined = year_da
+
+                # Compute time range before writing (while data is still in memory)
+                time_count = len(combined.time)
+                if time_count > 0:
+                    time_min = pd.Timestamp(combined.time.min().values).date()
+                    time_max = pd.Timestamp(combined.time.max().values).date()
+
+                # Convert to Dataset with encoding
+                year_ds = combined.to_dataset(name='ndvi')
+                year_ds.attrs['year'] = year
+
+                encoding = {
+                    'ndvi': {
+                        'chunksizes': (1, 20, 20),
+                        'zlib': True,
+                        'complevel': 5,
+                        'dtype': 'float32'
+                    },
+                    'time': {
+                        'units': 'days since 1970-01-01',
+                        'calendar': 'proleptic_gregorian',
+                        'dtype': 'float64'
+                    }
+                }
+
+                # FUSE FIX: Write to temp, then copy
+                logger.info(f"    Writing to temp file...")
+                year_ds.to_netcdf(str(temp_file), mode='w', encoding=encoding, engine='netcdf4')
+
+                logger.info(f"    Copying to: {year_file}")
+                shutil.copy2(temp_file, year_file)
+
+                # Cleanup temp
+                shutil.rmtree(temp_dir, ignore_errors=True)
+
+                updated_files.append(year_file)
+                logger.info(f"    ✓ Updated {year_file.name}")
+                if time_count > 0:
+                    logger.info(f"      Time range: {time_min} to {time_max}")
+                    logger.info(f"      Total days: {time_count}")
+
+            except Exception as e:
+                logger.error(f"    ✗ Failed to process year {year}: {e}")
+                if temp_dir.exists():
+                    shutil.rmtree(temp_dir, ignore_errors=True)
+                raise
+
+        ds.close()
+
+        logger.info(f"\n✓ Updated {len(updated_files)} yearly file(s)")
+        return updated_files
+
+    except Exception as e:
+        logger.error(f"✗ Failed to append to yearly historical: {e}")
         raise
 
 
@@ -796,13 +1081,14 @@ def ndvi_data_flow(
                         )
                         all_processed.extend(processed)
                     
-                    # Append to historical
+                    # Append to yearly historical
                     if hist_dates:
-                        append_to_historical_netcdf(
+                        yearly_files = append_to_yearly_historical_ndvi(
                             batch_path, source,
                             settings.latam_bbox_raster,
                             hist_dates
                         )
+                        logger.info(f"✓ Updated {len(yearly_files)} yearly historical file(s)")
                     
                     cleanup_raw_files(batch_path)
                     logger.info(f"✓ Completed batch")

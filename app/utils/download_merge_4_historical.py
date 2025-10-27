@@ -4,6 +4,9 @@ from dask.distributed import Client, LocalCluster
 import fsspec
 from datetime import datetime, timedelta
 from tqdm import tqdm
+import tempfile
+import shutil
+from pathlib import Path
 
 # -------------------------
 # USER CONFIGURATION
@@ -106,15 +109,30 @@ def process_year(year: int):
     try:
         ds_year = xr.concat(datasets, dim="time")
         out_path = os.path.join(OUTPUT_DIR, f"brazil_merge_{year}.nc")
-        print(f"💾 Saving {out_path} ...")
-        # Ensure to compute the data before saving if it's large and you want to trigger Dask
-        # If it's small, to_netcdf with dask chunks will work, but for large data, 
-        # it might be better to use compute() or a specific Dask function.
-        # For simplicity, keeping the original to_netcdf call:
-        ds_year.to_netcdf(out_path, engine="netcdf4")
+
+        # FUSE FIX: Write to /tmp first, then copy to FUSE filesystem
+        temp_dir = Path(tempfile.mkdtemp(prefix="merge_hist_"))
+        temp_file = temp_dir / f"brazil_merge_{year}.nc"
+
+        print(f"💾 Saving to temp file (FUSE-safe): {temp_file} ...")
+        ds_year.to_netcdf(str(temp_file), engine="netcdf4")
         ds_year.close()
+
+        print(f"📋 Copying to final location: {out_path} ...")
+        shutil.copy2(temp_file, out_path)
+
+        # Cleanup temp directory
+        shutil.rmtree(temp_dir, ignore_errors=True)
+        print(f"✓ Successfully saved {out_path}")
+
     except Exception as e:
         print(f"❌ Failed to merge year {year}: {e}")
+        # Cleanup temp directory on error
+        try:
+            if 'temp_dir' in locals():
+                shutil.rmtree(temp_dir, ignore_errors=True)
+        except:
+            pass
 
     # Cleanup temp files
     # for f in os.listdir(temp_dir):

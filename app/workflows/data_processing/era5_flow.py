@@ -9,7 +9,7 @@ import xarray as xr
 import pandas as pd
 from prefect import flow, task, get_run_logger
 from .schemas import DataSource
-from config.settings import get_settings
+from app.config.settings import get_settings
 
 
 # Mapping from ERA5 variable and statistic to directory names
@@ -371,44 +371,55 @@ def process_era5_land_daily_to_geotiff(
 
 
 @task
-def append_to_historical_netcdf(
+def append_to_yearly_historical(
     source_netcdf: Path,
     variable: str,
     daily_statistic: str,
     bbox: tuple,
     dates_to_append: Optional[List[date]] = None
-) -> Path:
+) -> List[Path]:
     """
-    Append processed daily data directly from source NetCDF to historical NetCDF.
-    Only appends dates specified in dates_to_append (if provided).
+    Append processed daily data to YEARLY historical NetCDF files.
+    Creates separate files for each year: {source}_2024.nc, {source}_2025.nc, etc.
+
+    This is more manageable than one huge historical.nc file and allows:
+    - Easy updates (only modify current year)
+    - Better performance (load only years needed)
+    - Consistent with precipitation data architecture
+
+    FUSE FILESYSTEM FIX: Writes to /tmp first, then copies to final location.
     """
     logger = get_run_logger()
     settings = get_settings()
-    
+    import tempfile
+    import shutil
+    from collections import defaultdict
+
     dir_name = get_output_directory(variable, daily_statistic, settings).name
-    hist_dir_name = f"{dir_name}_hist"
-    hist_dir = Path(settings.DATA_DIR) / hist_dir_name
+    hist_dir = Path(settings.DATA_DIR) / f"{dir_name}_hist"
     hist_dir.mkdir(parents=True, exist_ok=True)
-    
-    hist_file = hist_dir / "historical.nc"
-    logger.info(f"Appending data from {source_netcdf.name} to {hist_file}")
-    
+
+    logger.info(f"📦 Appending data from {source_netcdf.name} to yearly historical files")
+
     if dates_to_append:
-        logger.info(f"Appending only {len(dates_to_append)} specific dates")
+        logger.info(f"  Processing {len(dates_to_append)} specific dates")
+    else:
+        logger.info(f"  Processing all dates in source file")
     
+    updated_files = []
+
     try:
         # Open source NetCDF
         ds = xr.open_dataset(source_netcdf)
-        logger.info(f"Source NetCDF variables: {list(ds.data_vars)}")
-        
+        logger.info(f"  Source variables: {list(ds.data_vars)}")
+
         # Find the variable
         var_name = None
         if variable in ds.data_vars:
             var_name = variable
         else:
             possible_names = [
-                variable,
-                variable.replace("_", ""),
+                variable, variable.replace("_", ""),
                 "t2m", "2t", "temperature_2m",
                 *[v for v in ds.data_vars if any(part in v for part in variable.split("_"))]
             ]
@@ -416,23 +427,20 @@ def append_to_historical_netcdf(
                 if name in ds.data_vars:
                     var_name = name
                     break
-        
+
         if not var_name:
             raise ValueError(f"Variable '{variable}' not found. Available: {list(ds.data_vars)}")
-        
+
         da = ds[var_name]
-        
-        # Find time dimension
-        time_dim = None
-        for possible_time_dim in ['time', 'valid_time', 'datetime']:
-            if possible_time_dim in da.dims:
-                time_dim = possible_time_dim
-                break
-        
+
+        # Find and standardize time dimension
+        time_dim = next((d for d in ['time', 'valid_time', 'datetime'] if d in da.dims), None)
         if not time_dim:
             raise ValueError(f"No time dimension found in {da.dims}")
-        
-        # Standardize dimension names
+        if time_dim != 'time':
+            da = da.rename({time_dim: 'time'})
+
+        # Standardize spatial dimensions
         coord_mapping = {}
         for coord in da.dims:
             coord_lower = coord.lower()
@@ -440,36 +448,26 @@ def append_to_historical_netcdf(
                 coord_mapping[coord] = 'longitude'
             elif coord_lower in ['latitude', 'lat']:
                 coord_mapping[coord] = 'latitude'
-        
         if coord_mapping:
             da = da.rename(coord_mapping)
-        
-        # Rename time dimension to 'time'
-        if time_dim != 'time':
-            da = da.rename({time_dim: 'time'})
-        
+
         # Convert temperature from Kelvin to Celsius
         if "temperature" in variable.lower() or "t2m" in var_name.lower():
-            logger.info("Converting temperature from Kelvin to Celsius")
             da = da - 273.15
-        
+            logger.info("  Converted temperature to Celsius")
+
         # Clip to bbox
         if isinstance(bbox, list):
-            bbox = (bbox[1], bbox[2], bbox[3], bbox[0])  # [W, S, E, N]
-        
+            bbox = (bbox[1], bbox[2], bbox[3], bbox[0])
         try:
-            # Clip using coordinate selection
             west, south, east, north = bbox
-            da = da.sel(
-                longitude=slice(west, east),
-                latitude=slice(north, south)  # Note: latitude is typically descending
-            )
-            logger.info(f"Clipped to bbox: {bbox}")
+            da = da.sel(longitude=slice(west, east), latitude=slice(north, south))
+            logger.info(f"  Clipped to bbox: {bbox}")
         except Exception as e:
-            logger.warning(f"Could not clip to bbox: {e}. Using full extent.")
-        
-        # Rename variable to standardized name
-        var_short_name = dir_name  # temp_max, temp_min, temp
+            logger.warning(f"  Could not clip to bbox: {e}")
+
+        # Standardize variable name and attributes
+        var_short_name = dir_name
         da.name = var_short_name
         da.attrs.update({
             'long_name': f'{variable} {daily_statistic}',
@@ -477,76 +475,121 @@ def append_to_historical_netcdf(
             'source': 'ERA5-Land',
             'statistic': daily_statistic
         })
-        
-        # Get dates from new data
-        new_dates = set(pd.to_datetime(da.time.values).date)
-        logger.info(f"Source NetCDF contains {len(new_dates)} dates")
-        
-        # Filter to only dates_to_append if specified
+
+        # Get and filter dates
+        all_dates = set(pd.to_datetime(da.time.values).date)
         if dates_to_append:
-            dates_to_append_set = set(dates_to_append)
-            da = da.sel(time=da.time.isin([pd.Timestamp(d) for d in dates_to_append_set]))
-            new_dates = dates_to_append_set & new_dates
-            logger.info(f"Filtered to {len(new_dates)} dates to append")
-        
-        # Append to existing or create new
-        if hist_file.exists():
-            logger.info("Historical file exists, checking for duplicates...")
+            all_dates = all_dates & set(dates_to_append)
+            # Filter to only dates we want to append - compare dates directly
+            dates_to_keep = set(all_dates)
+            time_mask = [pd.Timestamp(t).date() in dates_to_keep for t in da.time.values]
+            da = da.isel(time=time_mask)
+
+        logger.info(f"  Processing {len(all_dates)} dates")
+
+        # Group dates by year
+        dates_by_year = defaultdict(list)
+        for d in all_dates:
+            dates_by_year[d.year].append(d)
+
+        logger.info(f"  Dates span {len(dates_by_year)} year(s): {sorted(dates_by_year.keys())}")
+
+        # Process each year
+        for year, year_dates in sorted(dates_by_year.items()):
+            logger.info(f"\n  📅 Processing year {year} ({len(year_dates)} dates)")
+
+            year_file = hist_dir / f"{dir_name}_{year}.nc"
+
+            # FUSE FIX: Create temp directory for this year
+            temp_dir = Path(tempfile.mkdtemp(prefix=f"era5_{year}_"))
+            temp_file = temp_dir / f"{dir_name}_{year}.nc"
+
             try:
-                existing_data = xr.open_dataset(hist_file, chunks='auto')
-                existing_da = existing_data[var_short_name]
-                
-                existing_dates = set(pd.to_datetime(existing_da.time.values).date)
-                dates_to_add = new_dates - existing_dates
-                
-                if not dates_to_add:
-                    logger.info("All dates already exist in historical file")
-                    existing_data.close()
-                    ds.close()
-                    return hist_file
-                
-                logger.info(f"Adding {len(dates_to_add)} new dates (skipping {len(new_dates - dates_to_add)} duplicates)")
-                
-                # Filter new data to only new dates
-                da_filtered = da.sel(time=da.time.isin([pd.Timestamp(d) for d in dates_to_add]))
-                
-                # Combine existing and new data
-                combined = xr.concat([existing_da, da_filtered], dim='time').sortby('time')
-                existing_data.close()
-                
+                # Extract data for this year - compare dates directly
+                year_dates_set = set(year_dates)
+                year_time_mask = [pd.Timestamp(t).date() in year_dates_set for t in da.time.values]
+                year_da = da.isel(time=year_time_mask)
+
+                # Check if yearly file already exists
+                if year_file.exists():
+                    logger.info(f"    Year file exists, checking for duplicates...")
+                    # FUSE FIX: Copy to temp for safe processing
+                    shutil.copy2(year_file, temp_file)
+                    existing = xr.open_dataset(temp_file, chunks='auto')
+                    existing_da = existing[var_short_name]
+
+                    existing_dates = set(pd.to_datetime(existing_da.time.values).date)
+                    new_dates = set(year_dates) - existing_dates
+
+                    if not new_dates:
+                        logger.info(f"    All {len(year_dates)} dates already exist, skipping")
+                        existing.close()
+                        shutil.rmtree(temp_dir, ignore_errors=True)
+                        continue
+
+                    logger.info(f"    Adding {len(new_dates)} new dates")
+                    new_dates_set = set(new_dates)
+                    new_dates_mask = [pd.Timestamp(t).date() in new_dates_set for t in year_da.time.values]
+                    year_da_filtered = year_da.isel(time=new_dates_mask)
+                    combined = xr.concat([existing_da, year_da_filtered], dim='time').sortby('time')
+                    existing.close()
+                else:
+                    logger.info(f"    Creating new year file with {len(year_dates)} dates")
+                    combined = year_da
+
+                # Compute time range before writing (while data is still in memory)
+                time_count = len(combined.time)
+                if time_count > 0:
+                    time_min = pd.Timestamp(combined.time.min().values).date()
+                    time_max = pd.Timestamp(combined.time.max().values).date()
+
+                # Convert to Dataset with encoding
+                year_ds = combined.to_dataset()
+                year_ds.attrs['year'] = year
+
+                encoding = {
+                    var_short_name: {
+                        'chunksizes': (1, 20, 20),
+                        'zlib': True,
+                        'complevel': 5,
+                        'dtype': 'float32'
+                    },
+                    'time': {
+                        'units': 'days since 1970-01-01',
+                        'calendar': 'proleptic_gregorian',
+                        'dtype': 'float64'
+                    }
+                }
+
+                # FUSE FIX: Write to temp, then copy
+                logger.info(f"    Writing to temp file...")
+                year_ds.to_netcdf(str(temp_file), mode='w', encoding=encoding, engine='netcdf4')
+
+                logger.info(f"    Copying to: {year_file}")
+                shutil.copy2(temp_file, year_file)
+
+                # Cleanup temp
+                shutil.rmtree(temp_dir, ignore_errors=True)
+
+                updated_files.append(year_file)
+                logger.info(f"    ✓ Updated {year_file.name}")
+                if time_count > 0:
+                    logger.info(f"      Time range: {time_min} to {time_max}")
+                    logger.info(f"      Total days: {time_count}")
+
             except Exception as e:
-                logger.warning(f"Could not append to existing file: {e}. Creating new file.")
-                combined = da
-        else:
-            logger.info("Creating new historical file")
-            combined = da
-        
+                logger.error(f"    ✗ Failed to process year {year}: {e}")
+                if temp_dir.exists():
+                    shutil.rmtree(temp_dir, ignore_errors=True)
+                raise
+
         ds.close()
-        
-        # Convert to Dataset
-        hist_ds = combined.to_dataset()
-        
-        # Efficient chunking: 1 day per chunk, 20x20 spatial chunks
-        encoding = {
-            var_short_name: {
-                'chunksizes': (1, 20, 20),
-                'zlib': True,
-                'complevel': 5,
-                'dtype': 'float32'
-            }
-        }
-        
-        logger.info("Saving with chunks: time=1, lat=20, lon=20")
-        hist_ds.to_netcdf(hist_file, mode='w', encoding=encoding, engine='netcdf4')
-        
-        logger.info(f"✓ Historical file updated: {hist_file}")
-        logger.info(f"  Time range: {combined.time.min().values} to {combined.time.max().values}")
-        logger.info(f"  Total days: {len(combined.time)}")
-        
-        return hist_file
-        
+
+        logger.info(f"\n✓ Updated {len(updated_files)} yearly file(s)")
+        return updated_files
+
     except Exception as e:
-        logger.error(f"✗ Failed to append to historical: {e}")
+        logger.error(f"✗ Failed to append to yearly historical: {e}")
         raise
 
 
@@ -694,16 +737,16 @@ def era5_land_daily_flow(
                     else:
                         logger.info("  Skipping GeoTIFF processing (all exist)")
                     
-                    # Append to historical NetCDF (only missing dates)
+                    # Append to yearly historical NetCDF (only missing dates)
                     if hist_dates_in_chunk:
-                        hist_file = append_to_historical_netcdf(
+                        yearly_files = append_to_yearly_historical(
                             source_netcdf=batch_path,
                             variable=variable,
                             daily_statistic=statistic,
                             bbox=settings.latam_bbox_raster,
                             dates_to_append=hist_dates_in_chunk
                         )
-                        logger.info(f"✓ Updated historical: {hist_file}")
+                        logger.info(f"✓ Updated {len(yearly_files)} yearly historical file(s)")
                     else:
                         logger.info("  Skipping historical append (all exist)")
                     

@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily Precipitation Data Update Timer
+Requires=geospatial-precipitation.service
+
+[Timer]
+OnCalendar=*-*-* 02:15:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

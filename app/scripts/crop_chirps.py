@@ -5,6 +5,8 @@ from dask.distributed import Client, LocalCluster
 from dask.diagnostics import ProgressBar
 import multiprocessing
 import logging
+import tempfile
+import shutil
 
 # Set up logging
 logging.basicConfig(
@@ -80,19 +82,38 @@ def crop_chirps_to_brazil_by_year(data_dir, output_dir, years, bbox):
                 }
             }
 
-            # Write directly without `.compute()`
+            # FUSE FIX: Write to /tmp first, then copy to FUSE filesystem
+            temp_dir = Path(tempfile.mkdtemp(prefix="chirps_crop_"))
+            temp_file = temp_dir / f"brazil_chirps_{year}.nc"
+
+            print(f"💾 Writing to temp file (FUSE-safe): {temp_file}")
+            logging.info(f"Writing to temp file: {temp_file}")
+
             ds_cropped.to_netcdf(
-                output_netcdf,
+                str(temp_file),
                 encoding=encoding,
                 engine="netcdf4",
                 format="NETCDF4"
             )
 
+            print(f"📋 Copying to final location: {output_netcdf}")
+            logging.info(f"Copying to final location: {output_netcdf}")
+            shutil.copy2(temp_file, output_netcdf)
+
+            # Cleanup temp directory
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
             file_size_mb = output_netcdf.stat().st_size / 1024**2
-            logging.info(f"Saved {output_netcdf}, size: {file_size_mb:.2f} MB")
+            logging.info(f"✓ Saved {output_netcdf}, size: {file_size_mb:.2f} MB")
 
         except Exception as e:
             logging.error(f"Error processing year {year}: {e}")
+            # Cleanup temp directory on error
+            try:
+                if 'temp_dir' in locals():
+                    shutil.rmtree(temp_dir, ignore_errors=True)
+            except:
+                pass
 
         finally:
             # Explicitly cleanup memory

@@ -1,0 +1,14 @@
+[Unit]
+Description=ERA5 Temperature Data Daily Update
+After=network.target
+
+[Service]
+Type=oneshot
+User=guilherme
+WorkingDirectory=/opt/geospatial_backend
+ExecStart=/home/guilherme/miniconda3/envs/horus/bin/python app/run_era5.py
+StandardOutput=append:/opt/geospatial_backend/logs/era5-daily.log
+StandardError=append:/opt/geospatial_backend/logs/era5-daily.log
+
+[Install]
+WantedBy=multi-user.target

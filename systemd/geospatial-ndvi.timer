@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily MODIS NDVI Data Update Timer
+Requires=geospatial-ndvi.service
+
+[Timer]
+OnCalendar=*-*-* 02:30:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

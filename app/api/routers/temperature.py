@@ -8,6 +8,8 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from app.services.geoserver import GeoServerService
 from app.services.climate_data import get_dataset
+from app.api.schemas.polygon import PolygonRequest
+from app.utils.polygon import PolygonProcessor
 from app.utils.geo import haversine_distance, retry_on_failure, DEGREES_TO_KM
 from app.api.schemas.era5 import (
     ERA5Request, 
@@ -315,69 +317,37 @@ async def get_temperature_area_triggers(request: ERA5TriggerAreaRequest):
 
 # --- WMS ENDPOINTS ---
 
-@router.post("/image")
-@retry_on_failure(max_retries=2, exceptions=(httpx.HTTPError, httpx.TimeoutException))
-async def get_temperature_wms_image(request: ERA5Request):
-    """WMS GetMap proxy for temperature image."""
+@router.api_route("/wms", methods=["GET"])
+async def proxy_wms(request: Request):
+    """
+    Transparent WMS proxy to GeoServer.
+    Frontend can call this as the WMS URL, no direct GeoServer exposure.
+    """
     try:
-        # Validate date
-        try:
-            request_date = datetime.strptime(request.date, "%Y-%m-%d")
-            if request_date.date() > datetime.now().date():
-                raise HTTPException(status_code=400, detail="Future dates are not supported.")
-        except ValueError:
-            raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD.")
-
-        # Validate source
-        if request.source not in TEMPERATURE_SOURCES:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Invalid source. Must be one of: {', '.join(TEMPERATURE_SOURCES)}"
-            )
-
-        # Build WMS parameters
-        layer_name = f"era5_ws:{request.source}"
-        north, west, south, east = settings.latam_bbox_cds  # [N, W, S, E]
-        
-        wms_params = {
-            "service": "WMS",
-            "version": "1.3.0",
-            "request": "GetMap",
-            "layers": layer_name,
-            "width": request.width,
-            "height": request.height,
-            "format": "image/png",
-            "transparent": "true",
-            "time": request.date,
-            "styles": "temperature_style",
-            "crs": "EPSG:4326",
-            "bbox": f"{south},{west},{north},{east}",  # WMS 1.3.0 uses lat,lon order
-            "tiled": "false",
-            "_": str(int(time.time()))
-        }
-
         async with httpx.AsyncClient(auth=geoserver.auth, timeout=60.0) as client:
-            resp = await client.get(GEOSERVER_WMS, params=wms_params)
+            if request.method == "GET":
+                resp = await client.get(GEOSERVER_WMS, params=request.query_params)
+            else:
+                body = await request.body()
+                headers = dict(request.headers)
+                headers.pop("host", None)
+                resp = await client.post(GEOSERVER_WMS, content=body, headers=headers)
 
-            if resp.status_code != 200:
-                raise HTTPException(status_code=502, detail=f"GeoServer returned {resp.status_code}")
-
-        # Validate response is image
-        content_type = resp.headers.get("content-type", "")
-        if "image" not in content_type:
-            raise HTTPException(status_code=502, detail=f"GeoServer error: {resp.text}")
+        if resp.status_code != 200:
+            raise HTTPException(status_code=resp.status_code, detail=resp.text)
 
         return StreamingResponse(
-            BytesIO(resp.content),
-            media_type="image/png"
+            resp.aiter_bytes(),  # << stream chunks directly
+            media_type=resp.headers.get("content-type", "application/octet-stream"),
+            headers={
+                k: v for k, v in resp.headers.items()
+                if k.lower() in ["content-disposition"]
+            }
         )
-
-    except HTTPException as e:
-        logger.error(f"Client error: {str(e)}", exc_info=True)
-        raise
     except Exception as e:
         logger.error(f"WMS proxy failed: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Failed to fetch WMS image: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to proxy WMS request")
+
 
 
 @router.post("/featureinfo")
@@ -466,3 +436,92 @@ async def get_temperature_featureinfo(request: ERA5Request):
     except Exception as e:
         logger.error(f"Unexpected error in featureinfo: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Error processing feature info request")
+
+
+@router.post("/polygon")
+async def temperature_polygon(request: PolygonRequest):
+    """
+    Process polygon request for temperature data.
+    
+    Example request:
+    {
+        "coordinates": [
+            [-47.9, -15.8],
+            [-47.8, -15.8],
+            [-47.8, -15.9],
+            [-47.9, -15.9]
+        ],
+        "source": "temp_max",
+        "start_date": "2023-06-01",
+        "end_date": "2023-08-31",
+        "trigger": 35.0,
+        "statistic": "max"
+    }
+    """
+    source = request.source.lower()
+    
+    # Validate source
+    if source not in ['temp_max', 'temp_min', 'temp']:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid source for temperature. Must be 'temp_max', 'temp_min', or 'temp'"
+        )
+    
+    # Get dataset
+    ds = get_dataset('temperature', source)
+    
+    if ds is None:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Temperature data for source '{source}' is not loaded"
+        )
+    
+    try:
+        # Process in thread pool
+        result = await asyncio.to_thread(
+            _process_temperature_polygon_sync,
+            ds,
+            request,
+            source
+        )
+        
+        return result
+        
+    except ValueError as e:
+        logger.error(f"Validation error: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error processing polygon request: {e}")
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+def _process_temperature_polygon_sync(ds, request: PolygonRequest, source: str):
+    """Synchronous helper for temperature polygon processing."""
+    # Map source to variable name
+    variable_map = {
+        'temp_max': 't2m_max',
+        'temp_min': 't2m_min',
+        'temp': 't2m'
+    }
+    variable_name = variable_map.get(source, 't2m')
+    
+    # Create polygon
+    polygon = PolygonProcessor.create_polygon_from_coords(request.coordinates)
+    
+    # Process request
+    result = PolygonProcessor.process_polygon_request(
+        ds=ds,
+        polygon=polygon,
+        variable_name=variable_name,
+        start_date=request.start_date,
+        end_date=request.end_date,
+        statistic=request.statistic,
+        trigger=request.trigger
+    )
+    
+    # Add source and variable to metadata
+    result["metadata"]["source"] = request.source
+    result["metadata"]["variable_name"] = variable_name
+    
+    return result

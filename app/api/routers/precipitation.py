@@ -8,6 +8,8 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from app.services.geoserver import GeoServerService
 from app.services.climate_data import get_dataset
+from app.api.schemas.polygon import PolygonRequest
+from app.utils.polygon import PolygonProcessor
 from app.utils.geo import haversine_distance, retry_on_failure, DEGREES_TO_KM
 from app.api.schemas.precipitation import MapRequest, MapHistoryRequest, TriggerRequest, TriggerAreaRequest
 from app.config.settings import get_settings
@@ -20,6 +22,7 @@ import numpy as np
 from io import BytesIO
 import asyncio
 import traceback
+
 
 router = APIRouter(prefix="/precipitation", tags=["Precipitation"])
 logger = logging.getLogger(__name__)
@@ -253,63 +256,36 @@ async def get_area_triggers(request: TriggerAreaRequest):
 
 
 # --- WMS ENDPOINTS ---
-
-@router.post("/image")
-@retry_on_failure(max_retries=2, exceptions=(httpx.HTTPError, httpx.TimeoutException))
-async def get_precipitation_wms_image(request: MapRequest):
-    """WMS GetMap proxy for precipitation image."""
+@router.api_route("/wms", methods=["GET"])
+async def proxy_wms(request: Request):
+    """
+    Transparent WMS proxy to GeoServer.
+    Frontend can call this as the WMS URL, no direct GeoServer exposure.
+    """
     try:
-        # Validate date
-        try:
-            request_date = datetime.strptime(request.date, "%Y-%m-%d")
-            if request_date.date() > datetime.now().date():
-                raise HTTPException(status_code=400, detail="Future dates are not supported.")
-        except ValueError:
-            raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD.")
-
-        # Build WMS parameters
-        layer_name = f"{geoserver.workspace}:{request.source}"
-        miny, minx, maxy, maxx = settings.latam_bbox
-        wms_params = {
-            "service": "WMS",
-            "version": "1.3.0",
-            "request": "GetMap",
-            "layers": layer_name,
-            "width": request.width,
-            "height": request.height,
-            "format": "image/png",
-            "transparent": "true",
-            "time": request.date,
-            "styles": "precipitation_style",
-            "crs": "EPSG:4326",
-            "bbox": f"{miny},{minx},{maxy},{maxx}",
-            "tiled": "false",
-            "_": str(int(time.time()))
-        }
-
         async with httpx.AsyncClient(auth=geoserver.auth, timeout=60.0) as client:
-            resp = await client.get(GEOSERVER_WMS, params=wms_params)
+            if request.method == "GET":
+                resp = await client.get(GEOSERVER_WMS, params=request.query_params)
+            else:
+                body = await request.body()
+                headers = dict(request.headers)
+                headers.pop("host", None)
+                resp = await client.post(GEOSERVER_WMS, content=body, headers=headers)
 
-            if resp.status_code != 200:
-                raise HTTPException(status_code=502, detail=f"GeoServer returned {resp.status_code}")
-
-        # Validate response is image
-        content_type = resp.headers.get("content-type", "")
-        if "image" not in content_type:
-            raise HTTPException(status_code=502, detail=f"GeoServer error: {resp.text}")
+        if resp.status_code != 200:
+            raise HTTPException(status_code=resp.status_code, detail=resp.text)
 
         return StreamingResponse(
-            BytesIO(resp.content),
-            media_type="image/png"
+            resp.aiter_bytes(),  # << stream chunks directly
+            media_type=resp.headers.get("content-type", "application/octet-stream"),
+            headers={
+                k: v for k, v in resp.headers.items()
+                if k.lower() in ["content-disposition"]
+            }
         )
-
-    except HTTPException as e:
-        logger.error(f"Client error: {str(e)}", exc_info=True)
-        raise
     except Exception as e:
         logger.error(f"WMS proxy failed: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Failed to fetch WMS image: {str(e)}")
-
+        raise HTTPException(status_code=500, detail="Failed to proxy WMS request")
 
 @router.post("/featureinfo")
 @retry_on_failure(max_retries=2, exceptions=(httpx.HTTPError, httpx.TimeoutException))
@@ -387,3 +363,82 @@ async def get_precipitation_featureinfo(request: MapRequest):
     except Exception as e:
         logger.error(f"Unexpected error in featureinfo: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Error processing feature info request")
+
+
+@router.post("/polygon")
+async def precipitation_polygon(request: PolygonRequest):
+    """
+    Process polygon request for precipitation data.
+    
+    Example request:
+    {
+        "coordinates": [
+            [-47.9, -15.8],
+            [-47.8, -15.8],
+            [-47.8, -15.9],
+            [-47.9, -15.9]
+        ],
+        "source": "chirps",
+        "start_date": "2023-01-01",
+        "end_date": "2023-12-31",
+        "trigger": 50.0,
+        "statistic": "pctl_50"
+    }
+    """
+    source = request.source.lower()
+    
+    # Validate source
+    if source not in ['chirps', 'merge']:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid source for precipitation. Must be 'chirps' or 'merge'"
+        )
+    
+    # Get dataset
+    ds = get_dataset('precipitation', source)
+    
+    if ds is None:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Precipitation data for source '{source}' is not loaded"
+        )
+    
+    try:
+        # Process in thread pool
+        result = await asyncio.to_thread(
+            _process_precipitation_polygon_sync,
+            ds,
+            request
+        )
+        
+        return result
+        
+    except ValueError as e:
+        logger.error(f"Validation error: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error processing polygon request: {e}")
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+def _process_precipitation_polygon_sync(ds, request: PolygonRequest):
+    """Synchronous helper for precipitation polygon processing."""
+    # Create polygon
+    polygon = PolygonProcessor.create_polygon_from_coords(request.coordinates)
+    
+    # Process request
+    result = PolygonProcessor.process_polygon_request(
+        ds=ds,
+        polygon=polygon,
+        variable_name="precip",  # Precipitation variable name
+        start_date=request.start_date,
+        end_date=request.end_date,
+        statistic=request.statistic,
+        trigger=request.trigger
+    )
+    
+    # Add source to metadata
+    result["metadata"]["source"] = request.source
+    
+    return result

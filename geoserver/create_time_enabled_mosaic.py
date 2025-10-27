@@ -1,6 +1,3 @@
-"""
-Create time-enabled ImageMosaic coverage stores and layers in GeoServer
-"""
 import requests
 from requests.auth import HTTPBasicAuth
 import json
@@ -85,7 +82,6 @@ class GeoServerMosaicManager:
             return True
         
         # Create coverage layer with minimal configuration
-        # Let GeoServer auto-configure from the mosaic
         data = {
             "coverage": {
                 "name": layer_name,
@@ -108,16 +104,6 @@ class GeoServerMosaicManager:
     def enable_time_dimension(self, layer_name, presentation="LIST", default_value_strategy="MAXIMUM", nearest_match=False):
         """
         Enable and configure time dimension for a layer using the reliable method
-        
-        Args:
-            layer_name: Name of the layer
-            presentation: How to present time values - "LIST", "DISCRETE_INTERVAL", "CONTINUOUS_INTERVAL"
-            default_value_strategy: Default time value strategy
-                - "MINIMUM" = Use the smallest domain value
-                - "MAXIMUM" = Use the biggest domain value
-                - "NEAREST" = Use the domain value nearest to the reference value
-                - "FIXED" = Use the reference value
-            nearest_match: Enable nearest match for time queries (default: False for exact matching)
         """
         print(f"  Configuring time dimension...")
         
@@ -134,7 +120,7 @@ class GeoServerMosaicManager:
         # Get the resource href
         resource_href = layer_data['layer']['resource']['href']
         
-        # Get coverage configuration from the resource URL
+        # Get coverage configuration
         response = requests.get(resource_href, auth=self.auth)
         if response.status_code != 200:
             print(f"✗ Failed to get coverage config: {response.status_code}")
@@ -150,13 +136,30 @@ class GeoServerMosaicManager:
         if not isinstance(metadata, list):
             metadata = []
         
+        # Check if time dimension already exists with correct settings
+        existing_time_config = None
+        for entry in metadata:
+            if isinstance(entry, dict) and entry.get('@key') == 'time':
+                existing_time_config = entry
+                break
+        
+        if existing_time_config:
+            dim_info = existing_time_config.get('dimensionInfo', {})
+            if (dim_info.get('enabled') == True and 
+                dim_info.get('presentation') == presentation and
+                dim_info.get('defaultValue', {}).get('strategy') == default_value_strategy and
+                dim_info.get('nearestMatchEnabled') == nearest_match and
+                dim_info.get('attribute') == "ingestion"):
+                print(f"✓ Time dimension already correctly configured for: {layer_name}")
+                return True
+        
         # Remove existing time entry if present
         metadata = [e for e in metadata if not (isinstance(e, dict) and e.get('@key') == 'time')]
         
         # Build time dimension configuration
         time_dimension_config = {
             "enabled": True,
-            "attribute": "ingestion",  # Must match TimeAttribute in indexer.properties
+            "attribute": "ingestion",
             "presentation": presentation,
             "units": "ISO8601",
             "defaultValue": {
@@ -200,11 +203,7 @@ class GeoServerMosaicManager:
             return False
     
     def setup_time_enabled_mosaic(self, store_name, layer_name, data_dir, title=None, abstract=None, workspace=None):
-        """Complete setup: create store and layer with time enabled
-        
-        Args:
-            workspace: Optional workspace override (uses self.workspace if not provided)
-        """
+        """Complete setup: create store and layer with time enabled"""
         # Use provided workspace or fall back to instance workspace
         target_workspace = workspace or self.workspace
         original_workspace = self.workspace
@@ -248,8 +247,6 @@ class GeoServerMosaicManager:
 
 def main():
     """Example usage"""
-    
-    # Import settings
     import sys
     import os
     
@@ -266,26 +263,26 @@ def main():
     GEOSERVER_URL = settings.geoserver_local_url
     USERNAME = settings.GEOSERVER_ADMIN_USER
     PASSWORD = settings.GEOSERVER_ADMIN_PASSWORD
-    WORKSPACE = "era5_ws"  # New workspace for ERA5 data
+    WORKSPACE_temp = "temperature_ws"  # New workspace for ERA5 data
+    WORKSPACE_precip = "precipitation_ws"  # New workspace for precipitation data
     DATA_BASE_DIR = settings.DATA_DIR.rstrip('/')
     
     print(f"Using GeoServer: {GEOSERVER_URL}")
     print(f"Data directory: {DATA_BASE_DIR}")
-    print(f"Workspace: {WORKSPACE}")
     
-    # Initialize manager
-    manager = GeoServerMosaicManager(GEOSERVER_URL, USERNAME, PASSWORD, WORKSPACE)
+    # Initialize manager with a default workspace (used only if not overridden)
+    manager = GeoServerMosaicManager(GEOSERVER_URL, USERNAME, PASSWORD, WORKSPACE_temp)
     
     # Define mosaics to create
     mosaics = [
-        # ERA5 Temperature layers (era5_ws workspace)
+        # ERA5 Temperature layers (temperature_ws workspace)
         {
             "store_name": "temp_max",
             "layer_name": "temp_max",
             "data_dir": f"{DATA_BASE_DIR}/temp_max",
             "title": "Maximum Temperature (ERA5 Land)",
             "abstract": "Daily maximum 2m temperature from ERA5 Land (9km resolution)",
-            "workspace": "era5_ws"
+            "workspace": WORKSPACE_temp
         },
         {
             "store_name": "temp_min",
@@ -293,7 +290,7 @@ def main():
             "data_dir": f"{DATA_BASE_DIR}/temp_min",
             "title": "Minimum Temperature (ERA5 Land)",
             "abstract": "Daily minimum 2m temperature from ERA5 Land (9km resolution)",
-            "workspace": "era5_ws"
+            "workspace": WORKSPACE_temp
         },
         {
             "store_name": "temp_mean",
@@ -301,7 +298,7 @@ def main():
             "data_dir": f"{DATA_BASE_DIR}/temp",
             "title": "Mean Temperature (ERA5 Land)",
             "abstract": "Daily mean 2m temperature from ERA5 Land (9km resolution)",
-            "workspace": "era5_ws"
+            "workspace": WORKSPACE_temp
         },
         # CHIRPS Precipitation layer (precipitation_ws workspace)
         {
@@ -310,7 +307,7 @@ def main():
             "data_dir": f"{DATA_BASE_DIR}/chirps",
             "title": "CHIRPS Precipitation",
             "abstract": "Daily precipitation from CHIRPS (Climate Hazards Group InfraRed Precipitation with Station data)",
-            "workspace": "precipitation_ws"
+            "workspace": WORKSPACE_precip
         },
         # MERGE Precipitation layer (precipitation_ws workspace)
         {
@@ -319,7 +316,7 @@ def main():
             "data_dir": f"{DATA_BASE_DIR}/merge",
             "title": "MERGE Precipitation",
             "abstract": "Daily precipitation from MERGE (Merged Satellite and Gauge Precipitation)",
-            "workspace": "precipitation_ws"
+            "workspace": WORKSPACE_precip
         }
     ]
     
@@ -354,7 +351,7 @@ def main():
         print(f"  Layer preview: {GEOSERVER_URL}/web/wicket/bookmarkable/org.geoserver.web.demo.MapPreviewPage")
         print(f"\nExample WMS request (temp_max for 2025-01-01):")
         bbox = f"{settings.min_lon},{settings.min_lat},{settings.max_lon},{settings.max_lat}"
-        print(f"  {GEOSERVER_URL}/wms?service=WMS&version=1.3.0&request=GetMap&layers={WORKSPACE}:temp_max&time=2025-01-01&width=800&height=600&crs=EPSG:4326&bbox={bbox}&format=image/png")
+        print(f"  {GEOSERVER_URL}/wms?service=WMS&version=1.3.0&request=GetMap&layers={WORKSPACE_temp}:temp_max&time=2025-01-01&width=800&height=600&crs=EPSG:4326&bbox={bbox}&format=image/png")
 
 
 if __name__ == "__main__":

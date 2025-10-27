@@ -439,65 +439,65 @@ async def proxy_wms(request: Request):
         raise HTTPException(status_code=500, detail="Failed to proxy WMS request")
 
 
-@router.post("/precipitation/image")
-@retry_on_failure(max_retries=2, exceptions=(httpx.HTTPError, httpx.TimeoutException))
-async def get_precipitation_wms_image(request: MapRequest):
-    """
-    WMS GetMap proxy for precipitation image.
-    This endpoint builds the WMS request internally and returns the PNG.
-    """
-    try:
-        # Validate date
-        try:
-            request_date = datetime.strptime(request.date, "%Y-%m-%d")
-            if request_date.date() > datetime.now().date():
-                raise HTTPException(status_code=400, detail="Future dates are not supported.")
-        except ValueError:
-            raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD.")
+# @router.post("/precipitation/image")
+# @retry_on_failure(max_retries=2, exceptions=(httpx.HTTPError, httpx.TimeoutException))
+# async def get_precipitation_wms_image(request: MapRequest):
+#     """
+#     WMS GetMap proxy for precipitation image.
+#     This endpoint builds the WMS request internally and returns the PNG.
+#     """
+#     try:
+#         # Validate date
+#         try:
+#             request_date = datetime.strptime(request.date, "%Y-%m-%d")
+#             if request_date.date() > datetime.now().date():
+#                 raise HTTPException(status_code=400, detail="Future dates are not supported.")
+#         except ValueError:
+#             raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD.")
 
-        # Build WMS parameters
-        layer_name = f"{geoserver.workspace}:{request.source}"
-        miny, minx, maxy, maxx = settings.latam_bbox
-        wms_params = {
-            "service": "WMS",
-            "version": "1.3.0",
-            "request": "GetMap",
-            "layers": layer_name,
-            "width": request.width,
-            "height": request.height,
-            "format": "image/png",
-            "transparent": "true",
-            "time": request.date,
-            "styles": "precipitation_style",
-            "crs": "EPSG:4326",
-            "bbox": f"{miny},{minx},{maxy},{maxx}",
-            "tiled": "false",
-            "_": str(int(time.time()))
-        }
+#         # Build WMS parameters
+#         layer_name = f"{geoserver.workspace}:{request.source}"
+#         miny, minx, maxy, maxx = settings.latam_bbox
+#         wms_params = {
+#             "service": "WMS",
+#             "version": "1.3.0",
+#             "request": "GetMap",
+#             "layers": layer_name,
+#             "width": request.width,
+#             "height": request.height,
+#             "format": "image/png",
+#             "transparent": "true",
+#             "time": request.date,
+#             "styles": "precipitation_style",
+#             "crs": "EPSG:4326",
+#             "bbox": f"{miny},{minx},{maxy},{maxx}",
+#             "tiled": "false",
+#             "_": str(int(time.time()))
+#         }
 
-        async with httpx.AsyncClient(auth=geoserver.auth, timeout=60.0) as client:
-            # Use params instead of manually encoding URL
-            resp = await client.get(GEOSERVER_WMS, params=wms_params)
+#         async with httpx.AsyncClient(auth=geoserver.auth, timeout=60.0) as client:
+#             # Use params instead of manually encoding URL
+#             resp = await client.get(GEOSERVER_WMS, params=wms_params)
 
-            if resp.status_code != 200:
-                raise HTTPException(status_code=502, detail=f"GeoServer returned {resp.status_code}")
+#             if resp.status_code != 200:
+#                 raise HTTPException(status_code=502, detail=f"GeoServer returned {resp.status_code}")
 
-        # Validate response is image
-        content_type = resp.headers.get("content-type", "")
-        if "image" not in content_type:
-            raise HTTPException(status_code=502, detail=f"GeoServer error: {resp.text}")
+#         # Validate response is image
+#         content_type = resp.headers.get("content-type", "")
+#         if "image" not in content_type:
+#             raise HTTPException(status_code=502, detail=f"GeoServer error: {resp.text}")
 
-        return StreamingResponse(
-            BytesIO(resp.content),        # wrap binary data
-            media_type="image/png"        # tell browser it's an image
-        )
+#         return StreamingResponse(
+#             BytesIO(resp.content),        # wrap binary data
+#             media_type="image/png"        # tell browser it's an image
+#         )
 
-    except HTTPException as e:
-        logger.error(f"Client error: {str(e)}", exc_info=True)
-        raise
-    except Exception as e:
-        logger.error(f"WMS proxy failed: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Failed to fetch WMS image: {str(e)}")
+#     except HTTPException as e:
+#         logger.error(f"Client error: {str(e)}", exc_info=True)
+#         raise
+#     except Exception as e:
+#         logger.error(f"WMS proxy failed: {str(e)}", exc_info=True)
+#         raise HTTPException(status_code=500, detail=f"Failed to fetch WMS image: {str(e)}")
 
 
 @router.post("/precipitation/featureinfo")

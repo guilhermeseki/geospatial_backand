@@ -55,17 +55,21 @@ def load_precipitation_datasets():
     """
     Load all precipitation datasets (CHIRPS, MERGE).
     Uses the SHARED Dask client for parallel loading.
+
+    Uses YEARLY historical files:
+    - chirps_hist/chirps_2024.nc, chirps_2025.nc, etc.
+    - merge_hist/merge_2024.nc, merge_2025.nc, etc.
     """
     global _climate_datasets
-    
+
     source_configs = {
         "chirps": {
-            "dir_suffix": "chirps_historical",
-            "file_glob": "brazil_chirps_*.nc",
+            "dir_suffix": "chirps_hist",
+            "file_glob": "chirps_*.nc",
         },
         "merge": {
-            "dir_suffix": "merge_historical",
-            "file_glob": "brazil_merge_*.nc",
+            "dir_suffix": "merge_hist",
+            "file_glob": "merge_*.nc",
         },
     }
     
@@ -110,61 +114,67 @@ def load_temperature_datasets():
     """
     Load all ERA5 temperature datasets (temp_max, temp_min, temp).
     Uses the SAME SHARED Dask client as precipitation datasets.
-    
-    Each temperature variable has its own directory structure:
-    - temp_max/ (daily GeoTIFFs) + temp_max_hist/historical.nc
-    - temp_min/ (daily GeoTIFFs) + temp_min_hist/historical.nc  
-    - temp/ (daily GeoTIFFs) + temp_hist/historical.nc
-    
-    We load the historical.nc files which contain all the data.
+
+    NEW: Uses YEARLY historical files for better manageability:
+    - temp_max_hist/temp_max_2024.nc, temp_max_2025.nc, etc.
+    - temp_min_hist/temp_min_2024.nc, temp_min_2025.nc, etc.
+    - temp_hist/temp_2024.nc, temp_2025.nc, etc.
+
+    All yearly files are combined seamlessly with open_mfdataset.
     """
     global _climate_datasets
-    
+
     # Map source names to their historical directory names
     temp_sources = {
         "temp_max": "temp_max_hist",
         "temp_min": "temp_min_hist",
         "temp": "temp_hist"
     }
-    
+
     # Get the shared Dask client (same one precipitation uses)
     client = get_dask_client()
-    
+
     if client:
         logger.info(f"Loading temperature datasets using SAME shared Dask client: {client.scheduler.address}")
         logger.info(f"  Client workers: {len(client.cluster.workers)} (shared with precipitation)")
     else:
         logger.warning("Loading temperature datasets without Dask (no parallelization)")
-    
+
     for source, hist_dir_name in temp_sources.items():
         try:
             hist_dir = Path(settings.DATA_DIR) / hist_dir_name
-            hist_file = hist_dir / "historical.nc"
-            
-            if not hist_file.exists():
-                logger.warning(f"Temperature historical file not found: {hist_file}")
-                logger.info(f"  Expected location: {hist_file}")
-                logger.info(f"  Make sure ERA5 daily flow has run and created {hist_dir_name}/historical.nc")
+            # NEW: Look for yearly files instead of single historical.nc
+            nc_files = sorted(hist_dir.glob(f"{source}_*.nc"))
+
+            if not nc_files:
+                logger.warning(f"No temperature yearly files found for '{source}' in {hist_dir}")
+                logger.info(f"  Expected pattern: {source}_YYYY.nc (e.g., {source}_2024.nc)")
+                logger.info(f"  Make sure ERA5 daily flow has run and created yearly files")
                 continue
-            
-            # EXPLICIT: Open with chunks to use the SHARED Dask client
-            # When you open with chunks and a Dask client is active, xarray uses it automatically
-            ds = xr.open_dataset(
-                hist_file,
+
+            logger.info(f"Found {len(nc_files)} yearly file(s) for {source}")
+
+            # EXPLICIT: Use parallel=True only if we have the shared Dask client
+            ds = xr.open_mfdataset(
+                nc_files,
+                combine="nested",
+                concat_dim="time",
                 engine="netcdf4",
-                chunks={"time": -1, "latitude": 20, "longitude": 20},  # ← Triggers Dask usage
+                parallel=True if client else False,  # ← Uses SHARED client
+                chunks={"time": -1, "latitude": 20, "longitude": 20},
+                cache=False,
             )
-            
+
             # Verify the variable exists in the dataset
             if source not in ds.data_vars:
-                logger.warning(f"Variable '{source}' not found in {hist_file}")
+                logger.warning(f"Variable '{source}' not found in combined dataset")
                 logger.info(f"  Available variables: {list(ds.data_vars)}")
                 ds.close()
                 continue
-            
+
             _climate_datasets['temperature'][source] = ds
             logger.info(f"✓ Loaded temperature dataset: {source}")
-            logger.info(f"  File: {hist_file}")
+            logger.info(f"  Files: {len(nc_files)} yearly files")
             logger.info(f"  Variable: {source}")
             logger.info(f"  Using shared Dask client: {bool(client)}")
             logger.info(f"  Chunks: {ds.chunks}")
