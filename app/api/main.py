@@ -10,7 +10,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 import os
 import asyncio
-from app.api.routers import temperature, precipitation, georisk
+from app.api.routers import temperature, precipitation, georisk, ndvi, wind, lightning
 from pathlib import Path
 from datetime import datetime
 import httpx
@@ -97,14 +97,18 @@ async def startup_event():
         # Log what was loaded
         precip_sources = get_available_sources('precipitation')
         temp_sources = get_available_sources('temperature')
+        ndvi_sources = get_available_sources('ndvi')
+        lightning_sources = get_available_sources('lightning')
         dask_info = get_dask_client_info()
-        
+
         logger.info("")
         logger.info("=" * 80)
         logger.info("📋 Climate Data Service Status")
         logger.info("=" * 80)
         logger.info(f"Precipitation sources: {len(precip_sources)} - {precip_sources}")
         logger.info(f"Temperature sources: {len(temp_sources)} - {temp_sources}")
+        logger.info(f"NDVI sources: {len(ndvi_sources)} - {ndvi_sources}")
+        logger.info(f"Lightning sources: {len(lightning_sources)} - {lightning_sources}")
         
         if dask_info:
             logger.info(f"Dask client: RUNNING")
@@ -152,15 +156,19 @@ async def status_check():
     """Detailed status check with climate data information"""
     precip_sources = get_available_sources('precipitation')
     temp_sources = get_available_sources('temperature')
+    ndvi_sources = get_available_sources('ndvi')
+    lightning_sources = get_available_sources('lightning')
     dask_info = get_dask_client_info()
-    
+
     return {
         "status": "ready" if app_state.ready else "initializing",
         "version": "2.0.0",
         "climate_data": {
             "precipitation_sources": precip_sources,
             "temperature_sources": temp_sources,
-            "total_datasets": len(precip_sources) + len(temp_sources)
+            "ndvi_sources": ndvi_sources,
+            "lightning_sources": lightning_sources,
+            "total_datasets": len(precip_sources) + len(temp_sources) + len(ndvi_sources) + len(lightning_sources)
         },
         "dask_client": {
             "available": dask_info is not None,
@@ -217,10 +225,13 @@ async def root():
     return {
         "title": "Geospatial Backend - Climate Data API",
         "version": "2.0.0",
-        "description": "Unified API for precipitation and temperature data",
+        "description": "Unified API for precipitation, temperature, NDVI, wind, and lightning data",
         "endpoints": {
             "precipitation": "/precipitation",
             "temperature": "/temperature",
+            "ndvi": "/ndvi",
+            "wind": "/wind",
+            "lightning": "/lightning",
             "georisk": "/georisk"
         },
         "documentation": {
@@ -237,6 +248,9 @@ async def root():
 # Include routers
 app.include_router(precipitation.router)
 app.include_router(temperature.router)
+app.include_router(ndvi.router)
+app.include_router(wind.router)
+app.include_router(lightning.router)
 app.include_router(georisk.router)
 
-logger.info("🔌 Routers registered: precipitation, temperature, georisk")
+logger.info("🔌 Routers registered: precipitation, temperature, ndvi, wind, lightning, georisk")

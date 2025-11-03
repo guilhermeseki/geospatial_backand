@@ -1,0 +1,43 @@
+16:34:46.180 | INFO    | prefect - Starting temporary server on http://127.0.0.1:8488
+See https://docs.prefect.io/v3/concepts/server#how-to-guides for more information on running a dedicated Prefect server.
+16:34:48.261 | INFO    | Flow run 'super-sheep' - Beginning flow run 'super-sheep' for flow 'process-glm-fed-data'
+16:34:48.263 | INFO    | Flow run 'super-sheep' - ================================================================================
+16:34:48.264 | INFO    | Flow run 'super-sheep' - GLM FED DATA PROCESSING FLOW
+16:34:48.264 | INFO    | Flow run 'super-sheep' - ================================================================================
+16:34:48.265 | INFO    | Flow run 'super-sheep' - Period: 2024-07-15 to 2024-07-15
+16:34:48.265 | INFO    | Flow run 'super-sheep' - Source: NASA GHRC DAAC - GLM Gridded Flash Extent Density
+16:34:48.265 | INFO    | Flow run 'super-sheep' - Resolution: 8km × 8km
+16:34:48.266 | INFO    | Flow run 'super-sheep' - ================================================================================
+16:34:48.285 | INFO    | Task run 'check_earthdata_credentials-ee8' - ✓ Found .netrc file for Earthdata authentication
+16:34:48.286 | INFO    | Task run 'check_earthdata_credentials-ee8' - ✓ Retrieved credentials for user: brussi
+16:34:48.288 | INFO    | Task run 'check_earthdata_credentials-ee8' - Finished in state Completed()
+16:34:48.299 | INFO    | Task run 'check_missing_dates_fed-895' - Checking for 1 dates: 2024-07-15 to 2024-07-15
+16:34:48.300 | INFO    | Task run 'check_missing_dates_fed-895' - Found 0 existing GeoTIFF files
+16:34:48.301 | INFO    | Task run 'check_missing_dates_fed-895' - Found 0 dates in historical NetCDF
+16:34:48.301 | INFO    | Task run 'check_missing_dates_fed-895' - Missing from GeoTIFF: 1 dates
+16:34:48.302 | INFO    | Task run 'check_missing_dates_fed-895' - Missing from historical: 1 dates
+16:34:48.302 | INFO    | Task run 'check_missing_dates_fed-895' - Need to download: 1 dates
+16:34:48.304 | INFO    | Task run 'check_missing_dates_fed-895' - Finished in state Completed()
+16:34:48.304 | INFO    | Flow run 'super-sheep' - Processing 1 missing dates
+16:34:48.305 | INFO    | Flow run 'super-sheep' - 
+Processing date: 2024-07-15
+16:34:48.318 | INFO    | Task run 'download_glm_fed_daily-f06' - ================================================================================
+16:34:48.318 | INFO    | Task run 'download_glm_fed_daily-f06' - DOWNLOADING GLM FED DATA FOR 2024-07-15
+16:34:48.319 | INFO    | Task run 'download_glm_fed_daily-f06' - ================================================================================
+16:34:48.319 | INFO    | Task run 'download_glm_fed_daily-f06' - Using satellite: GOES-16
+16:34:48.319 | INFO    | Task run 'download_glm_fed_daily-f06' - Need data from 2024-07-14 23:31 to 2024-07-15 23:59
+16:34:48.319 | INFO    | Task run 'download_glm_fed_daily-f06' - Searching CMR for granules from previous day...
+16:34:48.787 | INFO    | Task run 'download_glm_fed_daily-f06' - ✓ Found 0 granule(s) from previous day
+16:34:48.788 | INFO    | Task run 'download_glm_fed_daily-f06' - Searching CMR for granules from target day...
+16:34:49.228 | INFO    | Task run 'download_glm_fed_daily-f06' - ✓ Found 0 granule(s) from target day
+16:34:49.228 | WARNING | Task run 'download_glm_fed_daily-f06' - ⚠ No data available for 2024-07-15
+16:34:49.229 | WARNING | Task run 'download_glm_fed_daily-f06' -   GLM FED data may not be available for this date
+16:34:49.231 | INFO    | Task run 'download_glm_fed_daily-f06' - Finished in state Completed()
+16:34:49.231 | WARNING | Flow run 'super-sheep' -   ⊘ Skipping 2024-07-15 - download not implemented yet
+16:34:49.231 | INFO    | Flow run 'super-sheep' - 
+✓ Processed 0 files
+16:34:49.246 | INFO    | Flow run 'super-sheep' - Finished in state Completed()
+16:34:49.260 | INFO    | prefect - Stopping temporary server on http://127.0.0.1:8488
+Testing GLM FED download for 2024-07-15...
+
+Result: 0 files processed

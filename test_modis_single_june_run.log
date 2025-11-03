@@ -1,0 +1,1027 @@
+08:23:37.292 | INFO    | prefect - Starting temporary server on http://127.0.0.1:8154
+See https://docs.prefect.io/v3/concepts/server#how-to-guides for more information on running a dedicated Prefect server.
+08:23:39.576 | INFO    | Flow run 'invaluable-alligator' - Beginning flow run 'invaluable-alligator' for flow 'process-ndvi-data'
+08:23:39.578 | INFO    | Flow run 'invaluable-alligator' - ================================================================================
+08:23:39.578 | INFO    | Flow run 'invaluable-alligator' - NDVI DATA PROCESSING FLOW
+08:23:39.578 | INFO    | Flow run 'invaluable-alligator' - ================================================================================
+08:23:39.578 | INFO    | Flow run 'invaluable-alligator' - Period: 2025-06-08 to 2025-06-12
+08:23:39.579 | INFO    | Flow run 'invaluable-alligator' - Sources: modis
+08:23:39.579 | INFO    | Flow run 'invaluable-alligator' - ================================================================================
+08:23:39.580 | INFO    | Flow run 'invaluable-alligator' - 
+Processing: MODIS
+08:23:39.600 | INFO    | Task run 'check_missing_dates-07b' - Checking for 5 dates: 2025-06-08 to 2025-06-12
+08:23:39.623 | INFO    | Task run 'check_missing_dates-07b' - Found 2 existing GeoTIFF files
+08:23:39.635 | INFO    | Task run 'check_missing_dates-07b' - Historical NetCDF does not exist yet
+08:23:39.635 | INFO    | Task run 'check_missing_dates-07b' - Missing from GeoTIFF: 5 dates
+08:23:39.636 | INFO    | Task run 'check_missing_dates-07b' - Missing from historical: 5 dates
+08:23:39.636 | INFO    | Task run 'check_missing_dates-07b' - Need to download: 5 dates
+08:23:39.639 | INFO    | Task run 'check_missing_dates-07b' - Finished in state Completed()
+08:23:39.639 | INFO    | Flow run 'invaluable-alligator' - 
+Batch: 2025-06-08 to 2025-06-12
+08:23:39.655 | INFO    | Task run 'download_modis_batch-a2b' - ================================================================================
+08:23:39.655 | INFO    | Task run 'download_modis_batch-a2b' - MODIS NDVI DOWNLOAD (Microsoft Planetary Computer - FREE!)
+08:23:39.655 | INFO    | Task run 'download_modis_batch-a2b' - ================================================================================
+08:23:42.823 | INFO    | Task run 'download_modis_batch-a2b' - Found 69 MODIS composites
+08:23:42.824 | WARNING | Task run 'download_modis_batch-a2b' - Limiting latitude pixels to 10000
+08:23:42.824 | WARNING | Task run 'download_modis_batch-a2b' - Limiting longitude pixels to 10000
+08:23:42.825 | INFO    | Task run 'download_modis_batch-a2b' - Common grid: 10000 x 10000 pixels (~250m native MODIS resolution)
+08:23:42.825 | INFO    | Task run 'download_modis_batch-a2b' - Grid size optimized: ~381.5 MB per composite
+08:23:42.857 | INFO    | Task run 'download_modis_batch-a2b' - Target MODIS bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+08:23:42.857 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 1/69: MOD13Q1.A2025161.h15v11.061.2025178115438
+08:23:44.487 | ERROR   | prefect.server.services.telemetry - Failed to send telemetry:
+Shutting down telemetry service...
+08:23:49.180 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 284482m x 1111951m (25.6% of tile)
+08:23:50.219 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x1228 pixels
+08:23:50.226 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:23:50.882 | WARNING | Task run 'download_modis_batch-a2b' -   All values are NaN, skipping
+08:23:50.883 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 2/69: MOD13Q1.A2025161.h14v11.061.2025178115436
+08:23:51.488 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:23:54.489 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x4800 pixels
+08:23:54.517 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:23:55.383 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (0.3% valid pixels)
+08:23:55.384 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 3/69: MOD13Q1.A2025161.h14v10.061.2025178115151
+08:23:55.998 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:24:41.690 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x4800 pixels
+08:24:41.716 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:24:42.652 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (1.6% valid pixels)
+08:24:42.653 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 4/69: MOD13Q1.A2025161.h14v09.061.2025178115314
+08:24:43.273 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:25:36.659 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x4800 pixels
+08:25:36.685 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:25:37.626 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (1.7% valid pixels)
+08:25:37.627 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 5/69: MOD13Q1.A2025161.h13v12.061.2025178120152
+08:25:38.251 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 555975m (50.0% of tile)
+08:26:49.163 | INFO    | Task run 'download_modis_batch-a2b' -   Read 2400x4800 pixels
+08:26:49.177 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:26:50.102 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (1.9% valid pixels)
+08:26:50.103 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 6/69: MOD13Q1.A2025161.h13v11.061.2025178115458
+08:26:50.738 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:28:46.074 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x4800 pixels
+08:28:46.102 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:28:47.308 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (5.0% valid pixels)
+08:28:47.309 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 7/69: MOD13Q1.A2025161.h13v10.061.2025178115323
+08:28:47.890 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:31:10.538 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x4800 pixels
+08:31:10.565 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:31:11.831 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (6.0% valid pixels)
+08:31:11.831 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 8/69: MOD13Q1.A2025161.h13v09.061.2025178115325
+08:31:12.414 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:33:50.065 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x4800 pixels
+08:33:50.091 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:33:51.231 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (4.8% valid pixels)
+08:33:51.232 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 9/69: MOD13Q1.A2025161.h13v08.061.2025178115218
+08:33:51.811 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 722768m (65.0% of tile)
+08:33:52.439 | INFO    | Task run 'download_modis_batch-a2b' -   Read 3120x4800 pixels
+08:33:52.454 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:33:53.120 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (0.0% valid pixels)
+08:33:53.120 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 10/69: MOD13Q1.A2025161.h12v12.061.2025178115600
+08:33:53.716 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 555975m (50.0% of tile)
+08:36:00.253 | INFO    | Task run 'download_modis_batch-a2b' -   Read 2400x4800 pixels
+08:36:00.269 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:36:01.284 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (3.4% valid pixels)
+08:36:01.284 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 11/69: MOD13Q1.A2025161.h12v11.061.2025178115319
+08:36:01.868 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:38:52.061 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x4800 pixels
+08:38:52.088 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:38:53.526 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (6.4% valid pixels)
+08:38:53.527 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 12/69: MOD13Q1.A2025161.h12v10.061.2025178115327
+08:38:54.414 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:41:44.676 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x4800 pixels
+08:41:44.702 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:41:45.988 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (6.0% valid pixels)
+08:41:45.989 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 13/69: MOD13Q1.A2025161.h12v09.061.2025178115601
+08:41:46.619 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:44:02.035 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x4800 pixels
+08:44:02.062 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:44:03.267 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (5.8% valid pixels)
+08:44:03.267 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 14/69: MOD13Q1.A2025161.h12v08.061.2025178115318
+08:44:03.887 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 722768m (65.0% of tile)
+08:45:55.219 | INFO    | Task run 'download_modis_batch-a2b' -   Read 3120x4800 pixels
+08:45:55.239 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:45:56.253 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (3.2% valid pixels)
+08:45:56.254 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 15/69: MOD13Q1.A2025161.h11v12.061.2025178120150
+08:45:56.847 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 555975m (50.0% of tile)
+08:46:00.112 | INFO    | Task run 'download_modis_batch-a2b' -   Read 2400x4800 pixels
+08:46:00.125 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:46:00.870 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (0.2% valid pixels)
+08:46:00.871 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 16/69: MOD13Q1.A2025161.h11v11.061.2025178115309
+08:46:01.497 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:46:43.890 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x4800 pixels
+08:46:43.919 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:46:44.921 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (2.5% valid pixels)
+08:46:44.922 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 17/69: MOD13Q1.A2025161.h11v10.061.2025178115334
+08:46:45.780 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:48:45.226 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x4800 pixels
+08:48:45.256 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:48:46.574 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (5.4% valid pixels)
+08:48:46.575 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 18/69: MOD13Q1.A2025161.h11v09.061.2025178115300
+08:48:47.262 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:50:59.332 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x4800 pixels
+08:50:59.360 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:51:00.671 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (5.8% valid pixels)
+08:51:00.671 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 19/69: MOD13Q1.A2025161.h11v08.061.2025178115326
+08:51:01.302 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 722768m (65.0% of tile)
+08:52:22.868 | INFO    | Task run 'download_modis_batch-a2b' -   Read 3120x4800 pixels
+08:52:22.887 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:52:23.870 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (3.8% valid pixels)
+08:52:23.871 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 20/69: MOD13Q1.A2025161.h10v11.061.2025178115519
+08:52:24.506 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 555077m x 1111951m (49.9% of tile)
+08:52:30.370 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x2396 pixels
+08:52:30.386 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:52:31.000 | WARNING | Task run 'download_modis_batch-a2b' -   All values are NaN, skipping
+08:52:31.001 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 21/69: MOD13Q1.A2025161.h10v10.061.2025178115434
+08:52:31.680 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 555077m x 1111951m (49.9% of tile)
+08:52:45.084 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x2396 pixels
+08:52:45.098 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:52:45.951 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (1.1% valid pixels)
+08:52:45.952 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 22/69: MOD13Q1.A2025161.h10v09.061.2025178115311
+08:52:46.595 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 555077m x 1111951m (49.9% of tile)
+08:53:48.466 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x2396 pixels
+08:53:48.482 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:53:49.436 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (2.7% valid pixels)
+08:53:49.437 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 23/69: MOD13Q1.A2025161.h10v08.061.2025178120053
+08:53:50.022 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 555077m x 722768m (32.4% of tile)
+08:54:13.768 | INFO    | Task run 'download_modis_batch-a2b' -   Read 3120x2396 pixels
+08:54:13.777 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:54:14.631 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (1.8% valid pixels)
+08:54:14.631 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 24/69: MYD13Q1.A2025153.h15v11.061.2025171175942
+08:54:15.230 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 284482m x 1111951m (25.6% of tile)
+08:54:16.022 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x1228 pixels
+08:54:16.027 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:54:16.625 | WARNING | Task run 'download_modis_batch-a2b' -   All values are NaN, skipping
+08:54:16.625 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 25/69: MYD13Q1.A2025153.h14v11.061.2025171180857
+08:54:17.237 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:54:20.884 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x4800 pixels
+08:54:20.910 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:54:21.707 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (0.3% valid pixels)
+08:54:21.708 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 26/69: MYD13Q1.A2025153.h14v10.061.2025171175535
+08:54:22.370 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:55:12.074 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x4800 pixels
+08:55:12.102 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:55:13.003 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (1.6% valid pixels)
+08:55:13.004 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 27/69: MYD13Q1.A2025153.h14v09.061.2025171180219
+08:55:13.647 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:56:02.598 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x4800 pixels
+08:56:02.626 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:56:03.502 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (1.7% valid pixels)
+08:56:03.502 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 28/69: MYD13Q1.A2025153.h13v12.061.2025171175958
+08:56:04.121 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 555975m (50.0% of tile)
+08:57:18.213 | INFO    | Task run 'download_modis_batch-a2b' -   Read 2400x4800 pixels
+08:57:18.226 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:57:19.118 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (1.9% valid pixels)
+08:57:19.118 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 29/69: MYD13Q1.A2025153.h13v11.061.2025171180206
+08:57:19.746 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:59:09.157 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x4800 pixels
+08:59:09.185 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+08:59:10.389 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (5.0% valid pixels)
+08:59:10.389 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 30/69: MYD13Q1.A2025153.h13v10.061.2025171175635
+08:59:11.066 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+09:01:53.215 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x4800 pixels
+09:01:53.243 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+09:01:54.563 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (6.0% valid pixels)
+09:01:54.564 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 31/69: MYD13Q1.A2025153.h13v09.061.2025171180015
+09:01:55.180 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+09:03:42.373 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x4800 pixels
+09:03:42.402 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+09:03:43.589 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (4.8% valid pixels)
+09:03:43.590 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 32/69: MYD13Q1.A2025153.h13v08.061.2025171175943
+09:03:44.193 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 722768m (65.0% of tile)
+09:03:45.011 | INFO    | Task run 'download_modis_batch-a2b' -   Read 3120x4800 pixels
+09:03:45.033 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+09:03:45.742 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (0.0% valid pixels)
+09:03:45.743 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 33/69: MYD13Q1.A2025153.h12v12.061.2025171180608
+09:03:46.369 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 555975m (50.0% of tile)
+09:05:20.386 | INFO    | Task run 'download_modis_batch-a2b' -   Read 2400x4800 pixels
+09:05:20.400 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+09:05:21.435 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (3.4% valid pixels)
+09:05:21.436 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 34/69: MYD13Q1.A2025153.h12v11.061.2025171180235
+09:05:22.057 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+09:08:10.279 | INFO    | Task run 'download_modis_batch-a2b' -   Read 4800x4800 pixels
+09:08:10.307 | INFO    | Task run 'download_modis_batch-a2b' -   Masked nodata value: -3000.0
+09:08:11.628 | INFO    | Task run 'download_modis_batch-a2b' -   ✓ Processed successfully (6.4% valid pixels)
+09:08:11.629 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 35/69: MYD13Q1.A2025153.h12v10.061.2025171175909
+09:08:12.241 | INFO    | Task run 'download_modis_batch-a2b' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+09:09:05.309 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: Read failed. See previous exception for details.
+09:09:05.311 | ERROR   | Task run 'download_modis_batch-a2b' - rasterio._err.CPLE_AppDefinedError: TIFFFillTile:Read error at row 3072, col 3072, tile 27; got 0 bytes, expected 393260
+
+The above exception was the direct cause of the following exception:
+
+rasterio._err.CPLE_AppDefinedError: TIFFReadEncodedTile() failed.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "rasterio/_io.pyx", line 969, in rasterio._io.DatasetReaderBase._read
+  File "rasterio/_io.pyx", line 199, in rasterio._io.io_multi_band
+  File "rasterio/_io.pyx", line 205, in rasterio._io.io_multi_band
+  File "rasterio/_err.pyx", line 325, in rasterio._err.StackChecker.exc_wrap_int
+rasterio._err.CPLE_AppDefinedError: DCFGkGs%3D, band 1: IReadBlock failed at X offset 7, Y offset 2: TIFFReadEncodedTile() failed.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 546, in download_modis_batch
+    ndvi_src = src.read(1, window=window).astype(np.float32)
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "rasterio/_io.pyx", line 644, in rasterio._io.DatasetReaderBase.read
+  File "rasterio/_io.pyx", line 972, in rasterio._io.DatasetReaderBase._read
+rasterio.errors.RasterioIOError: Read failed. See previous exception for details.
+
+09:09:05.311 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 36/69: MYD13Q1.A2025153.h12v09.061.2025171180248
+09:09:05.879 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MYD13Q1/12/09/2025153/MYD13Q1.A2025153.h12v09.061.2025171180248_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:05.880 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:05.883 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:05.884 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 37/69: MYD13Q1.A2025153.h12v08.061.2025171175329
+09:09:06.452 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MYD13Q1/12/08/2025153/MYD13Q1.A2025153.h12v08.061.2025171175329_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:06.452 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:06.453 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:06.454 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 38/69: MYD13Q1.A2025153.h11v12.061.2025171180003
+09:09:07.022 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MYD13Q1/11/12/2025153/MYD13Q1.A2025153.h11v12.061.2025171180003_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:07.022 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:07.023 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:07.024 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 39/69: MYD13Q1.A2025153.h11v11.061.2025171180357
+09:09:07.592 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MYD13Q1/11/11/2025153/MYD13Q1.A2025153.h11v11.061.2025171180357_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:07.592 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:07.593 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:07.594 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 40/69: MYD13Q1.A2025153.h11v10.061.2025171175623
+09:09:08.162 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MYD13Q1/11/10/2025153/MYD13Q1.A2025153.h11v10.061.2025171175623_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:08.163 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:08.164 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:08.164 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 41/69: MYD13Q1.A2025153.h11v09.061.2025171175611
+09:09:08.732 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MYD13Q1/11/09/2025153/MYD13Q1.A2025153.h11v09.061.2025171175611_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:08.733 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:08.735 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:08.735 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 42/69: MYD13Q1.A2025153.h11v08.061.2025171175554
+09:09:09.304 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MYD13Q1/11/08/2025153/MYD13Q1.A2025153.h11v08.061.2025171175554_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:09.305 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:09.306 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:09.307 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 43/69: MYD13Q1.A2025153.h10v11.061.2025171175528
+09:09:09.876 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MYD13Q1/10/11/2025153/MYD13Q1.A2025153.h10v11.061.2025171175528_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:09.876 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:09.877 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:09.878 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 44/69: MYD13Q1.A2025153.h10v10.061.2025171180235
+09:09:10.446 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MYD13Q1/10/10/2025153/MYD13Q1.A2025153.h10v10.061.2025171180235_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:10.446 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:10.447 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:10.448 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 45/69: MYD13Q1.A2025153.h10v09.061.2025171180556
+09:09:11.016 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MYD13Q1/10/09/2025153/MYD13Q1.A2025153.h10v09.061.2025171180556_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:11.016 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:11.018 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:11.018 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 46/69: MYD13Q1.A2025153.h10v08.061.2025171175334
+09:09:11.586 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MYD13Q1/10/08/2025153/MYD13Q1.A2025153.h10v08.061.2025171175334_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:11.586 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:11.587 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:11.588 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 47/69: MOD13Q1.A2025145.h15v11.061.2025163005738
+09:09:12.156 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MOD13Q1/15/11/2025145/MOD13Q1.A2025145.h15v11.061.2025163005738_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:12.157 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:12.158 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:12.158 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 48/69: MOD13Q1.A2025145.h14v11.061.2025163010014
+09:09:12.726 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MOD13Q1/14/11/2025145/MOD13Q1.A2025145.h14v11.061.2025163010014_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:12.727 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:12.728 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:12.729 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 49/69: MOD13Q1.A2025145.h14v10.061.2025163013459
+09:09:13.297 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MOD13Q1/14/10/2025145/MOD13Q1.A2025145.h14v10.061.2025163013459_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:13.298 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:13.299 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:13.300 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 50/69: MOD13Q1.A2025145.h14v09.061.2025163013817
+09:09:13.869 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MOD13Q1/14/09/2025145/MOD13Q1.A2025145.h14v09.061.2025163013817_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:13.869 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:13.870 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:13.871 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 51/69: MOD13Q1.A2025145.h13v12.061.2025163013817
+09:09:14.440 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MOD13Q1/13/12/2025145/MOD13Q1.A2025145.h13v12.061.2025163013817_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:14.440 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:14.441 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:14.442 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 52/69: MOD13Q1.A2025145.h13v11.061.2025163010050
+09:09:15.010 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MOD13Q1/13/11/2025145/MOD13Q1.A2025145.h13v11.061.2025163010050_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:15.010 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:15.012 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:15.013 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 53/69: MOD13Q1.A2025145.h13v10.061.2025163010430
+09:09:15.582 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MOD13Q1/13/10/2025145/MOD13Q1.A2025145.h13v10.061.2025163010430_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:15.582 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:15.584 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:15.584 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 54/69: MOD13Q1.A2025145.h13v09.061.2025163014548
+09:09:16.152 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MOD13Q1/13/09/2025145/MOD13Q1.A2025145.h13v09.061.2025163014548_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:16.153 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:16.154 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:16.154 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 55/69: MOD13Q1.A2025145.h13v08.061.2025163015302
+09:09:16.723 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MOD13Q1/13/08/2025145/MOD13Q1.A2025145.h13v08.061.2025163015302_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:16.724 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:16.725 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:16.725 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 56/69: MOD13Q1.A2025145.h12v12.061.2025163012827
+09:09:17.293 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MOD13Q1/12/12/2025145/MOD13Q1.A2025145.h12v12.061.2025163012827_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:17.293 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:17.294 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:17.295 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 57/69: MOD13Q1.A2025145.h12v11.061.2025163021341
+09:09:17.863 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MOD13Q1/12/11/2025145/MOD13Q1.A2025145.h12v11.061.2025163021341_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:17.864 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:17.865 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:17.865 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 58/69: MOD13Q1.A2025145.h12v10.061.2025163011150
+09:09:18.433 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MOD13Q1/12/10/2025145/MOD13Q1.A2025145.h12v10.061.2025163011150_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:18.433 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:18.434 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:18.435 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 59/69: MOD13Q1.A2025145.h12v09.061.2025163020959
+09:09:19.005 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MOD13Q1/12/09/2025145/MOD13Q1.A2025145.h12v09.061.2025163020959_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:19.006 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:19.008 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:19.009 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 60/69: MOD13Q1.A2025145.h12v08.061.2025163015322
+09:09:19.578 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MOD13Q1/12/08/2025145/MOD13Q1.A2025145.h12v08.061.2025163015322_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:19.578 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:19.579 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:19.579 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 61/69: MOD13Q1.A2025145.h11v12.061.2025163015937
+09:09:20.148 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MOD13Q1/11/12/2025145/MOD13Q1.A2025145.h11v12.061.2025163015937_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:20.148 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:20.150 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:20.150 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 62/69: MOD13Q1.A2025145.h11v11.061.2025163013657
+09:09:20.719 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MOD13Q1/11/11/2025145/MOD13Q1.A2025145.h11v11.061.2025163013657_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:20.720 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:20.722 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:20.722 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 63/69: MOD13Q1.A2025145.h11v10.061.2025163030353
+09:09:21.290 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MOD13Q1/11/10/2025145/MOD13Q1.A2025145.h11v10.061.2025163030353_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:21.290 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:21.292 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:21.293 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 64/69: MOD13Q1.A2025145.h11v09.061.2025163010701
+09:09:21.861 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MOD13Q1/11/09/2025145/MOD13Q1.A2025145.h11v09.061.2025163010701_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:21.861 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:21.862 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:21.863 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 65/69: MOD13Q1.A2025145.h11v08.061.2025163013216
+09:09:22.431 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MOD13Q1/11/08/2025145/MOD13Q1.A2025145.h11v08.061.2025163013216_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:22.431 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:22.433 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:22.433 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 66/69: MOD13Q1.A2025145.h10v11.061.2025163014254
+09:09:23.002 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MOD13Q1/10/11/2025145/MOD13Q1.A2025145.h10v11.061.2025163014254_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:23.003 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:23.004 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:23.005 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 67/69: MOD13Q1.A2025145.h10v10.061.2025163005446
+09:09:23.573 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MOD13Q1/10/10/2025145/MOD13Q1.A2025145.h10v10.061.2025163005446_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:23.574 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:23.575 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:23.576 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 68/69: MOD13Q1.A2025145.h10v09.061.2025163014935
+09:09:24.145 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MOD13Q1/10/09/2025145/MOD13Q1.A2025145.h10v09.061.2025163014935_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:24.145 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:24.147 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:24.148 | INFO    | Task run 'download_modis_batch-a2b' - Processing composite 69/69: MOD13Q1.A2025145.h10v08.061.2025163010915
+09:09:24.716 | WARNING | rasterio._env - CPLE_AppDefined in HTTP response code on https://modiseuwest.blob.core.windows.net/modis-061-cogs/MOD13Q1/10/08/2025145/MOD13Q1.A2025145.h10v08.061.2025163010915_250m_16_days_NDVI.tif?st=2025-11-01T11%3A23%3A42Z&se=2025-11-02T12%3A08%3A42Z&sp=rl&sv=2025-07-05&sr=c&skoid=9c8ff44a-6a2c-4dfb-b298-1c9212f64d9a&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-11-01T16%3A51%3A25Z&ske=2025-11-08T16%3A51%3A25Z&sks=b&skv=2025-07-05&sig=gaHEYGkwibA3rdv/tnuLIfZsaDmpvxBsoNy/DCFGkGs%3D.xml: 403
+09:09:24.717 | ERROR   | Task run 'download_modis_batch-a2b' -   Failed: HTTP response code: 403
+09:09:24.718 | ERROR   | Task run 'download_modis_batch-a2b' - Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 310, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 221, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_HttpResponseError: HTTP response code: 403
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/workflows/data_processing/ndvi_flow.py", line 515, in download_modis_batch
+    with rasterio.open(ndvi_href) as src:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/env.py", line 463, in wrapper
+    return f(*args, **kwds)
+  File "/home/guilherme/miniconda3/envs/horus/lib/python3.13/site-packages/rasterio/__init__.py", line 356, in open
+    dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
+  File "rasterio/_base.pyx", line 312, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: HTTP response code: 403
+
+09:09:24.719 | INFO    | Task run 'download_modis_batch-a2b' - 
+Processing summary:
+09:09:24.720 | INFO    | Task run 'download_modis_batch-a2b' -   Total composites found: 69
+09:09:24.720 | INFO    | Task run 'download_modis_batch-a2b' -   Successfully processed: 31
+09:09:24.720 | INFO    | Task run 'download_modis_batch-a2b' -   Skipped (no overlap): 0
+09:09:24.721 | INFO    | Task run 'download_modis_batch-a2b' -   Failed: 38
+09:09:26.803 | INFO    | Task run 'download_modis_batch-a2b' - Writing to temp file (FUSE-safe): /tmp/ndvi_modis_q_bn9ek4/modis_ndvi_20250608_20250612.nc
+09:09:32.241 | INFO    | Task run 'download_modis_batch-a2b' - Copying to final location: /mnt/workwork/geoserver_data/raw/modis/modis_ndvi_20250608_20250612.nc
+09:11:07.516 | INFO    | Task run 'download_modis_batch-a2b' - ✓ MODIS NDVI saved: /mnt/workwork/geoserver_data/raw/modis/modis_ndvi_20250608_20250612.nc
+09:11:07.567 | INFO    | Task run 'download_modis_batch-a2b' - Finished in state Completed()
+09:12:21.805 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-10
+09:13:36.902 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-10
+09:14:51.439 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-10
+09:16:05.613 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-10
+09:17:27.070 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-10
+09:18:39.642 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-10
+09:19:52.642 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-10
+09:21:11.333 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-10
+09:22:22.800 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-10
+09:23:41.988 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-10
+09:24:53.953 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-10
+09:26:05.684 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-10
+09:27:16.905 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-10
+09:28:28.585 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-10
+09:29:40.353 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-10
+09:30:52.862 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-10
+09:32:05.764 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-10
+09:33:18.759 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-10
+09:34:31.205 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-10
+09:35:44.742 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-10
+09:36:57.826 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-10
+09:37:58.639 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-02
+09:38:31.058 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-02
+09:39:03.610 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-02
+09:39:36.032 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-02
+09:40:08.328 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-02
+09:40:40.736 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-02
+09:41:13.219 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-02
+09:41:45.528 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-02
+09:42:17.775 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-02
+09:42:50.009 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - ✓ Processed: 2025-06-02
+09:42:50.014 | INFO    | Task run 'process_ndvi_to_geotiff-9fe' - Finished in state Completed()
+09:42:50.024 | INFO    | Task run 'append_to_yearly_historical_ndvi-124' - 📦 Appending data from modis_ndvi_20250608_20250612.nc to yearly historical files
+09:42:50.024 | INFO    | Task run 'append_to_yearly_historical_ndvi-124' -   Processing all dates in source file
+09:42:50.041 | INFO    | Task run 'append_to_yearly_historical_ndvi-124' -   Processing 2 dates
+09:42:50.042 | INFO    | Task run 'append_to_yearly_historical_ndvi-124' -   Dates span 1 year(s): [2025]
+09:42:50.042 | INFO    | Task run 'append_to_yearly_historical_ndvi-124' - 
+  📅 Processing year 2025 (2 dates)
+09:42:50.151 | INFO    | Task run 'append_to_yearly_historical_ndvi-124' -     Creating new year file with 2 dates
+09:42:50.152 | INFO    | Task run 'append_to_yearly_historical_ndvi-124' -     Writing to temp file...

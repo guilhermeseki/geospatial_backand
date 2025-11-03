@@ -42,10 +42,10 @@ def chirps_daily_flow(source: DataSource = DataSource.CHIRPS):
     mosaic_dir = Path(settings.DATA_DIR) / source.value
     # Setup mosaic store
     #setup_mosaic.submit(mosaic_dir, source).result()
-    # Define date range
+    # Define date range - OPERATIONAL: Check only previous month
     today = date.today()
     last_month_end = today.replace(day=1) - timedelta(days=1)
-    start_date = last_month_end - relativedelta(years=10) + timedelta(days=1)
+    start_date = last_month_end.replace(day=1)  # First day of previous month
     current_date = start_date
 
     while current_date <= last_month_end:
@@ -83,14 +83,10 @@ def merge_daily_flow(source: DataSource = DataSource.MERGE):
     mosaic_dir = Path(settings.DATA_DIR) / source.value
     # Setup mosaic store
     #setup_mosaic.submit(mosaic_dir, source).result()
-    # Define date range
-    # Start: first day of previous month
+    # Define date range - OPERATIONAL: Check only last 30 days
     today = date.today()
-
-    start_date = (today.replace(day=1) - relativedelta(months=1)) 
-
-    # End: yesterday
-    end_date = today - timedelta(days=1)
+    start_date = today - timedelta(days=30)  # 30 days ago
+    end_date = today - timedelta(days=1)     # Yesterday (1-2 day lag)
 
 
     current_date = start_date

@@ -1,0 +1,71 @@
+19:07:01.844 | INFO    | prefect - Starting temporary server on http://127.0.0.1:8231
+See https://docs.prefect.io/v3/concepts/server#how-to-guides for more information on running a dedicated Prefect server.
+19:07:03.941 | INFO    | Flow run 'lavender-oarfish' - Beginning flow run 'lavender-oarfish' for flow 'process-ndvi-data'
+19:07:03.942 | INFO    | Flow run 'lavender-oarfish' - ================================================================================
+19:07:03.943 | INFO    | Flow run 'lavender-oarfish' - NDVI DATA PROCESSING FLOW
+19:07:03.943 | INFO    | Flow run 'lavender-oarfish' - ================================================================================
+19:07:03.943 | INFO    | Flow run 'lavender-oarfish' - Period: 2015-01-01 to 2015-12-31
+19:07:03.943 | INFO    | Flow run 'lavender-oarfish' - Sources: modis
+19:07:03.943 | INFO    | Flow run 'lavender-oarfish' - ================================================================================
+19:07:03.944 | INFO    | Flow run 'lavender-oarfish' - 
+Processing: MODIS
+19:07:03.957 | INFO    | Task run 'check_missing_dates-5cf' - Checking for 365 dates: 2015-01-01 to 2015-12-31
+19:07:03.958 | INFO    | Task run 'check_missing_dates-5cf' - Found 0 existing GeoTIFF files
+19:07:03.958 | INFO    | Task run 'check_missing_dates-5cf' - Historical NetCDF does not exist yet
+19:07:03.959 | INFO    | Task run 'check_missing_dates-5cf' - Missing from GeoTIFF: 365 dates
+19:07:03.959 | INFO    | Task run 'check_missing_dates-5cf' - Missing from historical: 365 dates
+19:07:03.959 | INFO    | Task run 'check_missing_dates-5cf' - Need to download: 365 dates
+19:07:03.961 | INFO    | Task run 'check_missing_dates-5cf' - Finished in state Completed()
+19:07:03.962 | INFO    | Flow run 'lavender-oarfish' - 
+Batch: 2015-01-01 to 2015-12-31
+19:07:03.973 | INFO    | Task run 'download_modis_batch-6a8' - ================================================================================
+19:07:03.973 | INFO    | Task run 'download_modis_batch-6a8' - MODIS NDVI DOWNLOAD (Microsoft Planetary Computer - FREE!)
+19:07:03.973 | INFO    | Task run 'download_modis_batch-6a8' - ================================================================================
+19:07:11.984 | INFO    | Task run 'download_modis_batch-6a8' - Found 1104 MODIS composites
+19:07:11.988 | INFO    | Task run 'download_modis_batch-6a8' - Limited to 100 most recent composites to reduce processing time
+19:07:11.988 | WARNING | Task run 'download_modis_batch-6a8' - Limiting latitude pixels to 10000
+19:07:11.988 | WARNING | Task run 'download_modis_batch-6a8' - Limiting longitude pixels to 10000
+19:07:11.989 | INFO    | Task run 'download_modis_batch-6a8' - Common grid: 10000 x 10000 pixels (~250m native MODIS resolution)
+19:07:11.989 | INFO    | Task run 'download_modis_batch-6a8' - Grid size optimized: ~381.5 MB per composite
+19:07:12.005 | INFO    | Task run 'download_modis_batch-6a8' - Target MODIS bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+19:07:12.006 | INFO    | Task run 'download_modis_batch-6a8' - Processing composite 1/100: MYD13Q1.A2015361.h15v11.061.2021342203727
+19:07:13.218 | INFO    | Task run 'download_modis_batch-6a8' -   Intersection: 284482m x 1111951m (25.6% of tile)
+19:07:14.025 | INFO    | Task run 'download_modis_batch-6a8' -   Read 4800x1228 pixels
+19:07:14.031 | INFO    | Task run 'download_modis_batch-6a8' -   Masked nodata value: -3000.0
+19:07:14.604 | WARNING | Task run 'download_modis_batch-6a8' -   All values are NaN, skipping
+19:07:14.604 | INFO    | Task run 'download_modis_batch-6a8' - Processing composite 2/100: MYD13Q1.A2015361.h14v11.061.2021342194948
+19:07:15.256 | INFO    | Task run 'download_modis_batch-6a8' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+19:07:19.612 | INFO    | Task run 'download_modis_batch-6a8' -   Read 4800x4800 pixels
+19:07:19.634 | INFO    | Task run 'download_modis_batch-6a8' -   Masked nodata value: -3000.0
+19:07:20.382 | INFO    | Task run 'download_modis_batch-6a8' -   ✓ Processed successfully (0.3% valid pixels)
+19:07:20.383 | INFO    | Task run 'download_modis_batch-6a8' - Processing composite 3/100: MYD13Q1.A2015361.h14v10.061.2021342195747
+19:07:21.031 | INFO    | Task run 'download_modis_batch-6a8' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+19:07:49.186 | INFO    | Task run 'download_modis_batch-6a8' -   Read 4800x4800 pixels
+19:07:49.212 | INFO    | Task run 'download_modis_batch-6a8' -   Masked nodata value: -3000.0
+19:07:50.098 | INFO    | Task run 'download_modis_batch-6a8' -   ✓ Processed successfully (1.6% valid pixels)
+19:07:50.099 | INFO    | Task run 'download_modis_batch-6a8' - Processing composite 4/100: MYD13Q1.A2015361.h14v09.061.2021342200041
+19:07:50.719 | INFO    | Task run 'download_modis_batch-6a8' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+19:08:36.700 | INFO    | Task run 'download_modis_batch-6a8' -   Read 4800x4800 pixels
+19:08:36.726 | INFO    | Task run 'download_modis_batch-6a8' -   Masked nodata value: -3000.0
+19:08:37.591 | INFO    | Task run 'download_modis_batch-6a8' -   ✓ Processed successfully (1.7% valid pixels)
+19:08:37.592 | INFO    | Task run 'download_modis_batch-6a8' - Processing composite 5/100: MYD13Q1.A2015361.h13v12.061.2021342200755
+19:08:38.232 | INFO    | Task run 'download_modis_batch-6a8' -   Intersection: 1111951m x 555975m (50.0% of tile)
+19:09:27.725 | INFO    | Task run 'download_modis_batch-6a8' -   Read 2400x4800 pixels
+19:09:27.739 | INFO    | Task run 'download_modis_batch-6a8' -   Masked nodata value: -3000.0
+19:09:28.662 | INFO    | Task run 'download_modis_batch-6a8' -   ✓ Processed successfully (1.9% valid pixels)
+19:09:28.662 | INFO    | Task run 'download_modis_batch-6a8' - Processing composite 6/100: MYD13Q1.A2015361.h13v11.061.2021342195213
+19:09:29.282 | INFO    | Task run 'download_modis_batch-6a8' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+19:11:18.698 | INFO    | Task run 'download_modis_batch-6a8' -   Read 4800x4800 pixels
+19:11:18.726 | INFO    | Task run 'download_modis_batch-6a8' -   Masked nodata value: -3000.0
+19:11:19.966 | INFO    | Task run 'download_modis_batch-6a8' -   ✓ Processed successfully (5.0% valid pixels)
+19:11:19.967 | INFO    | Task run 'download_modis_batch-6a8' - Processing composite 7/100: MYD13Q1.A2015361.h13v10.061.2021342200331
+19:11:20.650 | INFO    | Task run 'download_modis_batch-6a8' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+19:14:05.441 | INFO    | Task run 'download_modis_batch-6a8' -   Read 4800x4800 pixels
+19:14:05.469 | INFO    | Task run 'download_modis_batch-6a8' -   Masked nodata value: -3000.0
+19:14:06.804 | INFO    | Task run 'download_modis_batch-6a8' -   ✓ Processed successfully (6.0% valid pixels)
+19:14:06.805 | INFO    | Task run 'download_modis_batch-6a8' - Processing composite 8/100: MYD13Q1.A2015361.h13v09.061.2021342200908
+19:14:07.433 | INFO    | Task run 'download_modis_batch-6a8' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+19:17:08.323 | ERROR   | Task run 'download_modis_batch-6a8' - Crash detected! Execution was aborted by a termination signal.
+19:17:08.323 | ERROR   | Task run 'download_modis_batch-6a8' - Finished in state Crashed('Execution was aborted by a termination signal.')
+21:07:08.861 | ERROR   | prefect.server.services.telemetry - Failed to send telemetry:
+Shutting down telemetry service...

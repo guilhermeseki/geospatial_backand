@@ -17,7 +17,7 @@ curl -u admin:geoserver \
 --output map2.png
 
 #request history
-curl -X POST https://api.seki-tech.com/map/precipitation/history \
+curl -X POST https://api.seki-tech.com/precipitation/history \
   -H "Content-Type: application/json" \
   -d '{
     "source": "chirps",
@@ -29,7 +29,7 @@ curl -X POST https://api.seki-tech.com/map/precipitation/history \
 
 
 #featureinfo
-curl -X POST https://api.seki-tech.com/map/precipitation/featureinfo \
+curl -X POST https://api.seki-tech.com/precipitation/featureinfo \
   -H "Content-Type: application/json" \
   -d '{
     "source": "chirps",

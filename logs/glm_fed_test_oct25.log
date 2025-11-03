@@ -1,0 +1,42 @@
+16:34:06.388 | INFO    | prefect - Starting temporary server on http://127.0.0.1:8460
+See https://docs.prefect.io/v3/concepts/server#how-to-guides for more information on running a dedicated Prefect server.
+16:34:08.466 | INFO    | Flow run 'able-guan' - Beginning flow run 'able-guan' for flow 'process-glm-fed-data'
+16:34:08.468 | INFO    | Flow run 'able-guan' - ================================================================================
+16:34:08.468 | INFO    | Flow run 'able-guan' - GLM FED DATA PROCESSING FLOW
+16:34:08.469 | INFO    | Flow run 'able-guan' - ================================================================================
+16:34:08.469 | INFO    | Flow run 'able-guan' - Period: 2025-10-25 to 2025-10-25
+16:34:08.469 | INFO    | Flow run 'able-guan' - Source: NASA GHRC DAAC - GLM Gridded Flash Extent Density
+16:34:08.469 | INFO    | Flow run 'able-guan' - Resolution: 8km × 8km
+16:34:08.469 | INFO    | Flow run 'able-guan' - ================================================================================
+16:34:08.483 | INFO    | Task run 'check_earthdata_credentials-e1b' - ✓ Found .netrc file for Earthdata authentication
+16:34:08.483 | INFO    | Task run 'check_earthdata_credentials-e1b' - ✓ Retrieved credentials for user: brussi
+16:34:08.484 | INFO    | Task run 'check_earthdata_credentials-e1b' - Finished in state Completed()
+16:34:08.492 | INFO    | Task run 'check_missing_dates_fed-c5b' - Checking for 1 dates: 2025-10-25 to 2025-10-25
+16:34:08.493 | INFO    | Task run 'check_missing_dates_fed-c5b' - Found 0 existing GeoTIFF files
+16:34:08.493 | INFO    | Task run 'check_missing_dates_fed-c5b' - Found 0 dates in historical NetCDF
+16:34:08.493 | INFO    | Task run 'check_missing_dates_fed-c5b' - Missing from GeoTIFF: 1 dates
+16:34:08.494 | INFO    | Task run 'check_missing_dates_fed-c5b' - Missing from historical: 1 dates
+16:34:08.494 | INFO    | Task run 'check_missing_dates_fed-c5b' - Need to download: 1 dates
+16:34:08.495 | INFO    | Task run 'check_missing_dates_fed-c5b' - Finished in state Completed()
+16:34:08.496 | INFO    | Flow run 'able-guan' - Processing 1 missing dates
+16:34:08.496 | INFO    | Flow run 'able-guan' - 
+Processing date: 2025-10-25
+16:34:08.506 | INFO    | Task run 'download_glm_fed_daily-16b' - ================================================================================
+16:34:08.506 | INFO    | Task run 'download_glm_fed_daily-16b' - DOWNLOADING GLM FED DATA FOR 2025-10-25
+16:34:08.506 | INFO    | Task run 'download_glm_fed_daily-16b' - ================================================================================
+16:34:08.507 | INFO    | Task run 'download_glm_fed_daily-16b' - Using satellite: GOES-16
+16:34:08.507 | INFO    | Task run 'download_glm_fed_daily-16b' - Need data from 2025-10-24 23:31 to 2025-10-25 23:59
+16:34:08.507 | INFO    | Task run 'download_glm_fed_daily-16b' - Searching CMR for granules from previous day...
+16:34:08.962 | INFO    | Task run 'download_glm_fed_daily-16b' - ✓ Found 0 granule(s) from previous day
+16:34:08.963 | INFO    | Task run 'download_glm_fed_daily-16b' - Searching CMR for granules from target day...
+16:34:09.419 | INFO    | Task run 'download_glm_fed_daily-16b' - ✓ Found 0 granule(s) from target day
+16:34:09.419 | WARNING | Task run 'download_glm_fed_daily-16b' - ⚠ No data available for 2025-10-25
+16:34:09.420 | WARNING | Task run 'download_glm_fed_daily-16b' -   GLM FED data may not be available for this date
+16:34:09.423 | INFO    | Task run 'download_glm_fed_daily-16b' - Finished in state Completed()
+16:34:09.425 | WARNING | Flow run 'able-guan' -   ⊘ Skipping 2025-10-25 - download not implemented yet
+16:34:09.425 | INFO    | Flow run 'able-guan' - 
+✓ Processed 0 files
+16:34:09.443 | INFO    | Flow run 'able-guan' - Finished in state Completed()
+16:34:09.463 | INFO    | prefect - Stopping temporary server on http://127.0.0.1:8460
+Testing GLM FED download for 2025-10-25...
+Result: 0 files processed

@@ -1,0 +1,53 @@
+10:16:57.844 | INFO    | prefect - Starting temporary server on http://127.0.0.1:8904
+See https://docs.prefect.io/v3/concepts/server#how-to-guides for more information on running a dedicated Prefect server.
+10:16:59.955 | INFO    | Flow run 'nonchalant-crab' - Beginning flow run 'nonchalant-crab' for flow 'process-ndvi-data'
+10:16:59.958 | INFO    | Flow run 'nonchalant-crab' - ================================================================================
+10:16:59.958 | INFO    | Flow run 'nonchalant-crab' - NDVI DATA PROCESSING FLOW
+10:16:59.958 | INFO    | Flow run 'nonchalant-crab' - ================================================================================
+10:16:59.959 | INFO    | Flow run 'nonchalant-crab' - Period: 2015-01-01 to 2015-12-31
+10:16:59.959 | INFO    | Flow run 'nonchalant-crab' - Sources: modis
+10:16:59.959 | INFO    | Flow run 'nonchalant-crab' - ================================================================================
+10:16:59.959 | INFO    | Flow run 'nonchalant-crab' - 
+Processing: MODIS
+10:16:59.975 | INFO    | Task run 'check_missing_dates-417' - Checking for 365 dates: 2015-01-01 to 2015-12-31
+10:16:59.976 | INFO    | Task run 'check_missing_dates-417' - Found 0 existing GeoTIFF files
+10:16:59.976 | INFO    | Task run 'check_missing_dates-417' - Historical NetCDF does not exist yet
+10:16:59.977 | INFO    | Task run 'check_missing_dates-417' - Missing from GeoTIFF: 365 dates
+10:16:59.977 | INFO    | Task run 'check_missing_dates-417' - Missing from historical: 365 dates
+10:16:59.977 | INFO    | Task run 'check_missing_dates-417' - Need to download: 365 dates
+10:16:59.979 | INFO    | Task run 'check_missing_dates-417' - Finished in state Completed()
+10:16:59.980 | INFO    | Flow run 'nonchalant-crab' - 
+Batch: 2015-01-01 to 2015-01-16
+10:16:59.991 | INFO    | Task run 'download_modis_batch-440' - ================================================================================
+10:16:59.992 | INFO    | Task run 'download_modis_batch-440' - MODIS NDVI DOWNLOAD (Microsoft Planetary Computer - FREE!)
+10:16:59.992 | INFO    | Task run 'download_modis_batch-440' - ================================================================================
+10:17:03.185 | INFO    | Task run 'download_modis_batch-440' - Found 92 MODIS composites
+10:17:03.186 | WARNING | Task run 'download_modis_batch-440' - Limiting latitude pixels to 10000
+10:17:03.186 | WARNING | Task run 'download_modis_batch-440' - Limiting longitude pixels to 10000
+10:17:03.187 | INFO    | Task run 'download_modis_batch-440' - Common grid: 10000 x 10000 pixels (~250m native MODIS resolution)
+10:17:03.187 | INFO    | Task run 'download_modis_batch-440' - Grid size optimized: ~381.5 MB per composite
+10:17:03.204 | INFO    | Task run 'download_modis_batch-440' - Target MODIS bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+10:17:03.205 | INFO    | Task run 'download_modis_batch-440' - Processing composite 1/92: MYD13Q1.A2015009.h15v11.061.2021319210820
+10:17:04.398 | INFO    | Task run 'download_modis_batch-440' -   Intersection: 284482m x 1111951m (25.6% of tile)
+10:17:05.204 | INFO    | Task run 'download_modis_batch-440' -   Read 4800x1228 pixels
+10:17:05.774 | INFO    | Task run 'download_modis_batch-440' -   ✓ Processed successfully (100.0% valid pixels)
+10:17:05.774 | INFO    | Task run 'download_modis_batch-440' - Processing composite 2/92: MYD13Q1.A2015009.h14v11.061.2021319211101
+10:17:06.377 | INFO    | Task run 'download_modis_batch-440' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+10:17:08.508 | INFO    | Task run 'download_modis_batch-440' -   Read 4800x4800 pixels
+10:17:09.245 | INFO    | Task run 'download_modis_batch-440' -   ✓ Processed successfully (100.0% valid pixels)
+10:17:09.246 | INFO    | Task run 'download_modis_batch-440' - Processing composite 3/92: MYD13Q1.A2015009.h14v10.061.2021319210834
+10:17:09.863 | INFO    | Task run 'download_modis_batch-440' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+10:17:24.393 | INFO    | Task run 'download_modis_batch-440' -   Read 4800x4800 pixels
+10:17:25.086 | INFO    | Task run 'download_modis_batch-440' -   ✓ Processed successfully (100.0% valid pixels)
+10:17:25.087 | INFO    | Task run 'download_modis_batch-440' - Processing composite 4/92: MYD13Q1.A2015009.h14v09.061.2021319211027
+10:17:25.704 | INFO    | Task run 'download_modis_batch-440' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+10:18:02.862 | INFO    | Task run 'download_modis_batch-440' -   Read 4800x4800 pixels
+10:18:03.489 | INFO    | Task run 'download_modis_batch-440' -   ✓ Processed successfully (100.0% valid pixels)
+10:18:03.490 | INFO    | Task run 'download_modis_batch-440' - Processing composite 5/92: MYD13Q1.A2015009.h13v12.061.2021319211239
+10:18:04.097 | INFO    | Task run 'download_modis_batch-440' -   Intersection: 1111951m x 555975m (50.0% of tile)
+10:18:51.028 | INFO    | Task run 'download_modis_batch-440' -   Read 2400x4800 pixels
+10:18:51.637 | INFO    | Task run 'download_modis_batch-440' -   ✓ Processed successfully (100.0% valid pixels)
+10:18:51.637 | INFO    | Task run 'download_modis_batch-440' - Processing composite 6/92: MYD13Q1.A2015009.h13v11.061.2021319211059
+10:18:52.245 | INFO    | Task run 'download_modis_batch-440' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+10:20:24.946 | ERROR   | Task run 'download_modis_batch-440' - Crash detected! Execution was aborted by a termination signal.
+10:20:24.947 | ERROR   | Task run 'download_modis_batch-440' - Finished in state Crashed('Execution was aborted by a termination signal.')

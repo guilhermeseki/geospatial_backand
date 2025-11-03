@@ -1,0 +1,161 @@
+08:05:52.312 | INFO    | prefect - Starting temporary server on http://127.0.0.1:8191
+See https://docs.prefect.io/v3/concepts/server#how-to-guides for more information on running a dedicated Prefect server.
+08:05:54.508 | INFO    | Flow run 'offbeat-crane' - Beginning flow run 'offbeat-crane' for flow 'process-ndvi-data'
+08:05:54.510 | INFO    | Flow run 'offbeat-crane' - ================================================================================
+08:05:54.510 | INFO    | Flow run 'offbeat-crane' - NDVI DATA PROCESSING FLOW
+08:05:54.510 | INFO    | Flow run 'offbeat-crane' - ================================================================================
+08:05:54.510 | INFO    | Flow run 'offbeat-crane' - Period: 2015-01-01 to 2015-12-31
+08:05:54.511 | INFO    | Flow run 'offbeat-crane' - Sources: modis
+08:05:54.511 | INFO    | Flow run 'offbeat-crane' - ================================================================================
+08:05:54.511 | INFO    | Flow run 'offbeat-crane' - 
+Processing: MODIS
+08:05:54.526 | INFO    | Task run 'check_missing_dates-745' - Checking for 365 dates: 2015-01-01 to 2015-12-31
+08:05:54.526 | INFO    | Task run 'check_missing_dates-745' - Found 0 existing GeoTIFF files
+08:05:54.527 | INFO    | Task run 'check_missing_dates-745' - Historical NetCDF does not exist yet
+08:05:54.527 | INFO    | Task run 'check_missing_dates-745' - Missing from GeoTIFF: 365 dates
+08:05:54.528 | INFO    | Task run 'check_missing_dates-745' - Missing from historical: 365 dates
+08:05:54.528 | INFO    | Task run 'check_missing_dates-745' - Need to download: 365 dates
+08:05:54.529 | INFO    | Task run 'check_missing_dates-745' - Finished in state Completed()
+08:05:54.530 | INFO    | Flow run 'offbeat-crane' - 
+Batch: 2015-01-01 to 2015-01-16
+08:05:54.539 | INFO    | Task run 'download_modis_batch-9dc' - ================================================================================
+08:05:54.540 | INFO    | Task run 'download_modis_batch-9dc' - MODIS NDVI DOWNLOAD (Microsoft Planetary Computer - FREE!)
+08:05:54.540 | INFO    | Task run 'download_modis_batch-9dc' - ================================================================================
+08:05:57.667 | INFO    | Task run 'download_modis_batch-9dc' - Found 92 MODIS composites
+08:05:57.668 | WARNING | Task run 'download_modis_batch-9dc' - Limiting latitude pixels to 10000
+08:05:57.668 | WARNING | Task run 'download_modis_batch-9dc' - Limiting longitude pixels to 10000
+08:05:57.669 | INFO    | Task run 'download_modis_batch-9dc' - Common grid: 10000 x 10000 pixels (~250m native MODIS resolution)
+08:05:57.669 | INFO    | Task run 'download_modis_batch-9dc' - Grid size optimized: ~381.5 MB per composite
+08:05:57.695 | INFO    | Task run 'download_modis_batch-9dc' - Target MODIS bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+08:05:57.696 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 1/92: MYD13Q1.A2015009.h15v11.061.2021319210820
+08:05:58.970 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 284482m x 1111951m (25.6% of tile)
+08:05:59.807 | INFO    | Task run 'download_modis_batch-9dc' -   Read 4800x1228 pixels
+08:06:00.343 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:06:00.343 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 2/92: MYD13Q1.A2015009.h14v11.061.2021319211101
+08:06:00.982 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:06:22.971 | INFO    | Task run 'download_modis_batch-9dc' -   Read 4800x4800 pixels
+08:06:23.702 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:06:23.703 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 3/92: MYD13Q1.A2015009.h14v10.061.2021319210834
+08:06:24.509 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:07:40.238 | INFO    | Task run 'download_modis_batch-9dc' -   Read 4800x4800 pixels
+08:07:40.934 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:07:40.935 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 4/92: MYD13Q1.A2015009.h14v09.061.2021319211027
+08:07:41.758 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:08:34.176 | INFO    | Task run 'download_modis_batch-9dc' -   Read 4800x4800 pixels
+08:08:34.815 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:08:34.815 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 5/92: MYD13Q1.A2015009.h13v12.061.2021319211239
+08:08:35.483 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 555975m (50.0% of tile)
+08:09:11.061 | INFO    | Task run 'download_modis_batch-9dc' -   Read 2400x4800 pixels
+08:09:11.735 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:09:11.735 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 6/92: MYD13Q1.A2015009.h13v11.061.2021319211059
+08:09:12.448 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:11:46.892 | INFO    | Task run 'download_modis_batch-9dc' -   Read 4800x4800 pixels
+08:11:47.648 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:11:47.648 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 7/92: MYD13Q1.A2015009.h13v10.061.2021319210836
+08:11:48.280 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:15:06.733 | INFO    | Task run 'download_modis_batch-9dc' -   Read 4800x4800 pixels
+08:15:07.482 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:15:07.483 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 8/92: MYD13Q1.A2015009.h13v09.061.2021319211000
+08:15:08.137 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:17:29.764 | INFO    | Task run 'download_modis_batch-9dc' -   Read 4800x4800 pixels
+08:17:30.468 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:17:30.469 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 9/92: MYD13Q1.A2015009.h13v08.061.2021319211021
+08:17:31.080 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 722768m (65.0% of tile)
+08:17:32.080 | INFO    | Task run 'download_modis_batch-9dc' -   Read 3120x4800 pixels
+08:17:32.722 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:17:32.722 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 10/92: MYD13Q1.A2015009.h12v12.061.2021319210918
+08:17:33.619 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 555975m (50.0% of tile)
+08:19:21.155 | INFO    | Task run 'download_modis_batch-9dc' -   Read 2400x4800 pixels
+08:19:21.783 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:19:21.784 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 11/92: MYD13Q1.A2015009.h12v11.061.2021319210927
+08:19:22.405 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:21:48.120 | INFO    | Task run 'download_modis_batch-9dc' -   Read 4800x4800 pixels
+08:21:48.837 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:21:48.838 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 12/92: MYD13Q1.A2015009.h12v10.061.2021319210920
+08:21:49.469 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:23:43.774 | INFO    | Task run 'download_modis_batch-9dc' -   Read 4800x4800 pixels
+08:23:44.460 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:23:44.461 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 13/92: MYD13Q1.A2015009.h12v09.061.2021319211130
+08:23:45.089 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:26:20.874 | INFO    | Task run 'download_modis_batch-9dc' -   Read 4800x4800 pixels
+08:26:21.579 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:26:21.579 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 14/92: MYD13Q1.A2015009.h12v08.061.2021319211310
+08:26:22.215 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 722768m (65.0% of tile)
+08:27:52.704 | INFO    | Task run 'download_modis_batch-9dc' -   Read 3120x4800 pixels
+08:27:53.373 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:27:53.374 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 15/92: MYD13Q1.A2015009.h11v12.061.2021319210915
+08:27:53.976 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 555975m (50.0% of tile)
+08:27:59.136 | INFO    | Task run 'download_modis_batch-9dc' -   Read 2400x4800 pixels
+08:27:59.724 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:27:59.725 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 16/92: MYD13Q1.A2015009.h11v11.061.2021319211136
+08:28:00.369 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:28:52.358 | INFO    | Task run 'download_modis_batch-9dc' -   Read 4800x4800 pixels
+08:28:53.086 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:28:53.086 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 17/92: MYD13Q1.A2015009.h11v10.061.2021319211308
+08:28:53.754 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:31:43.162 | INFO    | Task run 'download_modis_batch-9dc' -   Read 4800x4800 pixels
+08:31:43.914 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:31:43.915 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 18/92: MYD13Q1.A2015009.h11v09.061.2021319211331
+08:31:44.827 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:34:56.877 | INFO    | Task run 'download_modis_batch-9dc' -   Read 4800x4800 pixels
+08:34:57.582 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:34:57.582 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 19/92: MYD13Q1.A2015009.h11v08.061.2021319211220
+08:34:58.307 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 722768m (65.0% of tile)
+08:36:43.576 | INFO    | Task run 'download_modis_batch-9dc' -   Read 3120x4800 pixels
+08:36:44.303 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:36:44.304 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 20/92: MYD13Q1.A2015009.h10v11.061.2021319211043
+08:36:44.950 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 555077m x 1111951m (49.9% of tile)
+08:36:45.857 | INFO    | Task run 'download_modis_batch-9dc' -   Read 4800x2396 pixels
+08:36:46.441 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:36:46.442 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 21/92: MYD13Q1.A2015009.h10v10.061.2021319211154
+08:36:47.157 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 555077m x 1111951m (49.9% of tile)
+08:36:55.649 | INFO    | Task run 'download_modis_batch-9dc' -   Read 4800x2396 pixels
+08:36:56.224 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:36:56.225 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 22/92: MYD13Q1.A2015009.h10v09.061.2021319211318
+08:36:56.844 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 555077m x 1111951m (49.9% of tile)
+08:37:58.463 | INFO    | Task run 'download_modis_batch-9dc' -   Read 4800x2396 pixels
+08:37:59.084 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:37:59.084 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 23/92: MYD13Q1.A2015009.h10v08.061.2021319210841
+08:37:59.754 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 555077m x 722768m (32.4% of tile)
+08:38:32.446 | INFO    | Task run 'download_modis_batch-9dc' -   Read 3120x2396 pixels
+08:38:33.082 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:38:33.082 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 24/92: MOD13Q1.A2015001.h15v11.061.2021317035939
+08:38:33.681 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 284482m x 1111951m (25.6% of tile)
+08:38:34.474 | INFO    | Task run 'download_modis_batch-9dc' -   Read 4800x1228 pixels
+08:38:35.046 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:38:35.046 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 25/92: MOD13Q1.A2015001.h14v11.061.2021317043559
+08:38:35.651 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:38:42.706 | INFO    | Task run 'download_modis_batch-9dc' -   Read 4800x4800 pixels
+08:38:43.468 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:38:43.469 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 26/92: MOD13Q1.A2015001.h14v10.061.2021317043956
+08:38:44.066 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:39:26.492 | INFO    | Task run 'download_modis_batch-9dc' -   Read 4800x4800 pixels
+08:39:27.149 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:39:27.150 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 27/92: MOD13Q1.A2015001.h14v09.061.2021317044841
+08:39:27.773 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:40:16.870 | INFO    | Task run 'download_modis_batch-9dc' -   Read 4800x4800 pixels
+08:40:17.487 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:40:17.487 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 28/92: MOD13Q1.A2015001.h13v12.061.2021317055611
+08:40:18.142 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 555975m (50.0% of tile)
+08:41:20.285 | INFO    | Task run 'download_modis_batch-9dc' -   Read 2400x4800 pixels
+08:41:20.889 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:41:20.890 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 29/92: MOD13Q1.A2015001.h13v11.061.2021317053847
+08:41:21.477 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:43:21.437 | INFO    | Task run 'download_modis_batch-9dc' -   Read 4800x4800 pixels
+08:43:22.125 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:43:22.126 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 30/92: MOD13Q1.A2015001.h13v10.061.2021317053442
+08:43:22.734 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:46:08.628 | INFO    | Task run 'download_modis_batch-9dc' -   Read 4800x4800 pixels
+08:46:09.378 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:46:09.378 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 31/92: MOD13Q1.A2015001.h13v09.061.2021317060728
+08:46:09.966 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 1111951m (100.0% of tile)
+08:48:46.322 | INFO    | Task run 'download_modis_batch-9dc' -   Read 4800x4800 pixels
+08:48:47.039 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:48:47.039 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 32/92: MOD13Q1.A2015001.h13v08.061.2021317045014
+08:48:47.656 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 722768m (65.0% of tile)
+08:48:49.039 | INFO    | Task run 'download_modis_batch-9dc' -   Read 3120x4800 pixels
+08:48:49.706 | INFO    | Task run 'download_modis_batch-9dc' -   ✓ Processed successfully (100.0% valid pixels)
+08:48:49.707 | INFO    | Task run 'download_modis_batch-9dc' - Processing composite 33/92: MOD13Q1.A2015001.h12v12.061.2021317062817
+08:48:50.321 | INFO    | Task run 'download_modis_batch-9dc' -   Intersection: 1111951m x 555975m (50.0% of tile)
+08:50:24.878 | ERROR   | Task run 'download_modis_batch-9dc' - Crash detected! Execution was aborted by a termination signal.
+08:50:24.879 | ERROR   | Task run 'download_modis_batch-9dc' - Finished in state Crashed('Execution was aborted by a termination signal.')

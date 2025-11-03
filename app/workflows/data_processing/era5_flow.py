@@ -16,12 +16,22 @@ from app.config.settings import get_settings
 VARIABLE_MAPPING = {
     "2m_temperature": {
         "daily_maximum": "temp_max",
-        "daily_minimum": "temp_min", 
+        "daily_minimum": "temp_min",
         "daily_mean": "temp"
     },
     "total_precipitation": {
         "daily_sum": "precipitation"
-    }
+    },
+    "10m_u_component_of_wind": {
+        "daily_mean": "wind_u",
+        "daily_maximum": "wind_u_max",
+        "daily_minimum": "wind_u_min"
+    },
+    "10m_v_component_of_wind": {
+        "daily_mean": "wind_v",
+        "daily_maximum": "wind_v_max",
+        "daily_minimum": "wind_v_min"
+    },
 }
 
 
@@ -40,6 +50,15 @@ def get_output_directory(variable: str, daily_statistic: str, settings) -> Path:
                 dir_name = "temp"
         elif "precipitation" in variable:
             dir_name = "precipitation"
+        elif "wind" in variable:
+            # Handle wind variables
+            base = "wind_speed" if "speed" in variable else "wind_u" if "u_component" in variable else "wind_v"
+            if "maximum" in daily_statistic:
+                dir_name = f"{base}_max"
+            elif "minimum" in daily_statistic:
+                dir_name = f"{base}_min"
+            else:
+                dir_name = base
         else:
             dir_name = f"{variable}_{daily_statistic}".replace("_", "-")
     
@@ -129,7 +148,7 @@ def check_missing_dates(
     }
 
 
-@task(retries=2, retry_delay_seconds=600, timeout_seconds=7200)
+@task(retries=2, retry_delay_seconds=600, timeout_seconds=14400)  # 4 hours (increased from 2 hours)
 def download_era5_land_daily_batch(
     start_date: date,
     end_date: date,
@@ -370,7 +389,7 @@ def process_era5_land_daily_to_geotiff(
         raise
 
 
-@task
+@task(retries=3, retry_delay_seconds=30)  # Add retries for HDF/NetCDF errors
 def append_to_yearly_historical(
     source_netcdf: Path,
     variable: str,
@@ -563,10 +582,21 @@ def append_to_yearly_historical(
 
                 # FUSE FIX: Write to temp, then copy
                 logger.info(f"    Writing to temp file...")
-                year_ds.to_netcdf(str(temp_file), mode='w', encoding=encoding, engine='netcdf4')
+                try:
+                    year_ds.to_netcdf(str(temp_file), mode='w', encoding=encoding, engine='netcdf4')
+                    # Ensure data is written to disk
+                    import os
+                    os.sync()
+                    logger.info(f"    ✓ Temp file written successfully")
+                except Exception as write_error:
+                    logger.error(f"    ✗ Failed to write NetCDF: {write_error}")
+                    if temp_file.exists():
+                        temp_file.unlink()
+                    raise
 
                 logger.info(f"    Copying to: {year_file}")
                 shutil.copy2(temp_file, year_file)
+                os.sync()
 
                 # Cleanup temp
                 shutil.rmtree(temp_dir, ignore_errors=True)
@@ -615,7 +645,8 @@ def era5_land_daily_flow(
     batch_days: int = 31,
     variables_config: Optional[List[Dict[str, str]]] = None,
     start_date: Optional[date] = None,
-    end_date: Optional[date] = None
+    end_date: Optional[date] = None,
+    skip_historical_merge: bool = False  # NEW: Skip problematic yearly merge
 ):
     """ERA5 Land Daily processing with historical NetCDF management."""
     logger = get_run_logger()
@@ -738,20 +769,26 @@ def era5_land_daily_flow(
                         logger.info("  Skipping GeoTIFF processing (all exist)")
                     
                     # Append to yearly historical NetCDF (only missing dates)
-                    if hist_dates_in_chunk:
-                        yearly_files = append_to_yearly_historical(
-                            source_netcdf=batch_path,
-                            variable=variable,
-                            daily_statistic=statistic,
-                            bbox=settings.latam_bbox_raster,
-                            dates_to_append=hist_dates_in_chunk
-                        )
-                        logger.info(f"✓ Updated {len(yearly_files)} yearly historical file(s)")
+                    if not skip_historical_merge:
+                        if hist_dates_in_chunk:
+                            yearly_files = append_to_yearly_historical(
+                                source_netcdf=batch_path,
+                                variable=variable,
+                                daily_statistic=statistic,
+                                bbox=settings.latam_bbox_raster,
+                                dates_to_append=hist_dates_in_chunk
+                            )
+                            logger.info(f"✓ Updated {len(yearly_files)} yearly historical file(s)")
+                        else:
+                            logger.info("  Skipping historical append (all exist)")
                     else:
-                        logger.info("  Skipping historical append (all exist)")
-                    
-                    # Clean up raw file
-                    cleanup_raw_files(batch_path)
+                        logger.info("  Skipping historical merge (will merge later)")
+
+                    # Clean up raw file (skip if we're keeping for later merge)
+                    if not skip_historical_merge:
+                        cleanup_raw_files(batch_path)
+                    else:
+                        logger.info(f"  Keeping raw file for later merge: {batch_path.name}")
                     
                     logger.info(f"✓ Completed batch: {current_start} to {current_end}")
                     

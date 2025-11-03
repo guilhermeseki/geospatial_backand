@@ -1,0 +1,28 @@
+14:18:58.130 | INFO    | prefect - Starting temporary server on http://127.0.0.1:8988
+See https://docs.prefect.io/v3/concepts/server#how-to-guides for more information on running a dedicated Prefect server.
+14:19:00.147 | INFO    | Flow run 'wine-sawfly' - Beginning flow run 'wine-sawfly' for flow 'process-ndvi-data'
+14:19:00.148 | INFO    | Flow run 'wine-sawfly' - ================================================================================
+14:19:00.149 | INFO    | Flow run 'wine-sawfly' - NDVI DATA PROCESSING FLOW
+14:19:00.149 | INFO    | Flow run 'wine-sawfly' - ================================================================================
+14:19:00.149 | INFO    | Flow run 'wine-sawfly' - Period: 2015-01-01 to 2015-12-31
+14:19:00.149 | INFO    | Flow run 'wine-sawfly' - Sources: modis
+14:19:00.149 | INFO    | Flow run 'wine-sawfly' - ================================================================================
+14:19:00.150 | INFO    | Flow run 'wine-sawfly' - 
+Processing: MODIS
+14:19:00.163 | INFO    | Task run 'check_missing_dates-03c' - Checking for 365 dates: 2015-01-01 to 2015-12-31
+14:19:00.164 | INFO    | Task run 'check_missing_dates-03c' - Found 2 existing GeoTIFF files
+14:19:00.165 | INFO    | Task run 'check_missing_dates-03c' - Historical NetCDF does not exist yet
+14:19:00.166 | INFO    | Task run 'check_missing_dates-03c' - Missing from GeoTIFF: 363 dates
+14:19:00.167 | INFO    | Task run 'check_missing_dates-03c' - Missing from historical: 365 dates
+14:19:00.167 | INFO    | Task run 'check_missing_dates-03c' - Need to download: 365 dates
+14:19:00.168 | INFO    | Task run 'check_missing_dates-03c' - Finished in state Completed()
+14:19:00.169 | INFO    | Flow run 'wine-sawfly' - 
+Batch: 2015-01-01 to 2015-01-16
+14:19:00.181 | INFO    | Task run 'download_modis_batch-b0c' - Batch already downloaded: /mnt/workwork/geoserver_data/raw/modis/modis_ndvi_20150101_20150116.nc
+14:19:00.182 | INFO    | Task run 'download_modis_batch-b0c' - Finished in state Completed()
+14:20:28.056 | INFO    | Task run 'process_ndvi_to_geotiff-1d1' - ✓ Processed: 2015-01-09
+14:22:43.333 | INFO    | Task run 'process_ndvi_to_geotiff-1d1' - ✓ Processed: 2015-01-09
+14:24:30.757 | ERROR   | Task run 'process_ndvi_to_geotiff-1d1' - Crash detected! Execution was aborted by a termination signal.
+14:24:30.757 | ERROR   | Task run 'process_ndvi_to_geotiff-1d1' - Finished in state Crashed('Execution was aborted by a termination signal.')
+15:59:05.062 | ERROR   | prefect.server.services.telemetry - Failed to send telemetry:
+Shutting down telemetry service...

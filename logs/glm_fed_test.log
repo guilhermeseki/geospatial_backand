@@ -1,0 +1,40 @@
+16:33:13.333 | INFO    | prefect - Starting temporary server on http://127.0.0.1:8907
+See https://docs.prefect.io/v3/concepts/server#how-to-guides for more information on running a dedicated Prefect server.
+16:33:15.408 | INFO    | Flow run 'elastic-mayfly' - Beginning flow run 'elastic-mayfly' for flow 'process-glm-fed-data'
+16:33:15.409 | INFO    | Flow run 'elastic-mayfly' - ================================================================================
+16:33:15.410 | INFO    | Flow run 'elastic-mayfly' - GLM FED DATA PROCESSING FLOW
+16:33:15.410 | INFO    | Flow run 'elastic-mayfly' - ================================================================================
+16:33:15.410 | INFO    | Flow run 'elastic-mayfly' - Period: 2025-10-30 to 2025-10-30
+16:33:15.410 | INFO    | Flow run 'elastic-mayfly' - Source: NASA GHRC DAAC - GLM Gridded Flash Extent Density
+16:33:15.410 | INFO    | Flow run 'elastic-mayfly' - Resolution: 8km × 8km
+16:33:15.411 | INFO    | Flow run 'elastic-mayfly' - ================================================================================
+16:33:15.426 | INFO    | Task run 'check_earthdata_credentials-7a3' - ✓ Found .netrc file for Earthdata authentication
+16:33:15.427 | INFO    | Task run 'check_earthdata_credentials-7a3' - ✓ Retrieved credentials for user: brussi
+16:33:15.428 | INFO    | Task run 'check_earthdata_credentials-7a3' - Finished in state Completed()
+16:33:15.439 | INFO    | Task run 'check_missing_dates_fed-729' - Checking for 1 dates: 2025-10-30 to 2025-10-30
+16:33:15.440 | INFO    | Task run 'check_missing_dates_fed-729' - Found 0 existing GeoTIFF files
+16:33:15.440 | INFO    | Task run 'check_missing_dates_fed-729' - Found 0 dates in historical NetCDF
+16:33:15.441 | INFO    | Task run 'check_missing_dates_fed-729' - Missing from GeoTIFF: 1 dates
+16:33:15.441 | INFO    | Task run 'check_missing_dates_fed-729' - Missing from historical: 1 dates
+16:33:15.441 | INFO    | Task run 'check_missing_dates_fed-729' - Need to download: 1 dates
+16:33:15.443 | INFO    | Task run 'check_missing_dates_fed-729' - Finished in state Completed()
+16:33:15.443 | INFO    | Flow run 'elastic-mayfly' - Processing 1 missing dates
+16:33:15.443 | INFO    | Flow run 'elastic-mayfly' - 
+Processing date: 2025-10-30
+16:33:15.454 | INFO    | Task run 'download_glm_fed_daily-201' - ================================================================================
+16:33:15.455 | INFO    | Task run 'download_glm_fed_daily-201' - DOWNLOADING GLM FED DATA FOR 2025-10-30
+16:33:15.455 | INFO    | Task run 'download_glm_fed_daily-201' - ================================================================================
+16:33:15.456 | INFO    | Task run 'download_glm_fed_daily-201' - Using satellite: GOES-16
+16:33:15.456 | INFO    | Task run 'download_glm_fed_daily-201' - Need data from 2025-10-29 23:31 to 2025-10-30 23:59
+16:33:15.456 | INFO    | Task run 'download_glm_fed_daily-201' - Searching CMR for granules from previous day...
+16:33:16.089 | INFO    | Task run 'download_glm_fed_daily-201' - ✓ Found 0 granule(s) from previous day
+16:33:16.090 | INFO    | Task run 'download_glm_fed_daily-201' - Searching CMR for granules from target day...
+16:33:16.896 | INFO    | Task run 'download_glm_fed_daily-201' - ✓ Found 0 granule(s) from target day
+16:33:16.897 | WARNING | Task run 'download_glm_fed_daily-201' - ⚠ No data available for 2025-10-30
+16:33:16.897 | WARNING | Task run 'download_glm_fed_daily-201' -   GLM FED data may not be available for this date
+16:33:16.900 | INFO    | Task run 'download_glm_fed_daily-201' - Finished in state Completed()
+16:33:16.901 | WARNING | Flow run 'elastic-mayfly' -   ⊘ Skipping 2025-10-30 - download not implemented yet
+16:33:16.901 | INFO    | Flow run 'elastic-mayfly' - 
+✓ Processed 0 files
+16:33:16.915 | INFO    | Flow run 'elastic-mayfly' - Finished in state Completed()
+16:33:16.930 | INFO    | prefect - Stopping temporary server on http://127.0.0.1:8907

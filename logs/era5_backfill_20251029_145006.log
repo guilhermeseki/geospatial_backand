@@ -1,0 +1,2255 @@
+14:50:08.898 | INFO    | prefect - Starting temporary server on http://127.0.0.1:8598
+See https://docs.prefect.io/v3/concepts/server#how-to-guides for more information on running a dedicated Prefect server.
+14:50:11.081 | INFO    | Flow run 'ambitious-rabbit' - Beginning flow run 'ambitious-rabbit' for flow 'process-era5-land-daily'
+14:50:11.083 | INFO    | Flow run 'ambitious-rabbit' - Processing from 2015-01-01 to 2015-12-31
+14:50:11.083 | INFO    | Flow run 'ambitious-rabbit' - 
+================================================================================
+14:50:11.083 | INFO    | Flow run 'ambitious-rabbit' - Processing: 2m_temperature - daily_maximum
+14:50:11.083 | INFO    | Flow run 'ambitious-rabbit' - ================================================================================
+14:50:11.098 | INFO    | Task run 'check_missing_dates-92b' - Checking for 365 dates: 2015-01-01 to 2015-12-31
+14:50:11.512 | INFO    | Task run 'check_missing_dates-92b' - Found 2161 existing GeoTIFF files
+14:50:11.986 | INFO    | Task run 'check_missing_dates-92b' - Missing from GeoTIFF: 0 dates
+14:50:11.986 | INFO    | Task run 'check_missing_dates-92b' - Missing from historical: 365 dates
+14:50:11.986 | INFO    | Task run 'check_missing_dates-92b' - Need to download: 365 dates
+14:50:11.987 | INFO    | Task run 'check_missing_dates-92b' -   Download range: 2015-01-01 to 2015-12-31
+14:50:11.988 | INFO    | Task run 'check_missing_dates-92b' - Finished in state Completed()
+14:50:11.989 | INFO    | Flow run 'ambitious-rabbit' - Organized into 1 download batch(es)
+14:50:11.989 | INFO    | Flow run 'ambitious-rabbit' - 
+Downloading batch: 2015-01-01 to 2015-01-31
+14:50:11.990 | INFO    | Flow run 'ambitious-rabbit' -   Will process 0 GeoTIFFs
+14:50:11.990 | INFO    | Flow run 'ambitious-rabbit' -   Will append 31 to historical
+14:50:11.998 | INFO    | Task run 'download_era5_land_daily_batch-13f' - Using CDS bbox [N, W, S, E]: [6.5, -75.0, -35.0, -33.5]
+14:50:11.999 | INFO    | Task run 'download_era5_land_daily_batch-13f' -   North: 6.5, South: -35.0 (span: 41.5°)
+14:50:11.999 | INFO    | Task run 'download_era5_land_daily_batch-13f' -   West: -75.0, East: -33.5 (span: 41.5°)
+14:50:12.009 | INFO    | Task run 'download_era5_land_daily_batch-13f' - Downloading ERA5 Land Daily: 2015-01-01 to 2015-01-31
+14:50:12.010 | INFO    | Task run 'download_era5_land_daily_batch-13f' - Variable: 2m_temperature, Statistic: daily_maximum
+14:50:12.010 | INFO    | Task run 'download_era5_land_daily_batch-13f' - ================================================================================
+14:50:12.010 | INFO    | Task run 'download_era5_land_daily_batch-13f' - CDS API REQUEST:
+14:50:12.011 | INFO    | Task run 'download_era5_land_daily_batch-13f' - ================================================================================
+14:50:12.011 | INFO    | Task run 'download_era5_land_daily_batch-13f' - {
+  "variable": [
+    "2m_temperature"
+  ],
+  "year": [
+    "2015"
+  ],
+  "month": [
+    "01"
+  ],
+  "day": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "31"
+  ],
+  "daily_statistic": "daily_maximum",
+  "time_zone": "utc+00:00",
+  "frequency": "6_hourly",
+  "area": [
+    6.5,
+    -75.0,
+    -35.0,
+    -33.5
+  ]
+}
+14:50:12.012 | INFO    | Task run 'download_era5_land_daily_batch-13f' - ================================================================================
+14:50:12.012 | INFO    | Task run 'download_era5_land_daily_batch-13f' - REQUEST DETAILS:
+14:50:12.012 | INFO    | Task run 'download_era5_land_daily_batch-13f' -   Dataset: derived-era5-land-daily-statistics
+14:50:12.012 | INFO    | Task run 'download_era5_land_daily_batch-13f' -   Variable: ['2m_temperature']
+14:50:12.013 | INFO    | Task run 'download_era5_land_daily_batch-13f' -   Daily statistic: daily_maximum
+14:50:12.013 | INFO    | Task run 'download_era5_land_daily_batch-13f' -   Time zone: utc+00:00
+14:50:12.013 | INFO    | Task run 'download_era5_land_daily_batch-13f' -   Frequency: 6_hourly
+14:50:12.013 | INFO    | Task run 'download_era5_land_daily_batch-13f' -   Years: ['2015']
+14:50:12.014 | INFO    | Task run 'download_era5_land_daily_batch-13f' -   Months: ['01']
+14:50:12.014 | INFO    | Task run 'download_era5_land_daily_batch-13f' -   Days: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31']
+14:50:12.014 | INFO    | Task run 'download_era5_land_daily_batch-13f' -   Area [N,W,S,E]: [6.5, -75.0, -35.0, -33.5]
+14:50:12.014 | INFO    | Task run 'download_era5_land_daily_batch-13f' -   Area interpretation:
+14:50:12.015 | INFO    | Task run 'download_era5_land_daily_batch-13f' -     North: 6.5°
+14:50:12.015 | INFO    | Task run 'download_era5_land_daily_batch-13f' -     West: -75.0°
+14:50:12.015 | INFO    | Task run 'download_era5_land_daily_batch-13f' -     South: -35.0°
+14:50:12.016 | INFO    | Task run 'download_era5_land_daily_batch-13f' -     East: -33.5°
+14:50:12.016 | INFO    | Task run 'download_era5_land_daily_batch-13f' - ================================================================================
+14:50:13.564 | INFO    | Task run 'download_era5_land_daily_batch-13f' - Submitting request to CDS...
+2025-10-29 14:50:14,172 INFO Request ID is d1417007-0f4a-4ce8-b54f-a1b91882572c
+14:50:14.172 | INFO    | ecmwf.datastores.legacy_client - Request ID is d1417007-0f4a-4ce8-b54f-a1b91882572c
+2025-10-29 14:50:14,468 INFO status has been updated to accepted
+14:50:14.468 | INFO    | ecmwf.datastores.legacy_client - status has been updated to accepted
+2025-10-29 14:50:29,089 INFO status has been updated to successful
+14:50:29.089 | INFO    | ecmwf.datastores.legacy_client - status has been updated to successful
+================================================================================
+ERA5 LAND DAILY DATA DOWNLOAD (YEAR-BY-YEAR)
+================================================================================
+Overall range: 2015-01-01 to 2025-10-22
+Total days: 3948
+Variables: 2m_temperature (daily_maximum, daily_minimum, daily_mean)
+Region: Latin America
+Strategy: Process one year at a time to avoid timeouts
+================================================================================
+
+
+================================================================================
+Processing Year: 2015
+  Date range: 2015-01-01 to 2015-12-31
+================================================================================
+
+8cc5b1618a8ac45363f0deb8a0fc1b70.nc:   0%|          | 0.00/6.24M [00:00<?, ?B/s]8cc5b1618a8ac45363f0deb8a0fc1b70.nc:  16%|█▌        | 1.00M/6.24M [00:02<00:12, 431kB/s]8cc5b1618a8ac45363f0deb8a0fc1b70.nc:  32%|███▏      | 2.00M/6.24M [00:02<00:04, 914kB/s]8cc5b1618a8ac45363f0deb8a0fc1b70.nc:  64%|██████▍   | 4.00M/6.24M [00:02<00:01, 2.08MB/s]8cc5b1618a8ac45363f0deb8a0fc1b70.nc: 100%|██████████| 6.24M/6.24M [00:03<00:00, 3.44MB/s]                                                                                         14:50:33.851 | INFO    | Task run 'download_era5_land_daily_batch-13f' - ✓ ERA5 Land Daily downloaded: /mnt/workwork/geoserver_data/raw/era5_land_daily/2mtemperature_daily_maximum_20150101_20150131.nc
+14:50:33.852 | INFO    | Task run 'download_era5_land_daily_batch-13f' - Finished in state Completed()
+14:50:33.853 | INFO    | Flow run 'ambitious-rabbit' -   Skipping GeoTIFF processing (all exist)
+14:50:33.863 | INFO    | Task run 'append_to_yearly_historical-f05' - 📦 Appending data from 2mtemperature_daily_maximum_20150101_20150131.nc to yearly historical files
+14:50:33.863 | INFO    | Task run 'append_to_yearly_historical-f05' -   Processing 31 specific dates
+14:50:33.870 | INFO    | Task run 'append_to_yearly_historical-f05' -   Source variables: ['t2m']
+14:50:33.934 | INFO    | Task run 'append_to_yearly_historical-f05' -   Converted temperature to Celsius
+14:50:33.935 | INFO    | Task run 'append_to_yearly_historical-f05' -   Clipped to bbox: (-75.0, -35.0, -33.5, 6.5)
+14:50:33.941 | INFO    | Task run 'append_to_yearly_historical-f05' -   Processing 31 dates
+14:50:33.942 | INFO    | Task run 'append_to_yearly_historical-f05' -   Dates span 1 year(s): [2015]
+14:50:33.942 | INFO    | Task run 'append_to_yearly_historical-f05' - 
+  📅 Processing year 2015 (31 dates)
+14:50:33.964 | INFO    | Task run 'append_to_yearly_historical-f05' -     Year file exists, checking for duplicates...
+14:50:34.086 | INFO    | Task run 'append_to_yearly_historical-f05' -     All 31 dates already exist, skipping
+14:50:34.088 | INFO    | Task run 'append_to_yearly_historical-f05' - 
+✓ Updated 0 yearly file(s)
+14:50:34.092 | INFO    | Task run 'append_to_yearly_historical-f05' - Finished in state Completed()
+14:50:34.092 | INFO    | Flow run 'ambitious-rabbit' - ✓ Updated 0 yearly historical file(s)
+14:50:34.101 | INFO    | Task run 'cleanup_raw_files-ed2' - ✓ Cleaned up: 2mtemperature_daily_maximum_20150101_20150131.nc
+14:50:34.103 | INFO    | Task run 'cleanup_raw_files-ed2' - Finished in state Completed()
+14:50:34.103 | INFO    | Flow run 'ambitious-rabbit' - ✓ Completed batch: 2015-01-01 to 2015-01-31
+14:50:34.104 | INFO    | Flow run 'ambitious-rabbit' - 
+Downloading batch: 2015-02-01 to 2015-03-03
+14:50:34.105 | INFO    | Flow run 'ambitious-rabbit' -   Will process 0 GeoTIFFs
+14:50:34.105 | INFO    | Flow run 'ambitious-rabbit' -   Will append 31 to historical
+14:50:34.117 | INFO    | Task run 'download_era5_land_daily_batch-55f' - Using CDS bbox [N, W, S, E]: [6.5, -75.0, -35.0, -33.5]
+14:50:34.118 | INFO    | Task run 'download_era5_land_daily_batch-55f' -   North: 6.5, South: -35.0 (span: 41.5°)
+14:50:34.119 | INFO    | Task run 'download_era5_land_daily_batch-55f' -   West: -75.0, East: -33.5 (span: 41.5°)
+14:50:34.120 | INFO    | Task run 'download_era5_land_daily_batch-55f' - Downloading ERA5 Land Daily: 2015-02-01 to 2015-03-03
+14:50:34.120 | INFO    | Task run 'download_era5_land_daily_batch-55f' - Variable: 2m_temperature, Statistic: daily_maximum
+14:50:34.120 | INFO    | Task run 'download_era5_land_daily_batch-55f' - ================================================================================
+14:50:34.121 | INFO    | Task run 'download_era5_land_daily_batch-55f' - CDS API REQUEST:
+14:50:34.121 | INFO    | Task run 'download_era5_land_daily_batch-55f' - ================================================================================
+14:50:34.122 | INFO    | Task run 'download_era5_land_daily_batch-55f' - {
+  "variable": [
+    "2m_temperature"
+  ],
+  "year": [
+    "2015"
+  ],
+  "month": [
+    "02",
+    "03"
+  ],
+  "day": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28"
+  ],
+  "daily_statistic": "daily_maximum",
+  "time_zone": "utc+00:00",
+  "frequency": "6_hourly",
+  "area": [
+    6.5,
+    -75.0,
+    -35.0,
+    -33.5
+  ]
+}
+14:50:34.123 | INFO    | Task run 'download_era5_land_daily_batch-55f' - ================================================================================
+14:50:34.123 | INFO    | Task run 'download_era5_land_daily_batch-55f' - REQUEST DETAILS:
+14:50:34.123 | INFO    | Task run 'download_era5_land_daily_batch-55f' -   Dataset: derived-era5-land-daily-statistics
+14:50:34.124 | INFO    | Task run 'download_era5_land_daily_batch-55f' -   Variable: ['2m_temperature']
+14:50:34.124 | INFO    | Task run 'download_era5_land_daily_batch-55f' -   Daily statistic: daily_maximum
+14:50:34.124 | INFO    | Task run 'download_era5_land_daily_batch-55f' -   Time zone: utc+00:00
+14:50:34.125 | INFO    | Task run 'download_era5_land_daily_batch-55f' -   Frequency: 6_hourly
+14:50:34.125 | INFO    | Task run 'download_era5_land_daily_batch-55f' -   Years: ['2015']
+14:50:34.125 | INFO    | Task run 'download_era5_land_daily_batch-55f' -   Months: ['02', '03']
+14:50:34.125 | INFO    | Task run 'download_era5_land_daily_batch-55f' -   Days: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28']
+14:50:34.126 | INFO    | Task run 'download_era5_land_daily_batch-55f' -   Area [N,W,S,E]: [6.5, -75.0, -35.0, -33.5]
+14:50:34.126 | INFO    | Task run 'download_era5_land_daily_batch-55f' -   Area interpretation:
+14:50:34.126 | INFO    | Task run 'download_era5_land_daily_batch-55f' -     North: 6.5°
+14:50:34.127 | INFO    | Task run 'download_era5_land_daily_batch-55f' -     West: -75.0°
+14:50:34.127 | INFO    | Task run 'download_era5_land_daily_batch-55f' -     South: -35.0°
+14:50:34.127 | INFO    | Task run 'download_era5_land_daily_batch-55f' -     East: -33.5°
+14:50:34.127 | INFO    | Task run 'download_era5_land_daily_batch-55f' - ================================================================================
+14:50:35.157 | INFO    | Task run 'download_era5_land_daily_batch-55f' - Submitting request to CDS...
+2025-10-29 14:50:35,769 INFO Request ID is 222390f8-e62f-40db-9cd2-1047ec392659
+14:50:35.769 | INFO    | ecmwf.datastores.legacy_client - Request ID is 222390f8-e62f-40db-9cd2-1047ec392659
+2025-10-29 14:50:36,053 INFO status has been updated to accepted
+14:50:36.053 | INFO    | ecmwf.datastores.legacy_client - status has been updated to accepted
+2025-10-29 14:50:58,467 INFO status has been updated to successful
+14:50:58.467 | INFO    | ecmwf.datastores.legacy_client - status has been updated to successful
+b56ae2867d6393151fe5678a4a2184b7.nc:   0%|          | 0.00/15.6M [00:00<?, ?B/s]b56ae2867d6393151fe5678a4a2184b7.nc:   6%|▋         | 1.00M/15.6M [00:02<00:42, 363kB/s]b56ae2867d6393151fe5678a4a2184b7.nc:  13%|█▎        | 2.00M/15.6M [00:03<00:18, 787kB/s]b56ae2867d6393151fe5678a4a2184b7.nc:  26%|██▌       | 4.00M/15.6M [00:03<00:06, 1.82MB/s]b56ae2867d6393151fe5678a4a2184b7.nc:  45%|████▍     | 7.00M/15.6M [00:03<00:02, 3.58MB/s]b56ae2867d6393151fe5678a4a2184b7.nc:  64%|██████▍   | 10.0M/15.6M [00:04<00:01, 4.45MB/s]b56ae2867d6393151fe5678a4a2184b7.nc:  83%|████████▎ | 13.0M/15.6M [00:04<00:00, 5.96MB/s]b56ae2867d6393151fe5678a4a2184b7.nc: 100%|██████████| 15.6M/15.6M [00:04<00:00, 7.05MB/s]                                                                                         14:51:05.472 | INFO    | Task run 'download_era5_land_daily_batch-55f' - ✓ ERA5 Land Daily downloaded: /mnt/workwork/geoserver_data/raw/era5_land_daily/2mtemperature_daily_maximum_20150201_20150303.nc
+14:51:05.475 | INFO    | Task run 'download_era5_land_daily_batch-55f' - Finished in state Completed()
+14:51:05.475 | INFO    | Flow run 'ambitious-rabbit' -   Skipping GeoTIFF processing (all exist)
+14:51:05.488 | INFO    | Task run 'append_to_yearly_historical-d9a' - 📦 Appending data from 2mtemperature_daily_maximum_20150201_20150303.nc to yearly historical files
+14:51:05.489 | INFO    | Task run 'append_to_yearly_historical-d9a' -   Processing 31 specific dates
+14:51:05.499 | INFO    | Task run 'append_to_yearly_historical-d9a' -   Source variables: ['t2m']
+14:51:05.612 | INFO    | Task run 'append_to_yearly_historical-d9a' -   Converted temperature to Celsius
+14:51:05.613 | INFO    | Task run 'append_to_yearly_historical-d9a' -   Clipped to bbox: (-75.0, -35.0, -33.5, 6.5)
+14:51:05.618 | INFO    | Task run 'append_to_yearly_historical-d9a' -   Processing 31 dates
+14:51:05.618 | INFO    | Task run 'append_to_yearly_historical-d9a' -   Dates span 1 year(s): [2015]
+14:51:05.619 | INFO    | Task run 'append_to_yearly_historical-d9a' - 
+  📅 Processing year 2015 (31 dates)
+14:51:05.625 | INFO    | Task run 'append_to_yearly_historical-d9a' -     Year file exists, checking for duplicates...
+14:51:05.640 | INFO    | Task run 'append_to_yearly_historical-d9a' -     All 31 dates already exist, skipping
+14:51:05.644 | INFO    | Task run 'append_to_yearly_historical-d9a' - 
+✓ Updated 0 yearly file(s)
+14:51:05.647 | INFO    | Task run 'append_to_yearly_historical-d9a' - Finished in state Completed()
+14:51:05.648 | INFO    | Flow run 'ambitious-rabbit' - ✓ Updated 0 yearly historical file(s)
+14:51:05.657 | INFO    | Task run 'cleanup_raw_files-1f3' - ✓ Cleaned up: 2mtemperature_daily_maximum_20150201_20150303.nc
+14:51:05.659 | INFO    | Task run 'cleanup_raw_files-1f3' - Finished in state Completed()
+14:51:05.660 | INFO    | Flow run 'ambitious-rabbit' - ✓ Completed batch: 2015-02-01 to 2015-03-03
+14:51:05.660 | INFO    | Flow run 'ambitious-rabbit' - 
+Downloading batch: 2015-03-04 to 2015-04-03
+14:51:05.660 | INFO    | Flow run 'ambitious-rabbit' -   Will process 0 GeoTIFFs
+14:51:05.661 | INFO    | Flow run 'ambitious-rabbit' -   Will append 31 to historical
+14:51:05.670 | INFO    | Task run 'download_era5_land_daily_batch-916' - Using CDS bbox [N, W, S, E]: [6.5, -75.0, -35.0, -33.5]
+14:51:05.671 | INFO    | Task run 'download_era5_land_daily_batch-916' -   North: 6.5, South: -35.0 (span: 41.5°)
+14:51:05.671 | INFO    | Task run 'download_era5_land_daily_batch-916' -   West: -75.0, East: -33.5 (span: 41.5°)
+14:51:05.672 | INFO    | Task run 'download_era5_land_daily_batch-916' - Downloading ERA5 Land Daily: 2015-03-04 to 2015-04-03
+14:51:05.673 | INFO    | Task run 'download_era5_land_daily_batch-916' - Variable: 2m_temperature, Statistic: daily_maximum
+14:51:05.673 | INFO    | Task run 'download_era5_land_daily_batch-916' - ================================================================================
+14:51:05.674 | INFO    | Task run 'download_era5_land_daily_batch-916' - CDS API REQUEST:
+14:51:05.674 | INFO    | Task run 'download_era5_land_daily_batch-916' - ================================================================================
+14:51:05.675 | INFO    | Task run 'download_era5_land_daily_batch-916' - {
+  "variable": [
+    "2m_temperature"
+  ],
+  "year": [
+    "2015"
+  ],
+  "month": [
+    "03",
+    "04"
+  ],
+  "day": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "31"
+  ],
+  "daily_statistic": "daily_maximum",
+  "time_zone": "utc+00:00",
+  "frequency": "6_hourly",
+  "area": [
+    6.5,
+    -75.0,
+    -35.0,
+    -33.5
+  ]
+}
+14:51:05.675 | INFO    | Task run 'download_era5_land_daily_batch-916' - ================================================================================
+14:51:05.676 | INFO    | Task run 'download_era5_land_daily_batch-916' - REQUEST DETAILS:
+14:51:05.676 | INFO    | Task run 'download_era5_land_daily_batch-916' -   Dataset: derived-era5-land-daily-statistics
+14:51:05.676 | INFO    | Task run 'download_era5_land_daily_batch-916' -   Variable: ['2m_temperature']
+14:51:05.676 | INFO    | Task run 'download_era5_land_daily_batch-916' -   Daily statistic: daily_maximum
+14:51:05.677 | INFO    | Task run 'download_era5_land_daily_batch-916' -   Time zone: utc+00:00
+14:51:05.677 | INFO    | Task run 'download_era5_land_daily_batch-916' -   Frequency: 6_hourly
+14:51:05.677 | INFO    | Task run 'download_era5_land_daily_batch-916' -   Years: ['2015']
+14:51:05.677 | INFO    | Task run 'download_era5_land_daily_batch-916' -   Months: ['03', '04']
+14:51:05.678 | INFO    | Task run 'download_era5_land_daily_batch-916' -   Days: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31']
+14:51:05.678 | INFO    | Task run 'download_era5_land_daily_batch-916' -   Area [N,W,S,E]: [6.5, -75.0, -35.0, -33.5]
+14:51:05.678 | INFO    | Task run 'download_era5_land_daily_batch-916' -   Area interpretation:
+14:51:05.678 | INFO    | Task run 'download_era5_land_daily_batch-916' -     North: 6.5°
+14:51:05.678 | INFO    | Task run 'download_era5_land_daily_batch-916' -     West: -75.0°
+14:51:05.679 | INFO    | Task run 'download_era5_land_daily_batch-916' -     South: -35.0°
+14:51:05.679 | INFO    | Task run 'download_era5_land_daily_batch-916' -     East: -33.5°
+14:51:05.679 | INFO    | Task run 'download_era5_land_daily_batch-916' - ================================================================================
+14:51:06.935 | INFO    | Task run 'download_era5_land_daily_batch-916' - Submitting request to CDS...
+2025-10-29 14:51:07,542 INFO Request ID is e4caf64a-b775-4227-bfd7-1174518d7916
+14:51:07.542 | INFO    | ecmwf.datastores.legacy_client - Request ID is e4caf64a-b775-4227-bfd7-1174518d7916
+2025-10-29 14:51:07,805 INFO status has been updated to accepted
+14:51:07.805 | INFO    | ecmwf.datastores.legacy_client - status has been updated to accepted
+2025-10-29 14:51:22,343 INFO status has been updated to successful
+14:51:22.343 | INFO    | ecmwf.datastores.legacy_client - status has been updated to successful
+37bfcc0dce8f0b3799aee068e6f47b.nc:   0%|          | 0.00/15.3M [00:00<?, ?B/s]37bfcc0dce8f0b3799aee068e6f47b.nc:   7%|▋         | 1.00M/15.3M [00:02<00:35, 420kB/s]37bfcc0dce8f0b3799aee068e6f47b.nc:  13%|█▎        | 2.00M/15.3M [00:02<00:15, 890kB/s]37bfcc0dce8f0b3799aee068e6f47b.nc:  26%|██▌       | 4.00M/15.3M [00:03<00:05, 2.02MB/s]37bfcc0dce8f0b3799aee068e6f47b.nc:  46%|████▌     | 7.00M/15.3M [00:03<00:02, 3.71MB/s]37bfcc0dce8f0b3799aee068e6f47b.nc:  59%|█████▊    | 9.00M/15.3M [00:03<00:01, 4.62MB/s]37bfcc0dce8f0b3799aee068e6f47b.nc:  72%|███████▏  | 11.0M/15.3M [00:04<00:01, 4.45MB/s]37bfcc0dce8f0b3799aee068e6f47b.nc:  98%|█████████▊| 15.0M/15.3M [00:04<00:00, 6.89MB/s]                                                                                       14:51:28.004 | INFO    | Task run 'download_era5_land_daily_batch-916' - ✓ ERA5 Land Daily downloaded: /mnt/workwork/geoserver_data/raw/era5_land_daily/2mtemperature_daily_maximum_20150304_20150403.nc
+14:51:28.006 | INFO    | Task run 'download_era5_land_daily_batch-916' - Finished in state Completed()
+14:51:28.007 | INFO    | Flow run 'ambitious-rabbit' -   Skipping GeoTIFF processing (all exist)
+14:51:28.017 | INFO    | Task run 'append_to_yearly_historical-1bd' - 📦 Appending data from 2mtemperature_daily_maximum_20150304_20150403.nc to yearly historical files
+14:51:28.017 | INFO    | Task run 'append_to_yearly_historical-1bd' -   Processing 31 specific dates
+14:51:28.025 | INFO    | Task run 'append_to_yearly_historical-1bd' -   Source variables: ['t2m']
+14:51:28.142 | INFO    | Task run 'append_to_yearly_historical-1bd' -   Converted temperature to Celsius
+14:51:28.143 | INFO    | Task run 'append_to_yearly_historical-1bd' -   Clipped to bbox: (-75.0, -35.0, -33.5, 6.5)
+14:51:28.147 | INFO    | Task run 'append_to_yearly_historical-1bd' -   Processing 31 dates
+14:51:28.148 | INFO    | Task run 'append_to_yearly_historical-1bd' -   Dates span 1 year(s): [2015]
+14:51:28.148 | INFO    | Task run 'append_to_yearly_historical-1bd' - 
+  📅 Processing year 2015 (31 dates)
+14:51:28.153 | INFO    | Task run 'append_to_yearly_historical-1bd' -     Year file exists, checking for duplicates...
+14:51:28.166 | INFO    | Task run 'append_to_yearly_historical-1bd' -     All 31 dates already exist, skipping
+14:51:28.168 | INFO    | Task run 'append_to_yearly_historical-1bd' - 
+✓ Updated 0 yearly file(s)
+14:51:28.170 | INFO    | Task run 'append_to_yearly_historical-1bd' - Finished in state Completed()
+14:51:28.171 | INFO    | Flow run 'ambitious-rabbit' - ✓ Updated 0 yearly historical file(s)
+14:51:28.179 | INFO    | Task run 'cleanup_raw_files-a65' - ✓ Cleaned up: 2mtemperature_daily_maximum_20150304_20150403.nc
+14:51:28.180 | INFO    | Task run 'cleanup_raw_files-a65' - Finished in state Completed()
+14:51:28.180 | INFO    | Flow run 'ambitious-rabbit' - ✓ Completed batch: 2015-03-04 to 2015-04-03
+14:51:28.180 | INFO    | Flow run 'ambitious-rabbit' - 
+Downloading batch: 2015-04-04 to 2015-05-04
+14:51:28.181 | INFO    | Flow run 'ambitious-rabbit' -   Will process 0 GeoTIFFs
+14:51:28.181 | INFO    | Flow run 'ambitious-rabbit' -   Will append 31 to historical
+14:51:28.192 | INFO    | Task run 'download_era5_land_daily_batch-ba9' - Using CDS bbox [N, W, S, E]: [6.5, -75.0, -35.0, -33.5]
+14:51:28.193 | INFO    | Task run 'download_era5_land_daily_batch-ba9' -   North: 6.5, South: -35.0 (span: 41.5°)
+14:51:28.193 | INFO    | Task run 'download_era5_land_daily_batch-ba9' -   West: -75.0, East: -33.5 (span: 41.5°)
+14:51:28.194 | INFO    | Task run 'download_era5_land_daily_batch-ba9' - Downloading ERA5 Land Daily: 2015-04-04 to 2015-05-04
+14:51:28.194 | INFO    | Task run 'download_era5_land_daily_batch-ba9' - Variable: 2m_temperature, Statistic: daily_maximum
+14:51:28.194 | INFO    | Task run 'download_era5_land_daily_batch-ba9' - ================================================================================
+14:51:28.195 | INFO    | Task run 'download_era5_land_daily_batch-ba9' - CDS API REQUEST:
+14:51:28.195 | INFO    | Task run 'download_era5_land_daily_batch-ba9' - ================================================================================
+14:51:28.195 | INFO    | Task run 'download_era5_land_daily_batch-ba9' - {
+  "variable": [
+    "2m_temperature"
+  ],
+  "year": [
+    "2015"
+  ],
+  "month": [
+    "04",
+    "05"
+  ],
+  "day": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30"
+  ],
+  "daily_statistic": "daily_maximum",
+  "time_zone": "utc+00:00",
+  "frequency": "6_hourly",
+  "area": [
+    6.5,
+    -75.0,
+    -35.0,
+    -33.5
+  ]
+}
+14:51:28.196 | INFO    | Task run 'download_era5_land_daily_batch-ba9' - ================================================================================
+14:51:28.196 | INFO    | Task run 'download_era5_land_daily_batch-ba9' - REQUEST DETAILS:
+14:51:28.196 | INFO    | Task run 'download_era5_land_daily_batch-ba9' -   Dataset: derived-era5-land-daily-statistics
+14:51:28.196 | INFO    | Task run 'download_era5_land_daily_batch-ba9' -   Variable: ['2m_temperature']
+14:51:28.197 | INFO    | Task run 'download_era5_land_daily_batch-ba9' -   Daily statistic: daily_maximum
+14:51:28.197 | INFO    | Task run 'download_era5_land_daily_batch-ba9' -   Time zone: utc+00:00
+14:51:28.197 | INFO    | Task run 'download_era5_land_daily_batch-ba9' -   Frequency: 6_hourly
+14:51:28.197 | INFO    | Task run 'download_era5_land_daily_batch-ba9' -   Years: ['2015']
+14:51:28.198 | INFO    | Task run 'download_era5_land_daily_batch-ba9' -   Months: ['04', '05']
+14:51:28.198 | INFO    | Task run 'download_era5_land_daily_batch-ba9' -   Days: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30']
+14:51:28.198 | INFO    | Task run 'download_era5_land_daily_batch-ba9' -   Area [N,W,S,E]: [6.5, -75.0, -35.0, -33.5]
+14:51:28.198 | INFO    | Task run 'download_era5_land_daily_batch-ba9' -   Area interpretation:
+14:51:28.199 | INFO    | Task run 'download_era5_land_daily_batch-ba9' -     North: 6.5°
+14:51:28.199 | INFO    | Task run 'download_era5_land_daily_batch-ba9' -     West: -75.0°
+14:51:28.199 | INFO    | Task run 'download_era5_land_daily_batch-ba9' -     South: -35.0°
+14:51:28.199 | INFO    | Task run 'download_era5_land_daily_batch-ba9' -     East: -33.5°
+14:51:28.200 | INFO    | Task run 'download_era5_land_daily_batch-ba9' - ================================================================================
+14:51:29.222 | INFO    | Task run 'download_era5_land_daily_batch-ba9' - Submitting request to CDS...
+2025-10-29 14:51:29,820 INFO Request ID is 4c7327d4-aa84-4fea-a667-c55edb590703
+14:51:29.820 | INFO    | ecmwf.datastores.legacy_client - Request ID is 4c7327d4-aa84-4fea-a667-c55edb590703
+2025-10-29 14:51:30,095 INFO status has been updated to accepted
+14:51:30.095 | INFO    | ecmwf.datastores.legacy_client - status has been updated to accepted
+2025-10-29 14:51:52,800 INFO status has been updated to running
+14:51:52.800 | INFO    | ecmwf.datastores.legacy_client - status has been updated to running
+2025-10-29 14:52:04,497 INFO status has been updated to successful
+14:52:04.497 | INFO    | ecmwf.datastores.legacy_client - status has been updated to successful
+3adee18fff6b53e99fb15a693981e3d9.nc:   0%|          | 0.00/14.6M [00:00<?, ?B/s]3adee18fff6b53e99fb15a693981e3d9.nc:   7%|▋         | 1.00M/14.6M [00:02<00:30, 473kB/s]3adee18fff6b53e99fb15a693981e3d9.nc:  14%|█▎        | 2.00M/14.6M [00:02<00:13, 992kB/s]3adee18fff6b53e99fb15a693981e3d9.nc:  27%|██▋       | 4.00M/14.6M [00:02<00:04, 2.23MB/s]3adee18fff6b53e99fb15a693981e3d9.nc:  48%|████▊     | 7.00M/14.6M [00:03<00:02, 3.55MB/s]3adee18fff6b53e99fb15a693981e3d9.nc:  69%|██████▊   | 10.0M/14.6M [00:03<00:00, 5.25MB/s]3adee18fff6b53e99fb15a693981e3d9.nc:  82%|████████▏ | 12.0M/14.6M [00:03<00:00, 5.83MB/s]                                                                                         14:52:09.814 | INFO    | Task run 'download_era5_land_daily_batch-ba9' - ✓ ERA5 Land Daily downloaded: /mnt/workwork/geoserver_data/raw/era5_land_daily/2mtemperature_daily_maximum_20150404_20150504.nc
+14:52:09.816 | INFO    | Task run 'download_era5_land_daily_batch-ba9' - Finished in state Completed()
+14:52:09.817 | INFO    | Flow run 'ambitious-rabbit' -   Skipping GeoTIFF processing (all exist)
+14:52:09.829 | INFO    | Task run 'append_to_yearly_historical-6d0' - 📦 Appending data from 2mtemperature_daily_maximum_20150404_20150504.nc to yearly historical files
+14:52:09.829 | INFO    | Task run 'append_to_yearly_historical-6d0' -   Processing 31 specific dates
+14:52:09.840 | INFO    | Task run 'append_to_yearly_historical-6d0' -   Source variables: ['t2m']
+14:52:09.960 | INFO    | Task run 'append_to_yearly_historical-6d0' -   Converted temperature to Celsius
+14:52:09.962 | INFO    | Task run 'append_to_yearly_historical-6d0' -   Clipped to bbox: (-75.0, -35.0, -33.5, 6.5)
+14:52:09.969 | INFO    | Task run 'append_to_yearly_historical-6d0' -   Processing 31 dates
+14:52:09.970 | INFO    | Task run 'append_to_yearly_historical-6d0' -   Dates span 1 year(s): [2015]
+14:52:09.971 | INFO    | Task run 'append_to_yearly_historical-6d0' - 
+  📅 Processing year 2015 (31 dates)
+14:52:09.979 | INFO    | Task run 'append_to_yearly_historical-6d0' -     Year file exists, checking for duplicates...
+14:52:09.996 | INFO    | Task run 'append_to_yearly_historical-6d0' -     All 31 dates already exist, skipping
+14:52:10.000 | INFO    | Task run 'append_to_yearly_historical-6d0' - 
+✓ Updated 0 yearly file(s)
+14:52:10.004 | INFO    | Task run 'append_to_yearly_historical-6d0' - Finished in state Completed()
+14:52:10.006 | INFO    | Flow run 'ambitious-rabbit' - ✓ Updated 0 yearly historical file(s)
+14:52:10.019 | INFO    | Task run 'cleanup_raw_files-000' - ✓ Cleaned up: 2mtemperature_daily_maximum_20150404_20150504.nc
+14:52:10.021 | INFO    | Task run 'cleanup_raw_files-000' - Finished in state Completed()
+14:52:10.021 | INFO    | Flow run 'ambitious-rabbit' - ✓ Completed batch: 2015-04-04 to 2015-05-04
+14:52:10.021 | INFO    | Flow run 'ambitious-rabbit' - 
+Downloading batch: 2015-05-05 to 2015-06-04
+14:52:10.022 | INFO    | Flow run 'ambitious-rabbit' -   Will process 0 GeoTIFFs
+14:52:10.022 | INFO    | Flow run 'ambitious-rabbit' -   Will append 31 to historical
+14:52:10.034 | INFO    | Task run 'download_era5_land_daily_batch-251' - Using CDS bbox [N, W, S, E]: [6.5, -75.0, -35.0, -33.5]
+14:52:10.034 | INFO    | Task run 'download_era5_land_daily_batch-251' -   North: 6.5, South: -35.0 (span: 41.5°)
+14:52:10.035 | INFO    | Task run 'download_era5_land_daily_batch-251' -   West: -75.0, East: -33.5 (span: 41.5°)
+14:52:10.035 | INFO    | Task run 'download_era5_land_daily_batch-251' - Downloading ERA5 Land Daily: 2015-05-05 to 2015-06-04
+14:52:10.036 | INFO    | Task run 'download_era5_land_daily_batch-251' - Variable: 2m_temperature, Statistic: daily_maximum
+14:52:10.036 | INFO    | Task run 'download_era5_land_daily_batch-251' - ================================================================================
+14:52:10.036 | INFO    | Task run 'download_era5_land_daily_batch-251' - CDS API REQUEST:
+14:52:10.037 | INFO    | Task run 'download_era5_land_daily_batch-251' - ================================================================================
+14:52:10.037 | INFO    | Task run 'download_era5_land_daily_batch-251' - {
+  "variable": [
+    "2m_temperature"
+  ],
+  "year": [
+    "2015"
+  ],
+  "month": [
+    "05",
+    "06"
+  ],
+  "day": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "31"
+  ],
+  "daily_statistic": "daily_maximum",
+  "time_zone": "utc+00:00",
+  "frequency": "6_hourly",
+  "area": [
+    6.5,
+    -75.0,
+    -35.0,
+    -33.5
+  ]
+}
+14:52:10.037 | INFO    | Task run 'download_era5_land_daily_batch-251' - ================================================================================
+14:52:10.038 | INFO    | Task run 'download_era5_land_daily_batch-251' - REQUEST DETAILS:
+14:52:10.038 | INFO    | Task run 'download_era5_land_daily_batch-251' -   Dataset: derived-era5-land-daily-statistics
+14:52:10.038 | INFO    | Task run 'download_era5_land_daily_batch-251' -   Variable: ['2m_temperature']
+14:52:10.039 | INFO    | Task run 'download_era5_land_daily_batch-251' -   Daily statistic: daily_maximum
+14:52:10.039 | INFO    | Task run 'download_era5_land_daily_batch-251' -   Time zone: utc+00:00
+14:52:10.039 | INFO    | Task run 'download_era5_land_daily_batch-251' -   Frequency: 6_hourly
+14:52:10.039 | INFO    | Task run 'download_era5_land_daily_batch-251' -   Years: ['2015']
+14:52:10.039 | INFO    | Task run 'download_era5_land_daily_batch-251' -   Months: ['05', '06']
+14:52:10.040 | INFO    | Task run 'download_era5_land_daily_batch-251' -   Days: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31']
+14:52:10.040 | INFO    | Task run 'download_era5_land_daily_batch-251' -   Area [N,W,S,E]: [6.5, -75.0, -35.0, -33.5]
+14:52:10.040 | INFO    | Task run 'download_era5_land_daily_batch-251' -   Area interpretation:
+14:52:10.040 | INFO    | Task run 'download_era5_land_daily_batch-251' -     North: 6.5°
+14:52:10.041 | INFO    | Task run 'download_era5_land_daily_batch-251' -     West: -75.0°
+14:52:10.041 | INFO    | Task run 'download_era5_land_daily_batch-251' -     South: -35.0°
+14:52:10.041 | INFO    | Task run 'download_era5_land_daily_batch-251' -     East: -33.5°
+14:52:10.042 | INFO    | Task run 'download_era5_land_daily_batch-251' - ================================================================================
+14:52:11.054 | INFO    | Task run 'download_era5_land_daily_batch-251' - Submitting request to CDS...
+2025-10-29 14:52:11,768 INFO Request ID is 19dcd034-1182-4fc1-987c-01bbdb65ec53
+14:52:11.768 | INFO    | ecmwf.datastores.legacy_client - Request ID is 19dcd034-1182-4fc1-987c-01bbdb65ec53
+2025-10-29 14:52:12,031 INFO status has been updated to accepted
+14:52:12.031 | INFO    | ecmwf.datastores.legacy_client - status has been updated to accepted
+2025-10-29 14:52:21,252 INFO status has been updated to successful
+14:52:21.252 | INFO    | ecmwf.datastores.legacy_client - status has been updated to successful
+936a60292c670d0bbff6d2dce57c7b83.nc:   0%|          | 0.00/13.5M [00:00<?, ?B/s]936a60292c670d0bbff6d2dce57c7b83.nc:   7%|▋         | 1.00M/13.5M [00:02<00:31, 417kB/s]936a60292c670d0bbff6d2dce57c7b83.nc:  15%|█▍        | 2.00M/13.5M [00:02<00:13, 885kB/s]936a60292c670d0bbff6d2dce57c7b83.nc:  30%|██▉       | 4.00M/13.5M [00:03<00:04, 2.01MB/s]936a60292c670d0bbff6d2dce57c7b83.nc:  52%|█████▏    | 7.00M/13.5M [00:03<00:01, 3.87MB/s]936a60292c670d0bbff6d2dce57c7b83.nc:  74%|███████▍  | 10.0M/13.5M [00:03<00:00, 4.66MB/s]936a60292c670d0bbff6d2dce57c7b83.nc:  96%|█████████▋| 13.0M/13.5M [00:04<00:00, 6.17MB/s]                                                                                         14:52:31.875 | INFO    | Task run 'download_era5_land_daily_batch-251' - ✓ ERA5 Land Daily downloaded: /mnt/workwork/geoserver_data/raw/era5_land_daily/2mtemperature_daily_maximum_20150505_20150604.nc
+14:52:31.877 | INFO    | Task run 'download_era5_land_daily_batch-251' - Finished in state Completed()
+14:52:31.877 | INFO    | Flow run 'ambitious-rabbit' -   Skipping GeoTIFF processing (all exist)
+14:52:31.887 | INFO    | Task run 'append_to_yearly_historical-374' - 📦 Appending data from 2mtemperature_daily_maximum_20150505_20150604.nc to yearly historical files
+14:52:31.887 | INFO    | Task run 'append_to_yearly_historical-374' -   Processing 31 specific dates
+14:52:31.897 | INFO    | Task run 'append_to_yearly_historical-374' -   Source variables: ['t2m']
+14:52:32.018 | INFO    | Task run 'append_to_yearly_historical-374' -   Converted temperature to Celsius
+14:52:32.019 | INFO    | Task run 'append_to_yearly_historical-374' -   Clipped to bbox: (-75.0, -35.0, -33.5, 6.5)
+14:52:32.024 | INFO    | Task run 'append_to_yearly_historical-374' -   Processing 31 dates
+14:52:32.024 | INFO    | Task run 'append_to_yearly_historical-374' -   Dates span 1 year(s): [2015]
+14:52:32.025 | INFO    | Task run 'append_to_yearly_historical-374' - 
+  📅 Processing year 2015 (31 dates)
+14:52:32.030 | INFO    | Task run 'append_to_yearly_historical-374' -     Year file exists, checking for duplicates...
+14:52:32.044 | INFO    | Task run 'append_to_yearly_historical-374' -     All 31 dates already exist, skipping
+14:52:32.047 | INFO    | Task run 'append_to_yearly_historical-374' - 
+✓ Updated 0 yearly file(s)
+14:52:32.049 | INFO    | Task run 'append_to_yearly_historical-374' - Finished in state Completed()
+14:52:32.050 | INFO    | Flow run 'ambitious-rabbit' - ✓ Updated 0 yearly historical file(s)
+14:52:32.058 | INFO    | Task run 'cleanup_raw_files-a5f' - ✓ Cleaned up: 2mtemperature_daily_maximum_20150505_20150604.nc
+14:52:32.059 | INFO    | Task run 'cleanup_raw_files-a5f' - Finished in state Completed()
+14:52:32.059 | INFO    | Flow run 'ambitious-rabbit' - ✓ Completed batch: 2015-05-05 to 2015-06-04
+14:52:32.060 | INFO    | Flow run 'ambitious-rabbit' - 
+Downloading batch: 2015-06-05 to 2015-07-05
+14:52:32.060 | INFO    | Flow run 'ambitious-rabbit' -   Will process 0 GeoTIFFs
+14:52:32.060 | INFO    | Flow run 'ambitious-rabbit' -   Will append 31 to historical
+14:52:32.071 | INFO    | Task run 'download_era5_land_daily_batch-eb5' - Using CDS bbox [N, W, S, E]: [6.5, -75.0, -35.0, -33.5]
+14:52:32.071 | INFO    | Task run 'download_era5_land_daily_batch-eb5' -   North: 6.5, South: -35.0 (span: 41.5°)
+14:52:32.072 | INFO    | Task run 'download_era5_land_daily_batch-eb5' -   West: -75.0, East: -33.5 (span: 41.5°)
+14:52:32.072 | INFO    | Task run 'download_era5_land_daily_batch-eb5' - Downloading ERA5 Land Daily: 2015-06-05 to 2015-07-05
+14:52:32.073 | INFO    | Task run 'download_era5_land_daily_batch-eb5' - Variable: 2m_temperature, Statistic: daily_maximum
+14:52:32.073 | INFO    | Task run 'download_era5_land_daily_batch-eb5' - ================================================================================
+14:52:32.073 | INFO    | Task run 'download_era5_land_daily_batch-eb5' - CDS API REQUEST:
+14:52:32.073 | INFO    | Task run 'download_era5_land_daily_batch-eb5' - ================================================================================
+14:52:32.074 | INFO    | Task run 'download_era5_land_daily_batch-eb5' - {
+  "variable": [
+    "2m_temperature"
+  ],
+  "year": [
+    "2015"
+  ],
+  "month": [
+    "06",
+    "07"
+  ],
+  "day": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30"
+  ],
+  "daily_statistic": "daily_maximum",
+  "time_zone": "utc+00:00",
+  "frequency": "6_hourly",
+  "area": [
+    6.5,
+    -75.0,
+    -35.0,
+    -33.5
+  ]
+}
+14:52:32.074 | INFO    | Task run 'download_era5_land_daily_batch-eb5' - ================================================================================
+14:52:32.074 | INFO    | Task run 'download_era5_land_daily_batch-eb5' - REQUEST DETAILS:
+14:52:32.075 | INFO    | Task run 'download_era5_land_daily_batch-eb5' -   Dataset: derived-era5-land-daily-statistics
+14:52:32.075 | INFO    | Task run 'download_era5_land_daily_batch-eb5' -   Variable: ['2m_temperature']
+14:52:32.075 | INFO    | Task run 'download_era5_land_daily_batch-eb5' -   Daily statistic: daily_maximum
+14:52:32.075 | INFO    | Task run 'download_era5_land_daily_batch-eb5' -   Time zone: utc+00:00
+14:52:32.076 | INFO    | Task run 'download_era5_land_daily_batch-eb5' -   Frequency: 6_hourly
+14:52:32.076 | INFO    | Task run 'download_era5_land_daily_batch-eb5' -   Years: ['2015']
+14:52:32.076 | INFO    | Task run 'download_era5_land_daily_batch-eb5' -   Months: ['06', '07']
+14:52:32.076 | INFO    | Task run 'download_era5_land_daily_batch-eb5' -   Days: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30']
+14:52:32.077 | INFO    | Task run 'download_era5_land_daily_batch-eb5' -   Area [N,W,S,E]: [6.5, -75.0, -35.0, -33.5]
+14:52:32.077 | INFO    | Task run 'download_era5_land_daily_batch-eb5' -   Area interpretation:
+14:52:32.077 | INFO    | Task run 'download_era5_land_daily_batch-eb5' -     North: 6.5°
+14:52:32.077 | INFO    | Task run 'download_era5_land_daily_batch-eb5' -     West: -75.0°
+14:52:32.077 | INFO    | Task run 'download_era5_land_daily_batch-eb5' -     South: -35.0°
+14:52:32.078 | INFO    | Task run 'download_era5_land_daily_batch-eb5' -     East: -33.5°
+14:52:32.078 | INFO    | Task run 'download_era5_land_daily_batch-eb5' - ================================================================================
+14:52:33.352 | INFO    | Task run 'download_era5_land_daily_batch-eb5' - Submitting request to CDS...
+2025-10-29 14:52:33,951 INFO Request ID is 590a8c55-3120-4e01-81f8-17e07d26b9e0
+14:52:33.951 | INFO    | ecmwf.datastores.legacy_client - Request ID is 590a8c55-3120-4e01-81f8-17e07d26b9e0
+2025-10-29 14:52:34,237 INFO status has been updated to accepted
+14:52:34.237 | INFO    | ecmwf.datastores.legacy_client - status has been updated to accepted
+2025-10-29 14:53:08,411 INFO status has been updated to successful
+14:53:08.411 | INFO    | ecmwf.datastores.legacy_client - status has been updated to successful
+ee48f2e340bf01d820f6c3dba95fe876.nc:   0%|          | 0.00/15.7M [00:00<?, ?B/s]ee48f2e340bf01d820f6c3dba95fe876.nc:   6%|▋         | 1.00M/15.7M [00:02<00:37, 417kB/s]ee48f2e340bf01d820f6c3dba95fe876.nc:  13%|█▎        | 2.00M/15.7M [00:02<00:16, 885kB/s]ee48f2e340bf01d820f6c3dba95fe876.nc:  19%|█▉        | 3.00M/15.7M [00:03<00:09, 1.34MB/s]ee48f2e340bf01d820f6c3dba95fe876.nc:  45%|████▍     | 7.00M/15.7M [00:03<00:02, 3.99MB/s]ee48f2e340bf01d820f6c3dba95fe876.nc:  51%|█████     | 8.00M/15.7M [00:03<00:02, 3.98MB/s]ee48f2e340bf01d820f6c3dba95fe876.nc:  57%|█████▋    | 9.00M/15.7M [00:03<00:01, 4.08MB/s]ee48f2e340bf01d820f6c3dba95fe876.nc:  76%|███████▋  | 12.0M/15.7M [00:04<00:00, 6.08MB/s]ee48f2e340bf01d820f6c3dba95fe876.nc:  83%|████████▎ | 13.0M/15.7M [00:04<00:00, 5.56MB/s]ee48f2e340bf01d820f6c3dba95fe876.nc:  89%|████████▉ | 14.0M/15.7M [00:04<00:00, 5.19MB/s]ee48f2e340bf01d820f6c3dba95fe876.nc: 100%|██████████| 15.7M/15.7M [00:05<00:00, 4.51MB/s]                                                                                         14:53:14.832 | INFO    | Task run 'download_era5_land_daily_batch-eb5' - ✓ ERA5 Land Daily downloaded: /mnt/workwork/geoserver_data/raw/era5_land_daily/2mtemperature_daily_maximum_20150605_20150705.nc
+14:53:14.834 | INFO    | Task run 'download_era5_land_daily_batch-eb5' - Finished in state Completed()
+14:53:14.835 | INFO    | Flow run 'ambitious-rabbit' -   Skipping GeoTIFF processing (all exist)
+14:53:14.845 | INFO    | Task run 'append_to_yearly_historical-6b1' - 📦 Appending data from 2mtemperature_daily_maximum_20150605_20150705.nc to yearly historical files
+14:53:14.845 | INFO    | Task run 'append_to_yearly_historical-6b1' -   Processing 31 specific dates
+14:53:14.853 | INFO    | Task run 'append_to_yearly_historical-6b1' -   Source variables: ['t2m']
+14:53:14.973 | INFO    | Task run 'append_to_yearly_historical-6b1' -   Converted temperature to Celsius
+14:53:14.974 | INFO    | Task run 'append_to_yearly_historical-6b1' -   Clipped to bbox: (-75.0, -35.0, -33.5, 6.5)
+14:53:14.978 | INFO    | Task run 'append_to_yearly_historical-6b1' -   Processing 31 dates
+14:53:14.979 | INFO    | Task run 'append_to_yearly_historical-6b1' -   Dates span 1 year(s): [2015]
+14:53:14.979 | INFO    | Task run 'append_to_yearly_historical-6b1' - 
+  📅 Processing year 2015 (31 dates)
+14:53:14.984 | INFO    | Task run 'append_to_yearly_historical-6b1' -     Year file exists, checking for duplicates...
+14:53:15.002 | INFO    | Task run 'append_to_yearly_historical-6b1' -     All 31 dates already exist, skipping
+14:53:15.005 | INFO    | Task run 'append_to_yearly_historical-6b1' - 
+✓ Updated 0 yearly file(s)
+14:53:15.009 | INFO    | Task run 'append_to_yearly_historical-6b1' - Finished in state Completed()
+14:53:15.009 | INFO    | Flow run 'ambitious-rabbit' - ✓ Updated 0 yearly historical file(s)
+14:53:15.017 | INFO    | Task run 'cleanup_raw_files-e6f' - ✓ Cleaned up: 2mtemperature_daily_maximum_20150605_20150705.nc
+14:53:15.018 | INFO    | Task run 'cleanup_raw_files-e6f' - Finished in state Completed()
+14:53:15.018 | INFO    | Flow run 'ambitious-rabbit' - ✓ Completed batch: 2015-06-05 to 2015-07-05
+14:53:15.019 | INFO    | Flow run 'ambitious-rabbit' - 
+Downloading batch: 2015-07-06 to 2015-08-05
+14:53:15.019 | INFO    | Flow run 'ambitious-rabbit' -   Will process 0 GeoTIFFs
+14:53:15.019 | INFO    | Flow run 'ambitious-rabbit' -   Will append 31 to historical
+14:53:15.029 | INFO    | Task run 'download_era5_land_daily_batch-76f' - Using CDS bbox [N, W, S, E]: [6.5, -75.0, -35.0, -33.5]
+14:53:15.029 | INFO    | Task run 'download_era5_land_daily_batch-76f' -   North: 6.5, South: -35.0 (span: 41.5°)
+14:53:15.030 | INFO    | Task run 'download_era5_land_daily_batch-76f' -   West: -75.0, East: -33.5 (span: 41.5°)
+14:53:15.030 | INFO    | Task run 'download_era5_land_daily_batch-76f' - Downloading ERA5 Land Daily: 2015-07-06 to 2015-08-05
+14:53:15.031 | INFO    | Task run 'download_era5_land_daily_batch-76f' - Variable: 2m_temperature, Statistic: daily_maximum
+14:53:15.031 | INFO    | Task run 'download_era5_land_daily_batch-76f' - ================================================================================
+14:53:15.031 | INFO    | Task run 'download_era5_land_daily_batch-76f' - CDS API REQUEST:
+14:53:15.031 | INFO    | Task run 'download_era5_land_daily_batch-76f' - ================================================================================
+14:53:15.032 | INFO    | Task run 'download_era5_land_daily_batch-76f' - {
+  "variable": [
+    "2m_temperature"
+  ],
+  "year": [
+    "2015"
+  ],
+  "month": [
+    "07",
+    "08"
+  ],
+  "day": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "31"
+  ],
+  "daily_statistic": "daily_maximum",
+  "time_zone": "utc+00:00",
+  "frequency": "6_hourly",
+  "area": [
+    6.5,
+    -75.0,
+    -35.0,
+    -33.5
+  ]
+}
+14:53:15.032 | INFO    | Task run 'download_era5_land_daily_batch-76f' - ================================================================================
+14:53:15.033 | INFO    | Task run 'download_era5_land_daily_batch-76f' - REQUEST DETAILS:
+14:53:15.033 | INFO    | Task run 'download_era5_land_daily_batch-76f' -   Dataset: derived-era5-land-daily-statistics
+14:53:15.033 | INFO    | Task run 'download_era5_land_daily_batch-76f' -   Variable: ['2m_temperature']
+14:53:15.033 | INFO    | Task run 'download_era5_land_daily_batch-76f' -   Daily statistic: daily_maximum
+14:53:15.033 | INFO    | Task run 'download_era5_land_daily_batch-76f' -   Time zone: utc+00:00
+14:53:15.034 | INFO    | Task run 'download_era5_land_daily_batch-76f' -   Frequency: 6_hourly
+14:53:15.034 | INFO    | Task run 'download_era5_land_daily_batch-76f' -   Years: ['2015']
+14:53:15.034 | INFO    | Task run 'download_era5_land_daily_batch-76f' -   Months: ['07', '08']
+14:53:15.034 | INFO    | Task run 'download_era5_land_daily_batch-76f' -   Days: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31']
+14:53:15.035 | INFO    | Task run 'download_era5_land_daily_batch-76f' -   Area [N,W,S,E]: [6.5, -75.0, -35.0, -33.5]
+14:53:15.035 | INFO    | Task run 'download_era5_land_daily_batch-76f' -   Area interpretation:
+14:53:15.035 | INFO    | Task run 'download_era5_land_daily_batch-76f' -     North: 6.5°
+14:53:15.035 | INFO    | Task run 'download_era5_land_daily_batch-76f' -     West: -75.0°
+14:53:15.036 | INFO    | Task run 'download_era5_land_daily_batch-76f' -     South: -35.0°
+14:53:15.036 | INFO    | Task run 'download_era5_land_daily_batch-76f' -     East: -33.5°
+14:53:15.036 | INFO    | Task run 'download_era5_land_daily_batch-76f' - ================================================================================
+14:53:21.063 | INFO    | Task run 'download_era5_land_daily_batch-76f' - Submitting request to CDS...
+2025-10-29 14:53:21,632 INFO Request ID is e3d16f99-9edf-4fd0-9a5d-f986173f2864
+14:53:21.632 | INFO    | ecmwf.datastores.legacy_client - Request ID is e3d16f99-9edf-4fd0-9a5d-f986173f2864
+2025-10-29 14:53:21,896 INFO status has been updated to accepted
+14:53:21.896 | INFO    | ecmwf.datastores.legacy_client - status has been updated to accepted
+2025-10-29 14:53:44,343 INFO status has been updated to successful
+14:53:44.343 | INFO    | ecmwf.datastores.legacy_client - status has been updated to successful
+2f3c31f744f1e553a0b5008f3723b5f5.nc:   0%|          | 0.00/13.3M [00:00<?, ?B/s]2f3c31f744f1e553a0b5008f3723b5f5.nc:   7%|▋         | 1.00M/13.3M [00:02<00:28, 456kB/s]2f3c31f744f1e553a0b5008f3723b5f5.nc:  15%|█▍        | 2.00M/13.3M [00:02<00:12, 960kB/s]2f3c31f744f1e553a0b5008f3723b5f5.nc:  22%|██▏       | 3.00M/13.3M [00:03<00:08, 1.28MB/s]2f3c31f744f1e553a0b5008f3723b5f5.nc:  30%|██▉       | 4.00M/13.3M [00:03<00:06, 1.51MB/s]2f3c31f744f1e553a0b5008f3723b5f5.nc:  37%|███▋      | 5.00M/13.3M [00:04<00:05, 1.57MB/s]2f3c31f744f1e553a0b5008f3723b5f5.nc:  45%|████▍     | 6.00M/13.3M [00:04<00:05, 1.45MB/s]2f3c31f744f1e553a0b5008f3723b5f5.nc:  52%|█████▏    | 7.00M/13.3M [00:05<00:04, 1.43MB/s]2f3c31f744f1e553a0b5008f3723b5f5.nc:  60%|█████▉    | 8.00M/13.3M [00:06<00:03, 1.54MB/s]2f3c31f744f1e553a0b5008f3723b5f5.nc:  67%|██████▋   | 9.00M/13.3M [00:07<00:03, 1.50MB/s]2f3c31f744f1e553a0b5008f3723b5f5.nc:  75%|███████▍  | 10.0M/13.3M [00:07<00:02, 1.48MB/s]2f3c31f744f1e553a0b5008f3723b5f5.nc:  82%|████████▏ | 11.0M/13.3M [00:08<00:01, 1.46MB/s]2f3c31f744f1e553a0b5008f3723b5f5.nc:  90%|████████▉ | 12.0M/13.3M [00:09<00:00, 1.49MB/s]2f3c31f744f1e553a0b5008f3723b5f5.nc:  97%|█████████▋| 13.0M/13.3M [00:09<00:00, 1.57MB/s]2f3c31f744f1e553a0b5008f3723b5f5.nc: 100%|██████████| 13.3M/13.3M [00:10<00:00, 1.56MB/s]                                                                                         14:53:55.739 | INFO    | Task run 'download_era5_land_daily_batch-76f' - ✓ ERA5 Land Daily downloaded: /mnt/workwork/geoserver_data/raw/era5_land_daily/2mtemperature_daily_maximum_20150706_20150805.nc
+14:53:55.741 | INFO    | Task run 'download_era5_land_daily_batch-76f' - Finished in state Completed()
+14:53:55.741 | INFO    | Flow run 'ambitious-rabbit' -   Skipping GeoTIFF processing (all exist)
+14:53:55.751 | INFO    | Task run 'append_to_yearly_historical-9e9' - 📦 Appending data from 2mtemperature_daily_maximum_20150706_20150805.nc to yearly historical files
+14:53:55.751 | INFO    | Task run 'append_to_yearly_historical-9e9' -   Processing 31 specific dates
+14:53:55.758 | INFO    | Task run 'append_to_yearly_historical-9e9' -   Source variables: ['t2m']
+14:53:55.876 | INFO    | Task run 'append_to_yearly_historical-9e9' -   Converted temperature to Celsius
+14:53:55.877 | INFO    | Task run 'append_to_yearly_historical-9e9' -   Clipped to bbox: (-75.0, -35.0, -33.5, 6.5)
+14:53:55.882 | INFO    | Task run 'append_to_yearly_historical-9e9' -   Processing 31 dates
+14:53:55.883 | INFO    | Task run 'append_to_yearly_historical-9e9' -   Dates span 1 year(s): [2015]
+14:53:55.883 | INFO    | Task run 'append_to_yearly_historical-9e9' - 
+  📅 Processing year 2015 (31 dates)
+14:53:55.888 | INFO    | Task run 'append_to_yearly_historical-9e9' -     Year file exists, checking for duplicates...
+14:53:55.902 | INFO    | Task run 'append_to_yearly_historical-9e9' -     All 31 dates already exist, skipping
+14:53:55.905 | INFO    | Task run 'append_to_yearly_historical-9e9' - 
+✓ Updated 0 yearly file(s)
+14:53:55.908 | INFO    | Task run 'append_to_yearly_historical-9e9' - Finished in state Completed()
+14:53:55.908 | INFO    | Flow run 'ambitious-rabbit' - ✓ Updated 0 yearly historical file(s)
+14:53:55.916 | INFO    | Task run 'cleanup_raw_files-eb6' - ✓ Cleaned up: 2mtemperature_daily_maximum_20150706_20150805.nc
+14:53:55.917 | INFO    | Task run 'cleanup_raw_files-eb6' - Finished in state Completed()
+14:53:55.918 | INFO    | Flow run 'ambitious-rabbit' - ✓ Completed batch: 2015-07-06 to 2015-08-05
+14:53:55.918 | INFO    | Flow run 'ambitious-rabbit' - 
+Downloading batch: 2015-08-06 to 2015-09-05
+14:53:55.918 | INFO    | Flow run 'ambitious-rabbit' -   Will process 0 GeoTIFFs
+14:53:55.919 | INFO    | Flow run 'ambitious-rabbit' -   Will append 31 to historical
+14:53:55.927 | INFO    | Task run 'download_era5_land_daily_batch-f4b' - Using CDS bbox [N, W, S, E]: [6.5, -75.0, -35.0, -33.5]
+14:53:55.927 | INFO    | Task run 'download_era5_land_daily_batch-f4b' -   North: 6.5, South: -35.0 (span: 41.5°)
+14:53:55.927 | INFO    | Task run 'download_era5_land_daily_batch-f4b' -   West: -75.0, East: -33.5 (span: 41.5°)
+14:53:55.928 | INFO    | Task run 'download_era5_land_daily_batch-f4b' - Downloading ERA5 Land Daily: 2015-08-06 to 2015-09-05
+14:53:55.928 | INFO    | Task run 'download_era5_land_daily_batch-f4b' - Variable: 2m_temperature, Statistic: daily_maximum
+14:53:55.928 | INFO    | Task run 'download_era5_land_daily_batch-f4b' - ================================================================================
+14:53:55.929 | INFO    | Task run 'download_era5_land_daily_batch-f4b' - CDS API REQUEST:
+14:53:55.929 | INFO    | Task run 'download_era5_land_daily_batch-f4b' - ================================================================================
+14:53:55.929 | INFO    | Task run 'download_era5_land_daily_batch-f4b' - {
+  "variable": [
+    "2m_temperature"
+  ],
+  "year": [
+    "2015"
+  ],
+  "month": [
+    "08",
+    "09"
+  ],
+  "day": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "31"
+  ],
+  "daily_statistic": "daily_maximum",
+  "time_zone": "utc+00:00",
+  "frequency": "6_hourly",
+  "area": [
+    6.5,
+    -75.0,
+    -35.0,
+    -33.5
+  ]
+}
+14:53:55.930 | INFO    | Task run 'download_era5_land_daily_batch-f4b' - ================================================================================
+14:53:55.930 | INFO    | Task run 'download_era5_land_daily_batch-f4b' - REQUEST DETAILS:
+14:53:55.930 | INFO    | Task run 'download_era5_land_daily_batch-f4b' -   Dataset: derived-era5-land-daily-statistics
+14:53:55.931 | INFO    | Task run 'download_era5_land_daily_batch-f4b' -   Variable: ['2m_temperature']
+14:53:55.931 | INFO    | Task run 'download_era5_land_daily_batch-f4b' -   Daily statistic: daily_maximum
+14:53:55.931 | INFO    | Task run 'download_era5_land_daily_batch-f4b' -   Time zone: utc+00:00
+14:53:55.931 | INFO    | Task run 'download_era5_land_daily_batch-f4b' -   Frequency: 6_hourly
+14:53:55.932 | INFO    | Task run 'download_era5_land_daily_batch-f4b' -   Years: ['2015']
+14:53:55.932 | INFO    | Task run 'download_era5_land_daily_batch-f4b' -   Months: ['08', '09']
+14:53:55.932 | INFO    | Task run 'download_era5_land_daily_batch-f4b' -   Days: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31']
+14:53:55.932 | INFO    | Task run 'download_era5_land_daily_batch-f4b' -   Area [N,W,S,E]: [6.5, -75.0, -35.0, -33.5]
+14:53:55.933 | INFO    | Task run 'download_era5_land_daily_batch-f4b' -   Area interpretation:
+14:53:55.933 | INFO    | Task run 'download_era5_land_daily_batch-f4b' -     North: 6.5°
+14:53:55.933 | INFO    | Task run 'download_era5_land_daily_batch-f4b' -     West: -75.0°
+14:53:55.933 | INFO    | Task run 'download_era5_land_daily_batch-f4b' -     South: -35.0°
+14:53:55.934 | INFO    | Task run 'download_era5_land_daily_batch-f4b' -     East: -33.5°
+14:53:55.934 | INFO    | Task run 'download_era5_land_daily_batch-f4b' - ================================================================================
+14:53:56.940 | INFO    | Task run 'download_era5_land_daily_batch-f4b' - Submitting request to CDS...
+2025-10-29 14:53:57,536 INFO Request ID is 5844e980-2607-4a53-97ed-ac3fc0d919fc
+14:53:57.536 | INFO    | ecmwf.datastores.legacy_client - Request ID is 5844e980-2607-4a53-97ed-ac3fc0d919fc
+2025-10-29 14:53:57,812 INFO status has been updated to accepted
+14:53:57.812 | INFO    | ecmwf.datastores.legacy_client - status has been updated to accepted
+2025-10-29 14:54:20,216 INFO status has been updated to successful
+14:54:20.216 | INFO    | ecmwf.datastores.legacy_client - status has been updated to successful
+c887060220b25bc56f5f62bfb7af1c53.nc:   0%|          | 0.00/13.2M [00:00<?, ?B/s]c887060220b25bc56f5f62bfb7af1c53.nc:   8%|▊         | 1.00M/13.2M [00:02<00:29, 436kB/s]c887060220b25bc56f5f62bfb7af1c53.nc:  15%|█▌        | 2.00M/13.2M [00:03<00:18, 630kB/s]c887060220b25bc56f5f62bfb7af1c53.nc:  23%|██▎       | 3.00M/13.2M [00:05<00:16, 637kB/s]c887060220b25bc56f5f62bfb7af1c53.nc:  30%|███       | 4.00M/13.2M [00:07<00:17, 566kB/s]c887060220b25bc56f5f62bfb7af1c53.nc:  38%|███▊      | 5.00M/13.2M [00:10<00:17, 479kB/s]c887060220b25bc56f5f62bfb7af1c53.nc:  45%|████▌     | 6.00M/13.2M [00:13<00:17, 423kB/s]c887060220b25bc56f5f62bfb7af1c53.nc:  53%|█████▎    | 7.00M/13.2M [00:17<00:18, 356kB/s]c887060220b25bc56f5f62bfb7af1c53.nc:  61%|██████    | 8.00M/13.2M [00:21<00:17, 311kB/s]c887060220b25bc56f5f62bfb7af1c53.nc:  68%|██████▊   | 9.00M/13.2M [00:25<00:15, 286kB/s]c887060220b25bc56f5f62bfb7af1c53.nc:  76%|███████▌  | 10.0M/13.2M [00:28<00:10, 320kB/s]c887060220b25bc56f5f62bfb7af1c53.nc:  83%|████████▎ | 11.0M/13.2M [00:29<00:05, 393kB/s]c887060220b25bc56f5f62bfb7af1c53.nc:  91%|█████████ | 12.0M/13.2M [00:30<00:02, 475kB/s]c887060220b25bc56f5f62bfb7af1c53.nc:  99%|█████████▊| 13.0M/13.2M [00:32<00:00, 509kB/s]c887060220b25bc56f5f62bfb7af1c53.nc: 100%|██████████| 13.2M/13.2M [00:32<00:00, 518kB/s]                                                                                        14:54:54.083 | INFO    | Task run 'download_era5_land_daily_batch-f4b' - ✓ ERA5 Land Daily downloaded: /mnt/workwork/geoserver_data/raw/era5_land_daily/2mtemperature_daily_maximum_20150806_20150905.nc
+14:54:54.084 | INFO    | Task run 'download_era5_land_daily_batch-f4b' - Finished in state Completed()
+14:54:54.084 | INFO    | Flow run 'ambitious-rabbit' -   Skipping GeoTIFF processing (all exist)
+14:54:54.093 | INFO    | Task run 'append_to_yearly_historical-879' - 📦 Appending data from 2mtemperature_daily_maximum_20150806_20150905.nc to yearly historical files
+14:54:54.094 | INFO    | Task run 'append_to_yearly_historical-879' -   Processing 31 specific dates
+14:54:54.100 | INFO    | Task run 'append_to_yearly_historical-879' -   Source variables: ['t2m']
+14:54:54.219 | INFO    | Task run 'append_to_yearly_historical-879' -   Converted temperature to Celsius
+14:54:54.220 | INFO    | Task run 'append_to_yearly_historical-879' -   Clipped to bbox: (-75.0, -35.0, -33.5, 6.5)
+14:54:54.226 | INFO    | Task run 'append_to_yearly_historical-879' -   Processing 31 dates
+14:54:54.226 | INFO    | Task run 'append_to_yearly_historical-879' -   Dates span 1 year(s): [2015]
+14:54:54.227 | INFO    | Task run 'append_to_yearly_historical-879' - 
+  📅 Processing year 2015 (31 dates)
+14:54:54.231 | INFO    | Task run 'append_to_yearly_historical-879' -     Year file exists, checking for duplicates...
+14:54:54.245 | INFO    | Task run 'append_to_yearly_historical-879' -     All 31 dates already exist, skipping
+14:54:54.248 | INFO    | Task run 'append_to_yearly_historical-879' - 
+✓ Updated 0 yearly file(s)
+14:54:54.251 | INFO    | Task run 'append_to_yearly_historical-879' - Finished in state Completed()
+14:54:54.251 | INFO    | Flow run 'ambitious-rabbit' - ✓ Updated 0 yearly historical file(s)
+14:54:54.260 | INFO    | Task run 'cleanup_raw_files-ef5' - ✓ Cleaned up: 2mtemperature_daily_maximum_20150806_20150905.nc
+14:54:54.261 | INFO    | Task run 'cleanup_raw_files-ef5' - Finished in state Completed()
+14:54:54.261 | INFO    | Flow run 'ambitious-rabbit' - ✓ Completed batch: 2015-08-06 to 2015-09-05
+14:54:54.262 | INFO    | Flow run 'ambitious-rabbit' - 
+Downloading batch: 2015-09-06 to 2015-10-06
+14:54:54.262 | INFO    | Flow run 'ambitious-rabbit' -   Will process 0 GeoTIFFs
+14:54:54.262 | INFO    | Flow run 'ambitious-rabbit' -   Will append 31 to historical
+14:54:54.270 | INFO    | Task run 'download_era5_land_daily_batch-2b3' - Using CDS bbox [N, W, S, E]: [6.5, -75.0, -35.0, -33.5]
+14:54:54.270 | INFO    | Task run 'download_era5_land_daily_batch-2b3' -   North: 6.5, South: -35.0 (span: 41.5°)
+14:54:54.270 | INFO    | Task run 'download_era5_land_daily_batch-2b3' -   West: -75.0, East: -33.5 (span: 41.5°)
+14:54:54.271 | INFO    | Task run 'download_era5_land_daily_batch-2b3' - Downloading ERA5 Land Daily: 2015-09-06 to 2015-10-06
+14:54:54.271 | INFO    | Task run 'download_era5_land_daily_batch-2b3' - Variable: 2m_temperature, Statistic: daily_maximum
+14:54:54.272 | INFO    | Task run 'download_era5_land_daily_batch-2b3' - ================================================================================
+14:54:54.272 | INFO    | Task run 'download_era5_land_daily_batch-2b3' - CDS API REQUEST:
+14:54:54.272 | INFO    | Task run 'download_era5_land_daily_batch-2b3' - ================================================================================
+14:54:54.272 | INFO    | Task run 'download_era5_land_daily_batch-2b3' - {
+  "variable": [
+    "2m_temperature"
+  ],
+  "year": [
+    "2015"
+  ],
+  "month": [
+    "09",
+    "10"
+  ],
+  "day": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30"
+  ],
+  "daily_statistic": "daily_maximum",
+  "time_zone": "utc+00:00",
+  "frequency": "6_hourly",
+  "area": [
+    6.5,
+    -75.0,
+    -35.0,
+    -33.5
+  ]
+}
+14:54:54.273 | INFO    | Task run 'download_era5_land_daily_batch-2b3' - ================================================================================
+14:54:54.273 | INFO    | Task run 'download_era5_land_daily_batch-2b3' - REQUEST DETAILS:
+14:54:54.273 | INFO    | Task run 'download_era5_land_daily_batch-2b3' -   Dataset: derived-era5-land-daily-statistics
+14:54:54.273 | INFO    | Task run 'download_era5_land_daily_batch-2b3' -   Variable: ['2m_temperature']
+14:54:54.274 | INFO    | Task run 'download_era5_land_daily_batch-2b3' -   Daily statistic: daily_maximum
+14:54:54.274 | INFO    | Task run 'download_era5_land_daily_batch-2b3' -   Time zone: utc+00:00
+14:54:54.274 | INFO    | Task run 'download_era5_land_daily_batch-2b3' -   Frequency: 6_hourly
+14:54:54.274 | INFO    | Task run 'download_era5_land_daily_batch-2b3' -   Years: ['2015']
+14:54:54.275 | INFO    | Task run 'download_era5_land_daily_batch-2b3' -   Months: ['09', '10']
+14:54:54.275 | INFO    | Task run 'download_era5_land_daily_batch-2b3' -   Days: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30']
+14:54:54.275 | INFO    | Task run 'download_era5_land_daily_batch-2b3' -   Area [N,W,S,E]: [6.5, -75.0, -35.0, -33.5]
+14:54:54.275 | INFO    | Task run 'download_era5_land_daily_batch-2b3' -   Area interpretation:
+14:54:54.276 | INFO    | Task run 'download_era5_land_daily_batch-2b3' -     North: 6.5°
+14:54:54.276 | INFO    | Task run 'download_era5_land_daily_batch-2b3' -     West: -75.0°
+14:54:54.276 | INFO    | Task run 'download_era5_land_daily_batch-2b3' -     South: -35.0°
+14:54:54.276 | INFO    | Task run 'download_era5_land_daily_batch-2b3' -     East: -33.5°
+14:54:54.277 | INFO    | Task run 'download_era5_land_daily_batch-2b3' - ================================================================================
+14:54:55.549 | INFO    | Task run 'download_era5_land_daily_batch-2b3' - Submitting request to CDS...
+2025-10-29 14:54:56,135 INFO Request ID is 9d32ab8f-535c-4f53-b1f5-48e1ce0d3c5b
+14:54:56.135 | INFO    | ecmwf.datastores.legacy_client - Request ID is 9d32ab8f-535c-4f53-b1f5-48e1ce0d3c5b
+2025-10-29 14:54:56,416 INFO status has been updated to accepted
+14:54:56.416 | INFO    | ecmwf.datastores.legacy_client - status has been updated to accepted
+2025-10-29 14:55:30,604 INFO status has been updated to successful
+14:55:30.604 | INFO    | ecmwf.datastores.legacy_client - status has been updated to successful
+9f07449caa9ed4664248fc15eb4ef6d2.nc:   0%|          | 0.00/14.2M [00:00<?, ?B/s]9f07449caa9ed4664248fc15eb4ef6d2.nc:   7%|▋         | 1.00M/14.2M [00:03<00:47, 289kB/s]9f07449caa9ed4664248fc15eb4ef6d2.nc:  14%|█▍        | 2.00M/14.2M [00:04<00:23, 541kB/s]9f07449caa9ed4664248fc15eb4ef6d2.nc:  21%|██        | 3.00M/14.2M [00:05<00:18, 642kB/s]9f07449caa9ed4664248fc15eb4ef6d2.nc:  28%|██▊       | 4.00M/14.2M [00:07<00:17, 621kB/s]9f07449caa9ed4664248fc15eb4ef6d2.nc:  35%|███▌      | 5.00M/14.2M [00:08<00:14, 645kB/s]9f07449caa9ed4664248fc15eb4ef6d2.nc:  42%|████▏     | 6.00M/14.2M [00:10<00:13, 660kB/s]9f07449caa9ed4664248fc15eb4ef6d2.nc:  49%|████▉     | 7.00M/14.2M [00:12<00:11, 635kB/s]9f07449caa9ed4664248fc15eb4ef6d2.nc:  56%|█████▋    | 8.00M/14.2M [00:14<00:11, 567kB/s]9f07449caa9ed4664248fc15eb4ef6d2.nc:  63%|██████▎   | 9.00M/14.2M [00:17<00:11, 458kB/s]9f07449caa9ed4664248fc15eb4ef6d2.nc:  70%|███████   | 10.0M/14.2M [00:24<00:15, 288kB/s]9f07449caa9ed4664248fc15eb4ef6d2.nc:  77%|███████▋  | 11.0M/14.2M [00:30<00:13, 246kB/s]9f07449caa9ed4664248fc15eb4ef6d2.nc:  84%|████████▍ | 12.0M/14.2M [00:35<00:10, 222kB/s]9f07449caa9ed4664248fc15eb4ef6d2.nc:  92%|█████████▏| 13.0M/14.2M [00:41<00:06, 205kB/s]9f07449caa9ed4664248fc15eb4ef6d2.nc:  99%|█████████▊| 14.0M/14.2M [00:49<00:01, 176kB/s]9f07449caa9ed4664248fc15eb4ef6d2.nc: 100%|██████████| 14.2M/14.2M [00:55<00:00, 133kB/s]                                                                                        14:56:28.467 | INFO    | Task run 'download_era5_land_daily_batch-2b3' - ✓ ERA5 Land Daily downloaded: /mnt/workwork/geoserver_data/raw/era5_land_daily/2mtemperature_daily_maximum_20150906_20151006.nc
+14:56:28.469 | INFO    | Task run 'download_era5_land_daily_batch-2b3' - Finished in state Completed()
+14:56:28.469 | INFO    | Flow run 'ambitious-rabbit' -   Skipping GeoTIFF processing (all exist)
+14:56:28.481 | INFO    | Task run 'append_to_yearly_historical-7ac' - 📦 Appending data from 2mtemperature_daily_maximum_20150906_20151006.nc to yearly historical files
+14:56:28.481 | INFO    | Task run 'append_to_yearly_historical-7ac' -   Processing 31 specific dates
+14:56:28.488 | INFO    | Task run 'append_to_yearly_historical-7ac' -   Source variables: ['t2m']
+14:56:28.600 | INFO    | Task run 'append_to_yearly_historical-7ac' -   Converted temperature to Celsius
+14:56:28.601 | INFO    | Task run 'append_to_yearly_historical-7ac' -   Clipped to bbox: (-75.0, -35.0, -33.5, 6.5)
+14:56:28.606 | INFO    | Task run 'append_to_yearly_historical-7ac' -   Processing 31 dates
+14:56:28.607 | INFO    | Task run 'append_to_yearly_historical-7ac' -   Dates span 1 year(s): [2015]
+14:56:28.607 | INFO    | Task run 'append_to_yearly_historical-7ac' - 
+  📅 Processing year 2015 (31 dates)
+14:56:28.612 | INFO    | Task run 'append_to_yearly_historical-7ac' -     Year file exists, checking for duplicates...
+14:56:28.625 | INFO    | Task run 'append_to_yearly_historical-7ac' -     All 31 dates already exist, skipping
+14:56:28.627 | INFO    | Task run 'append_to_yearly_historical-7ac' - 
+✓ Updated 0 yearly file(s)
+14:56:28.630 | INFO    | Task run 'append_to_yearly_historical-7ac' - Finished in state Completed()
+14:56:28.631 | INFO    | Flow run 'ambitious-rabbit' - ✓ Updated 0 yearly historical file(s)
+14:56:28.639 | INFO    | Task run 'cleanup_raw_files-fd6' - ✓ Cleaned up: 2mtemperature_daily_maximum_20150906_20151006.nc
+14:56:28.640 | INFO    | Task run 'cleanup_raw_files-fd6' - Finished in state Completed()
+14:56:28.640 | INFO    | Flow run 'ambitious-rabbit' - ✓ Completed batch: 2015-09-06 to 2015-10-06
+14:56:28.641 | INFO    | Flow run 'ambitious-rabbit' - 
+Downloading batch: 2015-10-07 to 2015-11-06
+14:56:28.641 | INFO    | Flow run 'ambitious-rabbit' -   Will process 0 GeoTIFFs
+14:56:28.641 | INFO    | Flow run 'ambitious-rabbit' -   Will append 31 to historical
+14:56:28.649 | INFO    | Task run 'download_era5_land_daily_batch-a41' - Using CDS bbox [N, W, S, E]: [6.5, -75.0, -35.0, -33.5]
+14:56:28.649 | INFO    | Task run 'download_era5_land_daily_batch-a41' -   North: 6.5, South: -35.0 (span: 41.5°)
+14:56:28.649 | INFO    | Task run 'download_era5_land_daily_batch-a41' -   West: -75.0, East: -33.5 (span: 41.5°)
+14:56:28.650 | INFO    | Task run 'download_era5_land_daily_batch-a41' - Downloading ERA5 Land Daily: 2015-10-07 to 2015-11-06
+14:56:28.650 | INFO    | Task run 'download_era5_land_daily_batch-a41' - Variable: 2m_temperature, Statistic: daily_maximum
+14:56:28.650 | INFO    | Task run 'download_era5_land_daily_batch-a41' - ================================================================================
+14:56:28.651 | INFO    | Task run 'download_era5_land_daily_batch-a41' - CDS API REQUEST:
+14:56:28.651 | INFO    | Task run 'download_era5_land_daily_batch-a41' - ================================================================================
+14:56:28.651 | INFO    | Task run 'download_era5_land_daily_batch-a41' - {
+  "variable": [
+    "2m_temperature"
+  ],
+  "year": [
+    "2015"
+  ],
+  "month": [
+    "10",
+    "11"
+  ],
+  "day": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "31"
+  ],
+  "daily_statistic": "daily_maximum",
+  "time_zone": "utc+00:00",
+  "frequency": "6_hourly",
+  "area": [
+    6.5,
+    -75.0,
+    -35.0,
+    -33.5
+  ]
+}
+14:56:28.652 | INFO    | Task run 'download_era5_land_daily_batch-a41' - ================================================================================
+14:56:28.652 | INFO    | Task run 'download_era5_land_daily_batch-a41' - REQUEST DETAILS:
+14:56:28.652 | INFO    | Task run 'download_era5_land_daily_batch-a41' -   Dataset: derived-era5-land-daily-statistics
+14:56:28.652 | INFO    | Task run 'download_era5_land_daily_batch-a41' -   Variable: ['2m_temperature']
+14:56:28.653 | INFO    | Task run 'download_era5_land_daily_batch-a41' -   Daily statistic: daily_maximum
+14:56:28.653 | INFO    | Task run 'download_era5_land_daily_batch-a41' -   Time zone: utc+00:00
+14:56:28.653 | INFO    | Task run 'download_era5_land_daily_batch-a41' -   Frequency: 6_hourly
+14:56:28.653 | INFO    | Task run 'download_era5_land_daily_batch-a41' -   Years: ['2015']
+14:56:28.654 | INFO    | Task run 'download_era5_land_daily_batch-a41' -   Months: ['10', '11']
+14:56:28.654 | INFO    | Task run 'download_era5_land_daily_batch-a41' -   Days: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31']
+14:56:28.654 | INFO    | Task run 'download_era5_land_daily_batch-a41' -   Area [N,W,S,E]: [6.5, -75.0, -35.0, -33.5]
+14:56:28.654 | INFO    | Task run 'download_era5_land_daily_batch-a41' -   Area interpretation:
+14:56:28.654 | INFO    | Task run 'download_era5_land_daily_batch-a41' -     North: 6.5°
+14:56:28.655 | INFO    | Task run 'download_era5_land_daily_batch-a41' -     West: -75.0°
+14:56:28.655 | INFO    | Task run 'download_era5_land_daily_batch-a41' -     South: -35.0°
+14:56:28.655 | INFO    | Task run 'download_era5_land_daily_batch-a41' -     East: -33.5°
+14:56:28.655 | INFO    | Task run 'download_era5_land_daily_batch-a41' - ================================================================================
+14:56:31.971 | INFO    | Task run 'download_era5_land_daily_batch-a41' - Submitting request to CDS...
+2025-10-29 14:56:32,574 INFO Request ID is d03e83b7-e2bc-4963-b05f-7b0cc1306dfe
+14:56:32.574 | INFO    | ecmwf.datastores.legacy_client - Request ID is d03e83b7-e2bc-4963-b05f-7b0cc1306dfe
+2025-10-29 14:56:32,853 INFO status has been updated to accepted
+14:56:32.853 | INFO    | ecmwf.datastores.legacy_client - status has been updated to accepted
+2025-10-29 14:57:06,974 INFO status has been updated to running
+14:57:06.974 | INFO    | ecmwf.datastores.legacy_client - status has been updated to running
+2025-10-29 14:57:24,330 INFO status has been updated to successful
+14:57:24.330 | INFO    | ecmwf.datastores.legacy_client - status has been updated to successful
+49216695ce0237813163e53bd965a8ec.nc:   0%|          | 0.00/13.1M [00:00<?, ?B/s]49216695ce0237813163e53bd965a8ec.nc:   8%|▊         | 1.00M/13.1M [00:04<00:49, 254kB/s]49216695ce0237813163e53bd965a8ec.nc:  15%|█▌        | 2.00M/13.1M [00:04<00:23, 490kB/s]49216695ce0237813163e53bd965a8ec.nc:  23%|██▎       | 3.00M/13.1M [00:05<00:16, 648kB/s]49216695ce0237813163e53bd965a8ec.nc:  31%|███       | 4.00M/13.1M [00:07<00:14, 669kB/s]49216695ce0237813163e53bd965a8ec.nc:  38%|███▊      | 5.00M/13.1M [00:08<00:11, 722kB/s]49216695ce0237813163e53bd965a8ec.nc:  46%|████▌     | 6.00M/13.1M [00:10<00:10, 713kB/s]49216695ce0237813163e53bd965a8ec.nc:  54%|█████▎    | 7.00M/13.1M [00:12<00:10, 605kB/s]49216695ce0237813163e53bd965a8ec.nc:  61%|██████    | 8.00M/13.1M [00:15<00:11, 461kB/s]49216695ce0237813163e53bd965a8ec.nc:  69%|██████▉   | 9.00M/13.1M [00:19<00:10, 393kB/s]49216695ce0237813163e53bd965a8ec.nc:  77%|███████▋  | 10.0M/13.1M [00:22<00:08, 371kB/s]49216695ce0237813163e53bd965a8ec.nc:  84%|████████▍ | 11.0M/13.1M [00:26<00:06, 320kB/s]49216695ce0237813163e53bd965a8ec.nc:  92%|█████████▏| 12.0M/13.1M [00:33<00:04, 236kB/s]49216695ce0237813163e53bd965a8ec.nc:  99%|█████████▉| 13.0M/13.1M [00:42<00:00, 184kB/s]49216695ce0237813163e53bd965a8ec.nc: 100%|██████████| 13.1M/13.1M [00:42<00:00, 183kB/s]                                                                                        14:58:08.906 | INFO    | Task run 'download_era5_land_daily_batch-a41' - ✓ ERA5 Land Daily downloaded: /mnt/workwork/geoserver_data/raw/era5_land_daily/2mtemperature_daily_maximum_20151007_20151106.nc
+14:58:08.908 | INFO    | Task run 'download_era5_land_daily_batch-a41' - Finished in state Completed()
+14:58:08.909 | INFO    | Flow run 'ambitious-rabbit' -   Skipping GeoTIFF processing (all exist)
+14:58:08.920 | INFO    | Task run 'append_to_yearly_historical-433' - 📦 Appending data from 2mtemperature_daily_maximum_20151007_20151106.nc to yearly historical files
+14:58:08.921 | INFO    | Task run 'append_to_yearly_historical-433' -   Processing 31 specific dates
+14:58:08.927 | INFO    | Task run 'append_to_yearly_historical-433' -   Source variables: ['t2m']
+14:58:09.043 | INFO    | Task run 'append_to_yearly_historical-433' -   Converted temperature to Celsius
+14:58:09.044 | INFO    | Task run 'append_to_yearly_historical-433' -   Clipped to bbox: (-75.0, -35.0, -33.5, 6.5)
+14:58:09.050 | INFO    | Task run 'append_to_yearly_historical-433' -   Processing 31 dates
+14:58:09.050 | INFO    | Task run 'append_to_yearly_historical-433' -   Dates span 1 year(s): [2015]
+14:58:09.051 | INFO    | Task run 'append_to_yearly_historical-433' - 
+  📅 Processing year 2015 (31 dates)
+14:58:09.055 | INFO    | Task run 'append_to_yearly_historical-433' -     Year file exists, checking for duplicates...
+14:58:09.069 | INFO    | Task run 'append_to_yearly_historical-433' -     All 31 dates already exist, skipping
+14:58:09.071 | INFO    | Task run 'append_to_yearly_historical-433' - 
+✓ Updated 0 yearly file(s)
+14:58:09.075 | INFO    | Task run 'append_to_yearly_historical-433' - Finished in state Completed()
+14:58:09.075 | INFO    | Flow run 'ambitious-rabbit' - ✓ Updated 0 yearly historical file(s)
+14:58:09.084 | INFO    | Task run 'cleanup_raw_files-ed0' - ✓ Cleaned up: 2mtemperature_daily_maximum_20151007_20151106.nc
+14:58:09.085 | INFO    | Task run 'cleanup_raw_files-ed0' - Finished in state Completed()
+14:58:09.085 | INFO    | Flow run 'ambitious-rabbit' - ✓ Completed batch: 2015-10-07 to 2015-11-06
+14:58:09.085 | INFO    | Flow run 'ambitious-rabbit' - 
+Downloading batch: 2015-11-07 to 2015-12-07
+14:58:09.085 | INFO    | Flow run 'ambitious-rabbit' -   Will process 0 GeoTIFFs
+14:58:09.086 | INFO    | Flow run 'ambitious-rabbit' -   Will append 31 to historical
+14:58:09.093 | INFO    | Task run 'download_era5_land_daily_batch-188' - Using CDS bbox [N, W, S, E]: [6.5, -75.0, -35.0, -33.5]
+14:58:09.093 | INFO    | Task run 'download_era5_land_daily_batch-188' -   North: 6.5, South: -35.0 (span: 41.5°)
+14:58:09.094 | INFO    | Task run 'download_era5_land_daily_batch-188' -   West: -75.0, East: -33.5 (span: 41.5°)
+14:58:09.094 | INFO    | Task run 'download_era5_land_daily_batch-188' - Downloading ERA5 Land Daily: 2015-11-07 to 2015-12-07
+14:58:09.094 | INFO    | Task run 'download_era5_land_daily_batch-188' - Variable: 2m_temperature, Statistic: daily_maximum
+14:58:09.095 | INFO    | Task run 'download_era5_land_daily_batch-188' - ================================================================================
+14:58:09.095 | INFO    | Task run 'download_era5_land_daily_batch-188' - CDS API REQUEST:
+14:58:09.095 | INFO    | Task run 'download_era5_land_daily_batch-188' - ================================================================================
+14:58:09.095 | INFO    | Task run 'download_era5_land_daily_batch-188' - {
+  "variable": [
+    "2m_temperature"
+  ],
+  "year": [
+    "2015"
+  ],
+  "month": [
+    "11",
+    "12"
+  ],
+  "day": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30"
+  ],
+  "daily_statistic": "daily_maximum",
+  "time_zone": "utc+00:00",
+  "frequency": "6_hourly",
+  "area": [
+    6.5,
+    -75.0,
+    -35.0,
+    -33.5
+  ]
+}
+14:58:09.096 | INFO    | Task run 'download_era5_land_daily_batch-188' - ================================================================================
+14:58:09.096 | INFO    | Task run 'download_era5_land_daily_batch-188' - REQUEST DETAILS:
+14:58:09.097 | INFO    | Task run 'download_era5_land_daily_batch-188' -   Dataset: derived-era5-land-daily-statistics
+14:58:09.097 | INFO    | Task run 'download_era5_land_daily_batch-188' -   Variable: ['2m_temperature']
+14:58:09.097 | INFO    | Task run 'download_era5_land_daily_batch-188' -   Daily statistic: daily_maximum
+14:58:09.097 | INFO    | Task run 'download_era5_land_daily_batch-188' -   Time zone: utc+00:00
+14:58:09.098 | INFO    | Task run 'download_era5_land_daily_batch-188' -   Frequency: 6_hourly
+14:58:09.098 | INFO    | Task run 'download_era5_land_daily_batch-188' -   Years: ['2015']
+14:58:09.098 | INFO    | Task run 'download_era5_land_daily_batch-188' -   Months: ['11', '12']
+14:58:09.098 | INFO    | Task run 'download_era5_land_daily_batch-188' -   Days: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30']
+14:58:09.099 | INFO    | Task run 'download_era5_land_daily_batch-188' -   Area [N,W,S,E]: [6.5, -75.0, -35.0, -33.5]
+14:58:09.099 | INFO    | Task run 'download_era5_land_daily_batch-188' -   Area interpretation:
+14:58:09.099 | INFO    | Task run 'download_era5_land_daily_batch-188' -     North: 6.5°
+14:58:09.099 | INFO    | Task run 'download_era5_land_daily_batch-188' -     West: -75.0°
+14:58:09.100 | INFO    | Task run 'download_era5_land_daily_batch-188' -     South: -35.0°
+14:58:09.100 | INFO    | Task run 'download_era5_land_daily_batch-188' -     East: -33.5°
+14:58:09.100 | INFO    | Task run 'download_era5_land_daily_batch-188' - ================================================================================
+14:58:10.157 | INFO    | Task run 'download_era5_land_daily_batch-188' - Submitting request to CDS...
+2025-10-29 14:58:10,805 INFO Request ID is ad6096e4-a544-4242-97b1-8c14d31fe46e
+14:58:10.805 | INFO    | ecmwf.datastores.legacy_client - Request ID is ad6096e4-a544-4242-97b1-8c14d31fe46e
+2025-10-29 14:58:11,100 INFO status has been updated to accepted
+14:58:11.100 | INFO    | ecmwf.datastores.legacy_client - status has been updated to accepted
+2025-10-29 14:58:33,645 INFO status has been updated to successful
+14:58:33.645 | INFO    | ecmwf.datastores.legacy_client - status has been updated to successful
+91e89ffd65862ded293416d194604ed3.nc:   0%|          | 0.00/14.3M [00:00<?, ?B/s]91e89ffd65862ded293416d194604ed3.nc:   7%|▋         | 1.00M/14.3M [00:05<01:11, 196kB/s]91e89ffd65862ded293416d194604ed3.nc:  14%|█▍        | 2.00M/14.3M [00:07<00:42, 307kB/s]91e89ffd65862ded293416d194604ed3.nc:  21%|██        | 3.00M/14.3M [00:09<00:33, 359kB/s]91e89ffd65862ded293416d194604ed3.nc:  28%|██▊       | 4.00M/14.3M [00:12<00:29, 363kB/s]91e89ffd65862ded293416d194604ed3.nc:  35%|███▍      | 5.00M/14.3M [00:15<00:26, 369kB/s]91e89ffd65862ded293416d194604ed3.nc:  42%|████▏     | 6.00M/14.3M [00:17<00:22, 394kB/s]91e89ffd65862ded293416d194604ed3.nc:  49%|████▉     | 7.00M/14.3M [00:20<00:19, 398kB/s]91e89ffd65862ded293416d194604ed3.nc:  56%|█████▌    | 8.00M/14.3M [00:22<00:16, 402kB/s]91e89ffd65862ded293416d194604ed3.nc:  63%|██████▎   | 9.00M/14.3M [00:25<00:14, 388kB/s]91e89ffd65862ded293416d194604ed3.nc:  70%|██████▉   | 10.0M/14.3M [00:29<00:12, 361kB/s]91e89ffd65862ded293416d194604ed3.nc:  77%|███████▋  | 11.0M/14.3M [00:33<00:10, 325kB/s]91e89ffd65862ded293416d194604ed3.nc:  84%|████████▍ | 12.0M/14.3M [00:37<00:07, 301kB/s]91e89ffd65862ded293416d194604ed3.nc:  91%|█████████ | 13.0M/14.3M [00:44<00:06, 224kB/s]91e89ffd65862ded293416d194604ed3.nc:  98%|█████████▊| 14.0M/14.3M [00:50<00:01, 205kB/s]91e89ffd65862ded293416d194604ed3.nc: 100%|██████████| 14.3M/14.3M [00:51<00:00, 219kB/s]                                                                                        14:59:26.626 | INFO    | Task run 'download_era5_land_daily_batch-188' - ✓ ERA5 Land Daily downloaded: /mnt/workwork/geoserver_data/raw/era5_land_daily/2mtemperature_daily_maximum_20151107_20151207.nc
+14:59:26.627 | INFO    | Task run 'download_era5_land_daily_batch-188' - Finished in state Completed()
+14:59:26.627 | INFO    | Flow run 'ambitious-rabbit' -   Skipping GeoTIFF processing (all exist)
+14:59:26.636 | INFO    | Task run 'append_to_yearly_historical-4e4' - 📦 Appending data from 2mtemperature_daily_maximum_20151107_20151207.nc to yearly historical files
+14:59:26.636 | INFO    | Task run 'append_to_yearly_historical-4e4' -   Processing 31 specific dates
+14:59:26.644 | INFO    | Task run 'append_to_yearly_historical-4e4' -   Source variables: ['t2m']
+14:59:26.755 | INFO    | Task run 'append_to_yearly_historical-4e4' -   Converted temperature to Celsius
+14:59:26.757 | INFO    | Task run 'append_to_yearly_historical-4e4' -   Clipped to bbox: (-75.0, -35.0, -33.5, 6.5)
+14:59:26.762 | INFO    | Task run 'append_to_yearly_historical-4e4' -   Processing 31 dates
+14:59:26.762 | INFO    | Task run 'append_to_yearly_historical-4e4' -   Dates span 1 year(s): [2015]
+14:59:26.763 | INFO    | Task run 'append_to_yearly_historical-4e4' - 
+  📅 Processing year 2015 (31 dates)
+14:59:26.767 | INFO    | Task run 'append_to_yearly_historical-4e4' -     Year file exists, checking for duplicates...
+14:59:26.780 | INFO    | Task run 'append_to_yearly_historical-4e4' -     All 31 dates already exist, skipping
+14:59:26.782 | INFO    | Task run 'append_to_yearly_historical-4e4' - 
+✓ Updated 0 yearly file(s)
+14:59:26.786 | INFO    | Task run 'append_to_yearly_historical-4e4' - Finished in state Completed()
+14:59:26.787 | INFO    | Flow run 'ambitious-rabbit' - ✓ Updated 0 yearly historical file(s)
+14:59:26.796 | INFO    | Task run 'cleanup_raw_files-3b3' - ✓ Cleaned up: 2mtemperature_daily_maximum_20151107_20151207.nc
+14:59:26.797 | INFO    | Task run 'cleanup_raw_files-3b3' - Finished in state Completed()
+14:59:26.797 | INFO    | Flow run 'ambitious-rabbit' - ✓ Completed batch: 2015-11-07 to 2015-12-07
+14:59:26.798 | INFO    | Flow run 'ambitious-rabbit' - 
+Downloading batch: 2015-12-08 to 2015-12-31
+14:59:26.798 | INFO    | Flow run 'ambitious-rabbit' -   Will process 0 GeoTIFFs
+14:59:26.798 | INFO    | Flow run 'ambitious-rabbit' -   Will append 24 to historical
+14:59:26.806 | INFO    | Task run 'download_era5_land_daily_batch-626' - Using CDS bbox [N, W, S, E]: [6.5, -75.0, -35.0, -33.5]
+14:59:26.807 | INFO    | Task run 'download_era5_land_daily_batch-626' -   North: 6.5, South: -35.0 (span: 41.5°)
+14:59:26.807 | INFO    | Task run 'download_era5_land_daily_batch-626' -   West: -75.0, East: -33.5 (span: 41.5°)
+14:59:26.808 | INFO    | Task run 'download_era5_land_daily_batch-626' - Downloading ERA5 Land Daily: 2015-12-08 to 2015-12-31
+14:59:26.808 | INFO    | Task run 'download_era5_land_daily_batch-626' - Variable: 2m_temperature, Statistic: daily_maximum
+14:59:26.808 | INFO    | Task run 'download_era5_land_daily_batch-626' - ================================================================================
+14:59:26.808 | INFO    | Task run 'download_era5_land_daily_batch-626' - CDS API REQUEST:
+14:59:26.809 | INFO    | Task run 'download_era5_land_daily_batch-626' - ================================================================================
+14:59:26.809 | INFO    | Task run 'download_era5_land_daily_batch-626' - {
+  "variable": [
+    "2m_temperature"
+  ],
+  "year": [
+    "2015"
+  ],
+  "month": [
+    "12"
+  ],
+  "day": [
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "31"
+  ],
+  "daily_statistic": "daily_maximum",
+  "time_zone": "utc+00:00",
+  "frequency": "6_hourly",
+  "area": [
+    6.5,
+    -75.0,
+    -35.0,
+    -33.5
+  ]
+}
+14:59:26.810 | INFO    | Task run 'download_era5_land_daily_batch-626' - ================================================================================
+14:59:26.810 | INFO    | Task run 'download_era5_land_daily_batch-626' - REQUEST DETAILS:
+14:59:26.810 | INFO    | Task run 'download_era5_land_daily_batch-626' -   Dataset: derived-era5-land-daily-statistics
+14:59:26.810 | INFO    | Task run 'download_era5_land_daily_batch-626' -   Variable: ['2m_temperature']
+14:59:26.811 | INFO    | Task run 'download_era5_land_daily_batch-626' -   Daily statistic: daily_maximum
+14:59:26.811 | INFO    | Task run 'download_era5_land_daily_batch-626' -   Time zone: utc+00:00
+14:59:26.811 | INFO    | Task run 'download_era5_land_daily_batch-626' -   Frequency: 6_hourly
+14:59:26.811 | INFO    | Task run 'download_era5_land_daily_batch-626' -   Years: ['2015']
+14:59:26.812 | INFO    | Task run 'download_era5_land_daily_batch-626' -   Months: ['12']
+14:59:26.812 | INFO    | Task run 'download_era5_land_daily_batch-626' -   Days: ['08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31']
+14:59:26.812 | INFO    | Task run 'download_era5_land_daily_batch-626' -   Area [N,W,S,E]: [6.5, -75.0, -35.0, -33.5]
+14:59:26.812 | INFO    | Task run 'download_era5_land_daily_batch-626' -   Area interpretation:
+14:59:26.812 | INFO    | Task run 'download_era5_land_daily_batch-626' -     North: 6.5°
+14:59:26.813 | INFO    | Task run 'download_era5_land_daily_batch-626' -     West: -75.0°
+14:59:26.813 | INFO    | Task run 'download_era5_land_daily_batch-626' -     South: -35.0°
+14:59:26.813 | INFO    | Task run 'download_era5_land_daily_batch-626' -     East: -33.5°
+14:59:26.813 | INFO    | Task run 'download_era5_land_daily_batch-626' - ================================================================================
+14:59:28.906 | INFO    | Task run 'download_era5_land_daily_batch-626' - Submitting request to CDS...
+2025-10-29 14:59:29,529 INFO Request ID is 89501915-f57c-4779-bc1a-b100b436e044
+14:59:29.529 | INFO    | ecmwf.datastores.legacy_client - Request ID is 89501915-f57c-4779-bc1a-b100b436e044
+2025-10-29 14:59:29,804 INFO status has been updated to accepted
+14:59:29.804 | INFO    | ecmwf.datastores.legacy_client - status has been updated to accepted
+2025-10-29 14:59:44,442 INFO status has been updated to running
+14:59:44.442 | INFO    | ecmwf.datastores.legacy_client - status has been updated to running
+2025-10-29 14:59:52,304 INFO status has been updated to successful
+14:59:52.304 | INFO    | ecmwf.datastores.legacy_client - status has been updated to successful
+3a89cd78982f5aeb168b99c606b8ae78.nc:   0%|          | 0.00/4.69M [00:00<?, ?B/s]3a89cd78982f5aeb168b99c606b8ae78.nc:  21%|██▏       | 1.00M/4.69M [00:02<00:09, 411kB/s]3a89cd78982f5aeb168b99c606b8ae78.nc:  43%|████▎     | 2.00M/4.69M [00:02<00:03, 875kB/s]3a89cd78982f5aeb168b99c606b8ae78.nc:  64%|██████▍   | 3.00M/4.69M [00:03<00:01, 1.34MB/s]3a89cd78982f5aeb168b99c606b8ae78.nc: 100%|██████████| 4.69M/4.69M [00:03<00:00, 2.34MB/s]                                                                                         14:59:57.321 | INFO    | Task run 'download_era5_land_daily_batch-626' - ✓ ERA5 Land Daily downloaded: /mnt/workwork/geoserver_data/raw/era5_land_daily/2mtemperature_daily_maximum_20151208_20151231.nc
+14:59:57.323 | INFO    | Task run 'download_era5_land_daily_batch-626' - Finished in state Completed()
+14:59:57.324 | INFO    | Flow run 'ambitious-rabbit' -   Skipping GeoTIFF processing (all exist)
+14:59:57.332 | INFO    | Task run 'append_to_yearly_historical-015' - 📦 Appending data from 2mtemperature_daily_maximum_20151208_20151231.nc to yearly historical files
+14:59:57.333 | INFO    | Task run 'append_to_yearly_historical-015' -   Processing 24 specific dates
+14:59:57.339 | INFO    | Task run 'append_to_yearly_historical-015' -   Source variables: ['t2m']
+14:59:57.389 | INFO    | Task run 'append_to_yearly_historical-015' -   Converted temperature to Celsius
+14:59:57.390 | INFO    | Task run 'append_to_yearly_historical-015' -   Clipped to bbox: (-75.0, -35.0, -33.5, 6.5)
+14:59:57.393 | INFO    | Task run 'append_to_yearly_historical-015' -   Processing 24 dates
+14:59:57.393 | INFO    | Task run 'append_to_yearly_historical-015' -   Dates span 1 year(s): [2015]
+14:59:57.394 | INFO    | Task run 'append_to_yearly_historical-015' - 
+  📅 Processing year 2015 (24 dates)
+14:59:57.396 | INFO    | Task run 'append_to_yearly_historical-015' -     Year file exists, checking for duplicates...
+14:59:57.409 | INFO    | Task run 'append_to_yearly_historical-015' -     All 24 dates already exist, skipping
+14:59:57.411 | INFO    | Task run 'append_to_yearly_historical-015' - 
+✓ Updated 0 yearly file(s)
+14:59:57.415 | INFO    | Task run 'append_to_yearly_historical-015' - Finished in state Completed()
+14:59:57.415 | INFO    | Flow run 'ambitious-rabbit' - ✓ Updated 0 yearly historical file(s)
+14:59:57.423 | INFO    | Task run 'cleanup_raw_files-df1' - ✓ Cleaned up: 2mtemperature_daily_maximum_20151208_20151231.nc
+14:59:57.424 | INFO    | Task run 'cleanup_raw_files-df1' - Finished in state Completed()
+14:59:57.424 | INFO    | Flow run 'ambitious-rabbit' - ✓ Completed batch: 2015-12-08 to 2015-12-31
+14:59:57.425 | INFO    | Flow run 'ambitious-rabbit' - 
+================================================================================
+14:59:57.425 | INFO    | Flow run 'ambitious-rabbit' - Processing: 2m_temperature - daily_minimum
+14:59:57.425 | INFO    | Flow run 'ambitious-rabbit' - ================================================================================
+14:59:57.433 | INFO    | Task run 'check_missing_dates-e6f' - Checking for 365 dates: 2015-01-01 to 2015-12-31
+14:59:57.497 | INFO    | Task run 'check_missing_dates-e6f' - Found 859 existing GeoTIFF files
+14:59:57.511 | INFO    | Task run 'check_missing_dates-e6f' - Missing from GeoTIFF: 117 dates
+14:59:57.511 | INFO    | Task run 'check_missing_dates-e6f' - Missing from historical: 365 dates
+14:59:57.512 | INFO    | Task run 'check_missing_dates-e6f' - Need to download: 365 dates
+14:59:57.512 | INFO    | Task run 'check_missing_dates-e6f' -   Download range: 2015-01-01 to 2015-12-31
+14:59:57.513 | INFO    | Task run 'check_missing_dates-e6f' - Finished in state Completed()
+14:59:57.513 | INFO    | Flow run 'ambitious-rabbit' - Organized into 1 download batch(es)
+14:59:57.514 | INFO    | Flow run 'ambitious-rabbit' - 
+Downloading batch: 2015-01-01 to 2015-01-31
+14:59:57.514 | INFO    | Flow run 'ambitious-rabbit' -   Will process 0 GeoTIFFs
+14:59:57.514 | INFO    | Flow run 'ambitious-rabbit' -   Will append 31 to historical
+14:59:57.522 | INFO    | Task run 'download_era5_land_daily_batch-61a' - Using CDS bbox [N, W, S, E]: [6.5, -75.0, -35.0, -33.5]
+14:59:57.522 | INFO    | Task run 'download_era5_land_daily_batch-61a' -   North: 6.5, South: -35.0 (span: 41.5°)
+14:59:57.523 | INFO    | Task run 'download_era5_land_daily_batch-61a' -   West: -75.0, East: -33.5 (span: 41.5°)
+14:59:57.525 | INFO    | Task run 'download_era5_land_daily_batch-61a' - Downloading ERA5 Land Daily: 2015-01-01 to 2015-01-31
+14:59:57.525 | INFO    | Task run 'download_era5_land_daily_batch-61a' - Variable: 2m_temperature, Statistic: daily_minimum
+14:59:57.525 | INFO    | Task run 'download_era5_land_daily_batch-61a' - ================================================================================
+14:59:57.525 | INFO    | Task run 'download_era5_land_daily_batch-61a' - CDS API REQUEST:
+14:59:57.526 | INFO    | Task run 'download_era5_land_daily_batch-61a' - ================================================================================
+14:59:57.526 | INFO    | Task run 'download_era5_land_daily_batch-61a' - {
+  "variable": [
+    "2m_temperature"
+  ],
+  "year": [
+    "2015"
+  ],
+  "month": [
+    "01"
+  ],
+  "day": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "31"
+  ],
+  "daily_statistic": "daily_minimum",
+  "time_zone": "utc+00:00",
+  "frequency": "6_hourly",
+  "area": [
+    6.5,
+    -75.0,
+    -35.0,
+    -33.5
+  ]
+}
+14:59:57.527 | INFO    | Task run 'download_era5_land_daily_batch-61a' - ================================================================================
+14:59:57.528 | INFO    | Task run 'download_era5_land_daily_batch-61a' - REQUEST DETAILS:
+14:59:57.528 | INFO    | Task run 'download_era5_land_daily_batch-61a' -   Dataset: derived-era5-land-daily-statistics
+14:59:57.528 | INFO    | Task run 'download_era5_land_daily_batch-61a' -   Variable: ['2m_temperature']
+14:59:57.529 | INFO    | Task run 'download_era5_land_daily_batch-61a' -   Daily statistic: daily_minimum
+14:59:57.529 | INFO    | Task run 'download_era5_land_daily_batch-61a' -   Time zone: utc+00:00
+14:59:57.529 | INFO    | Task run 'download_era5_land_daily_batch-61a' -   Frequency: 6_hourly
+14:59:57.529 | INFO    | Task run 'download_era5_land_daily_batch-61a' -   Years: ['2015']
+14:59:57.529 | INFO    | Task run 'download_era5_land_daily_batch-61a' -   Months: ['01']
+14:59:57.530 | INFO    | Task run 'download_era5_land_daily_batch-61a' -   Days: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31']
+14:59:57.530 | INFO    | Task run 'download_era5_land_daily_batch-61a' -   Area [N,W,S,E]: [6.5, -75.0, -35.0, -33.5]
+14:59:57.530 | INFO    | Task run 'download_era5_land_daily_batch-61a' -   Area interpretation:
+14:59:57.530 | INFO    | Task run 'download_era5_land_daily_batch-61a' -     North: 6.5°
+14:59:57.531 | INFO    | Task run 'download_era5_land_daily_batch-61a' -     West: -75.0°
+14:59:57.531 | INFO    | Task run 'download_era5_land_daily_batch-61a' -     South: -35.0°
+14:59:57.531 | INFO    | Task run 'download_era5_land_daily_batch-61a' -     East: -33.5°
+14:59:57.532 | INFO    | Task run 'download_era5_land_daily_batch-61a' - ================================================================================
+14:59:58.598 | INFO    | Task run 'download_era5_land_daily_batch-61a' - Submitting request to CDS...
+2025-10-29 14:59:59,230 INFO Request ID is 0b5ce9c2-67f7-4c31-9e9d-abe7114c7955
+14:59:59.230 | INFO    | ecmwf.datastores.legacy_client - Request ID is 0b5ce9c2-67f7-4c31-9e9d-abe7114c7955
+2025-10-29 14:59:59,505 INFO status has been updated to accepted
+14:59:59.505 | INFO    | ecmwf.datastores.legacy_client - status has been updated to accepted
+2025-10-29 15:00:14,353 INFO status has been updated to successful
+15:00:14.353 | INFO    | ecmwf.datastores.legacy_client - status has been updated to successful
+e3563912e9ad43e21239b31a5a07cea7.nc:   0%|          | 0.00/6.53M [00:00<?, ?B/s]e3563912e9ad43e21239b31a5a07cea7.nc:  15%|█▌        | 1.00M/6.53M [00:02<00:14, 394kB/s]e3563912e9ad43e21239b31a5a07cea7.nc:  31%|███       | 2.00M/6.53M [00:03<00:06, 746kB/s]e3563912e9ad43e21239b31a5a07cea7.nc:  46%|████▌     | 3.00M/6.53M [00:03<00:03, 1.05MB/s]e3563912e9ad43e21239b31a5a07cea7.nc:  61%|██████▏   | 4.00M/6.53M [00:04<00:02, 1.16MB/s]e3563912e9ad43e21239b31a5a07cea7.nc:  77%|███████▋  | 5.00M/6.53M [00:04<00:01, 1.52MB/s]e3563912e9ad43e21239b31a5a07cea7.nc:  92%|█████████▏| 6.00M/6.53M [00:05<00:00, 1.48MB/s]e3563912e9ad43e21239b31a5a07cea7.nc: 100%|██████████| 6.53M/6.53M [00:05<00:00, 1.58MB/s]                                                                                         15:00:22.254 | INFO    | Task run 'download_era5_land_daily_batch-61a' - ✓ ERA5 Land Daily downloaded: /mnt/workwork/geoserver_data/raw/era5_land_daily/2mtemperature_daily_minimum_20150101_20150131.nc
+15:00:22.256 | INFO    | Task run 'download_era5_land_daily_batch-61a' - Finished in state Completed()
+15:00:22.256 | INFO    | Flow run 'ambitious-rabbit' -   Skipping GeoTIFF processing (all exist)
+15:00:22.265 | INFO    | Task run 'append_to_yearly_historical-8cc' - 📦 Appending data from 2mtemperature_daily_minimum_20150101_20150131.nc to yearly historical files
+15:00:22.265 | INFO    | Task run 'append_to_yearly_historical-8cc' -   Processing 31 specific dates
+15:00:22.271 | INFO    | Task run 'append_to_yearly_historical-8cc' -   Source variables: ['t2m']
+15:00:22.333 | INFO    | Task run 'append_to_yearly_historical-8cc' -   Converted temperature to Celsius
+15:00:22.334 | INFO    | Task run 'append_to_yearly_historical-8cc' -   Clipped to bbox: (-75.0, -35.0, -33.5, 6.5)
+15:00:22.337 | INFO    | Task run 'append_to_yearly_historical-8cc' -   Processing 31 dates
+15:00:22.338 | INFO    | Task run 'append_to_yearly_historical-8cc' -   Dates span 1 year(s): [2015]
+15:00:22.338 | INFO    | Task run 'append_to_yearly_historical-8cc' - 
+  📅 Processing year 2015 (31 dates)
+15:00:22.342 | INFO    | Task run 'append_to_yearly_historical-8cc' -     Year file exists, checking for duplicates...
+15:00:22.439 | INFO    | Task run 'append_to_yearly_historical-8cc' -     All 31 dates already exist, skipping
+15:00:22.442 | INFO    | Task run 'append_to_yearly_historical-8cc' - 
+✓ Updated 0 yearly file(s)
+15:00:22.445 | INFO    | Task run 'append_to_yearly_historical-8cc' - Finished in state Completed()
+15:00:22.446 | INFO    | Flow run 'ambitious-rabbit' - ✓ Updated 0 yearly historical file(s)
+15:00:22.454 | INFO    | Task run 'cleanup_raw_files-4b0' - ✓ Cleaned up: 2mtemperature_daily_minimum_20150101_20150131.nc
+15:00:22.455 | INFO    | Task run 'cleanup_raw_files-4b0' - Finished in state Completed()
+15:00:22.455 | INFO    | Flow run 'ambitious-rabbit' - ✓ Completed batch: 2015-01-01 to 2015-01-31
+15:00:22.456 | INFO    | Flow run 'ambitious-rabbit' - 
+Downloading batch: 2015-02-01 to 2015-03-03
+15:00:22.456 | INFO    | Flow run 'ambitious-rabbit' -   Will process 0 GeoTIFFs
+15:00:22.457 | INFO    | Flow run 'ambitious-rabbit' -   Will append 31 to historical
+15:00:22.465 | INFO    | Task run 'download_era5_land_daily_batch-3bd' - Using CDS bbox [N, W, S, E]: [6.5, -75.0, -35.0, -33.5]
+15:00:22.465 | INFO    | Task run 'download_era5_land_daily_batch-3bd' -   North: 6.5, South: -35.0 (span: 41.5°)
+15:00:22.465 | INFO    | Task run 'download_era5_land_daily_batch-3bd' -   West: -75.0, East: -33.5 (span: 41.5°)
+15:00:22.466 | INFO    | Task run 'download_era5_land_daily_batch-3bd' - Downloading ERA5 Land Daily: 2015-02-01 to 2015-03-03
+15:00:22.466 | INFO    | Task run 'download_era5_land_daily_batch-3bd' - Variable: 2m_temperature, Statistic: daily_minimum
+15:00:22.467 | INFO    | Task run 'download_era5_land_daily_batch-3bd' - ================================================================================
+15:00:22.467 | INFO    | Task run 'download_era5_land_daily_batch-3bd' - CDS API REQUEST:
+15:00:22.467 | INFO    | Task run 'download_era5_land_daily_batch-3bd' - ================================================================================
+15:00:22.468 | INFO    | Task run 'download_era5_land_daily_batch-3bd' - {
+  "variable": [
+    "2m_temperature"
+  ],
+  "year": [
+    "2015"
+  ],
+  "month": [
+    "02",
+    "03"
+  ],
+  "day": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28"
+  ],
+  "daily_statistic": "daily_minimum",
+  "time_zone": "utc+00:00",
+  "frequency": "6_hourly",
+  "area": [
+    6.5,
+    -75.0,
+    -35.0,
+    -33.5
+  ]
+}
+15:00:22.468 | INFO    | Task run 'download_era5_land_daily_batch-3bd' - ================================================================================
+15:00:22.468 | INFO    | Task run 'download_era5_land_daily_batch-3bd' - REQUEST DETAILS:
+15:00:22.469 | INFO    | Task run 'download_era5_land_daily_batch-3bd' -   Dataset: derived-era5-land-daily-statistics
+15:00:22.469 | INFO    | Task run 'download_era5_land_daily_batch-3bd' -   Variable: ['2m_temperature']
+15:00:22.469 | INFO    | Task run 'download_era5_land_daily_batch-3bd' -   Daily statistic: daily_minimum
+15:00:22.469 | INFO    | Task run 'download_era5_land_daily_batch-3bd' -   Time zone: utc+00:00
+15:00:22.470 | INFO    | Task run 'download_era5_land_daily_batch-3bd' -   Frequency: 6_hourly
+15:00:22.470 | INFO    | Task run 'download_era5_land_daily_batch-3bd' -   Years: ['2015']
+15:00:22.470 | INFO    | Task run 'download_era5_land_daily_batch-3bd' -   Months: ['02', '03']
+15:00:22.470 | INFO    | Task run 'download_era5_land_daily_batch-3bd' -   Days: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28']
+15:00:22.471 | INFO    | Task run 'download_era5_land_daily_batch-3bd' -   Area [N,W,S,E]: [6.5, -75.0, -35.0, -33.5]
+15:00:22.471 | INFO    | Task run 'download_era5_land_daily_batch-3bd' -   Area interpretation:
+15:00:22.471 | INFO    | Task run 'download_era5_land_daily_batch-3bd' -     North: 6.5°
+15:00:22.471 | INFO    | Task run 'download_era5_land_daily_batch-3bd' -     West: -75.0°
+15:00:22.472 | INFO    | Task run 'download_era5_land_daily_batch-3bd' -     South: -35.0°
+15:00:22.472 | INFO    | Task run 'download_era5_land_daily_batch-3bd' -     East: -33.5°
+15:00:22.472 | INFO    | Task run 'download_era5_land_daily_batch-3bd' - ================================================================================
+15:00:23.702 | INFO    | Task run 'download_era5_land_daily_batch-3bd' - Submitting request to CDS...
+2025-10-29 15:00:24,402 INFO Request ID is 94fa717e-0e77-4c42-ba6f-08a76669dd13
+15:00:24.402 | INFO    | ecmwf.datastores.legacy_client - Request ID is 94fa717e-0e77-4c42-ba6f-08a76669dd13
+2025-10-29 15:00:24,678 INFO status has been updated to accepted
+15:00:24.678 | INFO    | ecmwf.datastores.legacy_client - status has been updated to accepted
+2025-10-29 15:00:39,374 INFO status has been updated to successful
+15:00:39.374 | INFO    | ecmwf.datastores.legacy_client - status has been updated to successful
+272606fd3f6ba72dab7a87bc019b3574.nc:   0%|          | 0.00/13.8M [00:00<?, ?B/s]272606fd3f6ba72dab7a87bc019b3574.nc:   7%|▋         | 1.00M/13.8M [00:02<00:32, 411kB/s]272606fd3f6ba72dab7a87bc019b3574.nc:  14%|█▍        | 2.00M/13.8M [00:02<00:14, 856kB/s]272606fd3f6ba72dab7a87bc019b3574.nc:  22%|██▏       | 3.00M/13.8M [00:03<00:08, 1.34MB/s]272606fd3f6ba72dab7a87bc019b3574.nc:  36%|███▌      | 5.00M/13.8M [00:03<00:03, 2.53MB/s]272606fd3f6ba72dab7a87bc019b3574.nc:  43%|████▎     | 6.00M/13.8M [00:03<00:02, 2.85MB/s]272606fd3f6ba72dab7a87bc019b3574.nc:  51%|█████     | 7.00M/13.8M [00:04<00:02, 2.56MB/s]272606fd3f6ba72dab7a87bc019b3574.nc:  65%|██████▌   | 9.00M/13.8M [00:04<00:01, 3.68MB/s]272606fd3f6ba72dab7a87bc019b3574.nc:  72%|███████▏  | 10.0M/13.8M [00:04<00:01, 3.74MB/s]272606fd3f6ba72dab7a87bc019b3574.nc:  80%|███████▉  | 11.0M/13.8M [00:05<00:00, 3.22MB/s]272606fd3f6ba72dab7a87bc019b3574.nc:  87%|████████▋ | 12.0M/13.8M [00:05<00:00, 2.79MB/s]272606fd3f6ba72dab7a87bc019b3574.nc:  94%|█████████▍| 13.0M/13.8M [00:06<00:00, 2.43MB/s]                                                                                         15:00:47.212 | INFO    | Task run 'download_era5_land_daily_batch-3bd' - ✓ ERA5 Land Daily downloaded: /mnt/workwork/geoserver_data/raw/era5_land_daily/2mtemperature_daily_minimum_20150201_20150303.nc
+15:00:47.214 | INFO    | Task run 'download_era5_land_daily_batch-3bd' - Finished in state Completed()
+15:00:47.214 | INFO    | Flow run 'ambitious-rabbit' -   Skipping GeoTIFF processing (all exist)
+15:00:47.224 | INFO    | Task run 'append_to_yearly_historical-612' - 📦 Appending data from 2mtemperature_daily_minimum_20150201_20150303.nc to yearly historical files
+15:00:47.225 | INFO    | Task run 'append_to_yearly_historical-612' -   Processing 31 specific dates
+15:00:47.233 | INFO    | Task run 'append_to_yearly_historical-612' -   Source variables: ['t2m']
+15:00:47.339 | INFO    | Task run 'append_to_yearly_historical-612' -   Converted temperature to Celsius
+15:00:47.341 | INFO    | Task run 'append_to_yearly_historical-612' -   Clipped to bbox: (-75.0, -35.0, -33.5, 6.5)
+15:00:47.347 | INFO    | Task run 'append_to_yearly_historical-612' -   Processing 31 dates
+15:00:47.347 | INFO    | Task run 'append_to_yearly_historical-612' -   Dates span 1 year(s): [2015]
+15:00:47.347 | INFO    | Task run 'append_to_yearly_historical-612' - 
+  📅 Processing year 2015 (31 dates)
+15:00:47.351 | INFO    | Task run 'append_to_yearly_historical-612' -     Year file exists, checking for duplicates...
+15:00:47.363 | INFO    | Task run 'append_to_yearly_historical-612' -     All 31 dates already exist, skipping
+15:00:47.365 | INFO    | Task run 'append_to_yearly_historical-612' - 
+✓ Updated 0 yearly file(s)
+15:00:47.369 | INFO    | Task run 'append_to_yearly_historical-612' - Finished in state Completed()
+15:00:47.369 | INFO    | Flow run 'ambitious-rabbit' - ✓ Updated 0 yearly historical file(s)
+15:00:47.377 | INFO    | Task run 'cleanup_raw_files-ab8' - ✓ Cleaned up: 2mtemperature_daily_minimum_20150201_20150303.nc
+15:00:47.378 | INFO    | Task run 'cleanup_raw_files-ab8' - Finished in state Completed()
+15:00:47.379 | INFO    | Flow run 'ambitious-rabbit' - ✓ Completed batch: 2015-02-01 to 2015-03-03
+15:00:47.379 | INFO    | Flow run 'ambitious-rabbit' - 
+Downloading batch: 2015-03-04 to 2015-04-03
+15:00:47.380 | INFO    | Flow run 'ambitious-rabbit' -   Will process 0 GeoTIFFs
+15:00:47.380 | INFO    | Flow run 'ambitious-rabbit' -   Will append 31 to historical
+15:00:47.388 | INFO    | Task run 'download_era5_land_daily_batch-6f8' - Using CDS bbox [N, W, S, E]: [6.5, -75.0, -35.0, -33.5]
+15:00:47.388 | INFO    | Task run 'download_era5_land_daily_batch-6f8' -   North: 6.5, South: -35.0 (span: 41.5°)
+15:00:47.389 | INFO    | Task run 'download_era5_land_daily_batch-6f8' -   West: -75.0, East: -33.5 (span: 41.5°)
+15:00:47.389 | INFO    | Task run 'download_era5_land_daily_batch-6f8' - Downloading ERA5 Land Daily: 2015-03-04 to 2015-04-03
+15:00:47.390 | INFO    | Task run 'download_era5_land_daily_batch-6f8' - Variable: 2m_temperature, Statistic: daily_minimum
+15:00:47.390 | INFO    | Task run 'download_era5_land_daily_batch-6f8' - ================================================================================
+15:00:47.390 | INFO    | Task run 'download_era5_land_daily_batch-6f8' - CDS API REQUEST:
+15:00:47.390 | INFO    | Task run 'download_era5_land_daily_batch-6f8' - ================================================================================
+15:00:47.391 | INFO    | Task run 'download_era5_land_daily_batch-6f8' - {
+  "variable": [
+    "2m_temperature"
+  ],
+  "year": [
+    "2015"
+  ],
+  "month": [
+    "03",
+    "04"
+  ],
+  "day": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "31"
+  ],
+  "daily_statistic": "daily_minimum",
+  "time_zone": "utc+00:00",
+  "frequency": "6_hourly",
+  "area": [
+    6.5,
+    -75.0,
+    -35.0,
+    -33.5
+  ]
+}
+15:00:47.391 | INFO    | Task run 'download_era5_land_daily_batch-6f8' - ================================================================================
+15:00:47.391 | INFO    | Task run 'download_era5_land_daily_batch-6f8' - REQUEST DETAILS:
+15:00:47.392 | INFO    | Task run 'download_era5_land_daily_batch-6f8' -   Dataset: derived-era5-land-daily-statistics
+15:00:47.392 | INFO    | Task run 'download_era5_land_daily_batch-6f8' -   Variable: ['2m_temperature']
+15:00:47.392 | INFO    | Task run 'download_era5_land_daily_batch-6f8' -   Daily statistic: daily_minimum
+15:00:47.392 | INFO    | Task run 'download_era5_land_daily_batch-6f8' -   Time zone: utc+00:00
+15:00:47.393 | INFO    | Task run 'download_era5_land_daily_batch-6f8' -   Frequency: 6_hourly
+15:00:47.393 | INFO    | Task run 'download_era5_land_daily_batch-6f8' -   Years: ['2015']
+15:00:47.393 | INFO    | Task run 'download_era5_land_daily_batch-6f8' -   Months: ['03', '04']
+15:00:47.393 | INFO    | Task run 'download_era5_land_daily_batch-6f8' -   Days: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31']
+15:00:47.394 | INFO    | Task run 'download_era5_land_daily_batch-6f8' -   Area [N,W,S,E]: [6.5, -75.0, -35.0, -33.5]
+15:00:47.394 | INFO    | Task run 'download_era5_land_daily_batch-6f8' -   Area interpretation:
+15:00:47.394 | INFO    | Task run 'download_era5_land_daily_batch-6f8' -     North: 6.5°
+15:00:47.394 | INFO    | Task run 'download_era5_land_daily_batch-6f8' -     West: -75.0°
+15:00:47.395 | INFO    | Task run 'download_era5_land_daily_batch-6f8' -     South: -35.0°
+15:00:47.395 | INFO    | Task run 'download_era5_land_daily_batch-6f8' -     East: -33.5°
+15:00:47.395 | INFO    | Task run 'download_era5_land_daily_batch-6f8' - ================================================================================
+15:00:48.435 | INFO    | Task run 'download_era5_land_daily_batch-6f8' - Submitting request to CDS...
+2025-10-29 15:00:49,015 INFO Request ID is a47f3de1-cb46-4480-bbf1-bee4c85d7562
+15:00:49.015 | INFO    | ecmwf.datastores.legacy_client - Request ID is a47f3de1-cb46-4480-bbf1-bee4c85d7562
+2025-10-29 15:00:49,309 INFO status has been updated to accepted
+15:00:49.309 | INFO    | ecmwf.datastores.legacy_client - status has been updated to accepted
+2025-10-29 15:01:03,902 INFO status has been updated to successful
+15:01:03.902 | INFO    | ecmwf.datastores.legacy_client - status has been updated to successful
+fbd038e987383d749e1ab109f6c8f4ca.nc:   0%|          | 0.00/12.9M [00:00<?, ?B/s]fbd038e987383d749e1ab109f6c8f4ca.nc:   8%|▊         | 1.00M/12.9M [00:03<00:45, 274kB/s]fbd038e987383d749e1ab109f6c8f4ca.nc:  16%|█▌        | 2.00M/12.9M [00:06<00:32, 352kB/s]fbd038e987383d749e1ab109f6c8f4ca.nc:  23%|██▎       | 3.00M/12.9M [00:10<00:33, 306kB/s]fbd038e987383d749e1ab109f6c8f4ca.nc:  31%|███       | 4.00M/12.9M [00:16<00:40, 230kB/s]fbd038e987383d749e1ab109f6c8f4ca.nc:  39%|███▉      | 5.00M/12.9M [00:24<00:46, 180kB/s]fbd038e987383d749e1ab109f6c8f4ca.nc:  47%|████▋     | 6.00M/12.9M [00:32<00:45, 159kB/s]fbd038e987383d749e1ab109f6c8f4ca.nc:  54%|█████▍    | 7.00M/12.9M [00:38<00:38, 162kB/s]fbd038e987383d749e1ab109f6c8f4ca.nc:  62%|██████▏   | 8.00M/12.9M [00:46<00:33, 155kB/s]fbd038e987383d749e1ab109f6c8f4ca.nc:  70%|██████▉   | 9.00M/12.9M [00:52<00:25, 160kB/s]fbd038e987383d749e1ab109f6c8f4ca.nc:  78%|███████▊  | 10.0M/12.9M [00:53<00:14, 209kB/s]fbd038e987383d749e1ab109f6c8f4ca.nc:  85%|████████▌ | 11.0M/12.9M [00:55<00:07, 269kB/s]fbd038e987383d749e1ab109f6c8f4ca.nc:  93%|█████████▎| 12.0M/12.9M [00:56<00:02, 341kB/s]fbd038e987383d749e1ab109f6c8f4ca.nc: 100%|██████████| 12.9M/12.9M [00:57<00:00, 402kB/s]                                                                                        15:02:08.010 | INFO    | Task run 'download_era5_land_daily_batch-6f8' - ✓ ERA5 Land Daily downloaded: /mnt/workwork/geoserver_data/raw/era5_land_daily/2mtemperature_daily_minimum_20150304_20150403.nc
+15:02:08.011 | INFO    | Task run 'download_era5_land_daily_batch-6f8' - Finished in state Completed()
+15:02:08.012 | INFO    | Flow run 'ambitious-rabbit' -   Skipping GeoTIFF processing (all exist)
+15:02:08.024 | INFO    | Task run 'append_to_yearly_historical-e2c' - 📦 Appending data from 2mtemperature_daily_minimum_20150304_20150403.nc to yearly historical files
+15:02:08.024 | INFO    | Task run 'append_to_yearly_historical-e2c' -   Processing 31 specific dates
+15:02:08.030 | INFO    | Task run 'append_to_yearly_historical-e2c' -   Source variables: ['t2m']
+15:02:08.145 | INFO    | Task run 'append_to_yearly_historical-e2c' -   Converted temperature to Celsius
+15:02:08.146 | INFO    | Task run 'append_to_yearly_historical-e2c' -   Clipped to bbox: (-75.0, -35.0, -33.5, 6.5)
+15:02:08.151 | INFO    | Task run 'append_to_yearly_historical-e2c' -   Processing 31 dates
+15:02:08.151 | INFO    | Task run 'append_to_yearly_historical-e2c' -   Dates span 1 year(s): [2015]
+15:02:08.152 | INFO    | Task run 'append_to_yearly_historical-e2c' - 
+  📅 Processing year 2015 (31 dates)
+15:02:08.156 | INFO    | Task run 'append_to_yearly_historical-e2c' -     Year file exists, checking for duplicates...
+15:02:08.167 | INFO    | Task run 'append_to_yearly_historical-e2c' -     All 31 dates already exist, skipping
+15:02:08.169 | INFO    | Task run 'append_to_yearly_historical-e2c' - 
+✓ Updated 0 yearly file(s)
+15:02:08.172 | INFO    | Task run 'append_to_yearly_historical-e2c' - Finished in state Completed()
+15:02:08.172 | INFO    | Flow run 'ambitious-rabbit' - ✓ Updated 0 yearly historical file(s)
+15:02:08.181 | INFO    | Task run 'cleanup_raw_files-afd' - ✓ Cleaned up: 2mtemperature_daily_minimum_20150304_20150403.nc
+15:02:08.182 | INFO    | Task run 'cleanup_raw_files-afd' - Finished in state Completed()
+15:02:08.182 | INFO    | Flow run 'ambitious-rabbit' - ✓ Completed batch: 2015-03-04 to 2015-04-03
+15:02:08.182 | INFO    | Flow run 'ambitious-rabbit' - 
+Downloading batch: 2015-04-04 to 2015-05-04
+15:02:08.183 | INFO    | Flow run 'ambitious-rabbit' -   Will process 0 GeoTIFFs
+15:02:08.183 | INFO    | Flow run 'ambitious-rabbit' -   Will append 31 to historical
+15:02:08.190 | INFO    | Task run 'download_era5_land_daily_batch-f1d' - Using CDS bbox [N, W, S, E]: [6.5, -75.0, -35.0, -33.5]
+15:02:08.191 | INFO    | Task run 'download_era5_land_daily_batch-f1d' -   North: 6.5, South: -35.0 (span: 41.5°)
+15:02:08.191 | INFO    | Task run 'download_era5_land_daily_batch-f1d' -   West: -75.0, East: -33.5 (span: 41.5°)
+15:02:08.192 | INFO    | Task run 'download_era5_land_daily_batch-f1d' - Downloading ERA5 Land Daily: 2015-04-04 to 2015-05-04
+15:02:08.192 | INFO    | Task run 'download_era5_land_daily_batch-f1d' - Variable: 2m_temperature, Statistic: daily_minimum
+15:02:08.192 | INFO    | Task run 'download_era5_land_daily_batch-f1d' - ================================================================================
+15:02:08.192 | INFO    | Task run 'download_era5_land_daily_batch-f1d' - CDS API REQUEST:
+15:02:08.193 | INFO    | Task run 'download_era5_land_daily_batch-f1d' - ================================================================================
+15:02:08.193 | INFO    | Task run 'download_era5_land_daily_batch-f1d' - {
+  "variable": [
+    "2m_temperature"
+  ],
+  "year": [
+    "2015"
+  ],
+  "month": [
+    "04",
+    "05"
+  ],
+  "day": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30"
+  ],
+  "daily_statistic": "daily_minimum",
+  "time_zone": "utc+00:00",
+  "frequency": "6_hourly",
+  "area": [
+    6.5,
+    -75.0,
+    -35.0,
+    -33.5
+  ]
+}
+15:02:08.193 | INFO    | Task run 'download_era5_land_daily_batch-f1d' - ================================================================================
+15:02:08.193 | INFO    | Task run 'download_era5_land_daily_batch-f1d' - REQUEST DETAILS:
+15:02:08.194 | INFO    | Task run 'download_era5_land_daily_batch-f1d' -   Dataset: derived-era5-land-daily-statistics
+15:02:08.194 | INFO    | Task run 'download_era5_land_daily_batch-f1d' -   Variable: ['2m_temperature']
+15:02:08.194 | INFO    | Task run 'download_era5_land_daily_batch-f1d' -   Daily statistic: daily_minimum
+15:02:08.194 | INFO    | Task run 'download_era5_land_daily_batch-f1d' -   Time zone: utc+00:00
+15:02:08.195 | INFO    | Task run 'download_era5_land_daily_batch-f1d' -   Frequency: 6_hourly
+15:02:08.195 | INFO    | Task run 'download_era5_land_daily_batch-f1d' -   Years: ['2015']
+15:02:08.195 | INFO    | Task run 'download_era5_land_daily_batch-f1d' -   Months: ['04', '05']
+15:02:08.195 | INFO    | Task run 'download_era5_land_daily_batch-f1d' -   Days: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30']
+15:02:08.196 | INFO    | Task run 'download_era5_land_daily_batch-f1d' -   Area [N,W,S,E]: [6.5, -75.0, -35.0, -33.5]
+15:02:08.196 | INFO    | Task run 'download_era5_land_daily_batch-f1d' -   Area interpretation:
+15:02:08.196 | INFO    | Task run 'download_era5_land_daily_batch-f1d' -     North: 6.5°
+15:02:08.196 | INFO    | Task run 'download_era5_land_daily_batch-f1d' -     West: -75.0°
+15:02:08.197 | INFO    | Task run 'download_era5_land_daily_batch-f1d' -     South: -35.0°
+15:02:08.197 | INFO    | Task run 'download_era5_land_daily_batch-f1d' -     East: -33.5°
+15:02:08.197 | INFO    | Task run 'download_era5_land_daily_batch-f1d' - ================================================================================
+15:02:09.518 | INFO    | Task run 'download_era5_land_daily_batch-f1d' - Submitting request to CDS...
+2025-10-29 15:02:10,135 INFO Request ID is 332adbf5-1d02-4db6-bd8d-f4452d944ee6
+15:02:10.135 | INFO    | ecmwf.datastores.legacy_client - Request ID is 332adbf5-1d02-4db6-bd8d-f4452d944ee6
+2025-10-29 15:02:10,431 INFO status has been updated to accepted
+15:02:10.431 | INFO    | ecmwf.datastores.legacy_client - status has been updated to accepted
+2025-10-29 15:02:25,510 INFO status has been updated to successful
+15:02:25.510 | INFO    | ecmwf.datastores.legacy_client - status has been updated to successful
+d10bb826f26c7213fe27564a57c4469b.nc:   0%|          | 0.00/14.0M [00:00<?, ?B/s]d10bb826f26c7213fe27564a57c4469b.nc:   7%|▋         | 1.00M/14.0M [00:02<00:29, 454kB/s]d10bb826f26c7213fe27564a57c4469b.nc:  14%|█▍        | 2.00M/14.0M [00:02<00:13, 955kB/s]d10bb826f26c7213fe27564a57c4469b.nc:  29%|██▊       | 4.00M/14.0M [00:02<00:04, 2.15MB/s]d10bb826f26c7213fe27564a57c4469b.nc:  36%|███▌      | 5.00M/14.0M [00:03<00:03, 2.51MB/s]d10bb826f26c7213fe27564a57c4469b.nc:  57%|█████▋    | 8.00M/14.0M [00:03<00:01, 4.61MB/s]d10bb826f26c7213fe27564a57c4469b.nc:  64%|██████▍   | 9.00M/14.0M [00:03<00:01, 4.47MB/s]d10bb826f26c7213fe27564a57c4469b.nc:  79%|███████▊  | 11.0M/14.0M [00:03<00:00, 5.49MB/s]d10bb826f26c7213fe27564a57c4469b.nc: 100%|██████████| 14.0M/14.0M [00:04<00:00, 7.26MB/s]                                                                                         15:02:30.916 | INFO    | Task run 'download_era5_land_daily_batch-f1d' - ✓ ERA5 Land Daily downloaded: /mnt/workwork/geoserver_data/raw/era5_land_daily/2mtemperature_daily_minimum_20150404_20150504.nc
+15:02:30.918 | INFO    | Task run 'download_era5_land_daily_batch-f1d' - Finished in state Completed()
+15:02:30.919 | INFO    | Flow run 'ambitious-rabbit' -   Skipping GeoTIFF processing (all exist)
+15:02:30.931 | INFO    | Task run 'append_to_yearly_historical-2d8' - 📦 Appending data from 2mtemperature_daily_minimum_20150404_20150504.nc to yearly historical files
+15:02:30.931 | INFO    | Task run 'append_to_yearly_historical-2d8' -   Processing 31 specific dates
+15:02:30.940 | INFO    | Task run 'append_to_yearly_historical-2d8' -   Source variables: ['t2m']
+15:02:31.054 | INFO    | Task run 'append_to_yearly_historical-2d8' -   Converted temperature to Celsius
+15:02:31.055 | INFO    | Task run 'append_to_yearly_historical-2d8' -   Clipped to bbox: (-75.0, -35.0, -33.5, 6.5)
+15:02:31.060 | INFO    | Task run 'append_to_yearly_historical-2d8' -   Processing 31 dates
+15:02:31.060 | INFO    | Task run 'append_to_yearly_historical-2d8' -   Dates span 1 year(s): [2015]
+15:02:31.060 | INFO    | Task run 'append_to_yearly_historical-2d8' - 
+  📅 Processing year 2015 (31 dates)
+15:02:31.064 | INFO    | Task run 'append_to_yearly_historical-2d8' -     Year file exists, checking for duplicates...
+15:02:31.075 | INFO    | Task run 'append_to_yearly_historical-2d8' -     All 31 dates already exist, skipping
+15:02:31.077 | INFO    | Task run 'append_to_yearly_historical-2d8' - 
+✓ Updated 0 yearly file(s)
+15:02:31.080 | INFO    | Task run 'append_to_yearly_historical-2d8' - Finished in state Completed()
+15:02:31.081 | INFO    | Flow run 'ambitious-rabbit' - ✓ Updated 0 yearly historical file(s)
+15:02:31.089 | INFO    | Task run 'cleanup_raw_files-0e3' - ✓ Cleaned up: 2mtemperature_daily_minimum_20150404_20150504.nc
+15:02:31.090 | INFO    | Task run 'cleanup_raw_files-0e3' - Finished in state Completed()
+15:02:31.090 | INFO    | Flow run 'ambitious-rabbit' - ✓ Completed batch: 2015-04-04 to 2015-05-04
+15:02:31.091 | INFO    | Flow run 'ambitious-rabbit' - 
+Downloading batch: 2015-05-05 to 2015-06-04
+15:02:31.091 | INFO    | Flow run 'ambitious-rabbit' -   Will process 0 GeoTIFFs
+15:02:31.091 | INFO    | Flow run 'ambitious-rabbit' -   Will append 31 to historical
+15:02:31.099 | INFO    | Task run 'download_era5_land_daily_batch-42e' - Using CDS bbox [N, W, S, E]: [6.5, -75.0, -35.0, -33.5]
+15:02:31.100 | INFO    | Task run 'download_era5_land_daily_batch-42e' -   North: 6.5, South: -35.0 (span: 41.5°)
+15:02:31.101 | INFO    | Task run 'download_era5_land_daily_batch-42e' -   West: -75.0, East: -33.5 (span: 41.5°)
+15:02:31.102 | INFO    | Task run 'download_era5_land_daily_batch-42e' - Downloading ERA5 Land Daily: 2015-05-05 to 2015-06-04
+15:02:31.102 | INFO    | Task run 'download_era5_land_daily_batch-42e' - Variable: 2m_temperature, Statistic: daily_minimum
+15:02:31.102 | INFO    | Task run 'download_era5_land_daily_batch-42e' - ================================================================================
+15:02:31.103 | INFO    | Task run 'download_era5_land_daily_batch-42e' - CDS API REQUEST:
+15:02:31.103 | INFO    | Task run 'download_era5_land_daily_batch-42e' - ================================================================================
+15:02:31.104 | INFO    | Task run 'download_era5_land_daily_batch-42e' - {
+  "variable": [
+    "2m_temperature"
+  ],
+  "year": [
+    "2015"
+  ],
+  "month": [
+    "05",
+    "06"
+  ],
+  "day": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "31"
+  ],
+  "daily_statistic": "daily_minimum",
+  "time_zone": "utc+00:00",
+  "frequency": "6_hourly",
+  "area": [
+    6.5,
+    -75.0,
+    -35.0,
+    -33.5
+  ]
+}
+15:02:31.105 | INFO    | Task run 'download_era5_land_daily_batch-42e' - ================================================================================
+15:02:31.105 | INFO    | Task run 'download_era5_land_daily_batch-42e' - REQUEST DETAILS:
+15:02:31.105 | INFO    | Task run 'download_era5_land_daily_batch-42e' -   Dataset: derived-era5-land-daily-statistics
+15:02:31.106 | INFO    | Task run 'download_era5_land_daily_batch-42e' -   Variable: ['2m_temperature']
+15:02:31.106 | INFO    | Task run 'download_era5_land_daily_batch-42e' -   Daily statistic: daily_minimum
+15:02:31.106 | INFO    | Task run 'download_era5_land_daily_batch-42e' -   Time zone: utc+00:00
+15:02:31.107 | INFO    | Task run 'download_era5_land_daily_batch-42e' -   Frequency: 6_hourly
+15:02:31.107 | INFO    | Task run 'download_era5_land_daily_batch-42e' -   Years: ['2015']
+15:02:31.107 | INFO    | Task run 'download_era5_land_daily_batch-42e' -   Months: ['05', '06']
+15:02:31.107 | INFO    | Task run 'download_era5_land_daily_batch-42e' -   Days: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31']
+15:02:31.108 | INFO    | Task run 'download_era5_land_daily_batch-42e' -   Area [N,W,S,E]: [6.5, -75.0, -35.0, -33.5]
+15:02:31.108 | INFO    | Task run 'download_era5_land_daily_batch-42e' -   Area interpretation:
+15:02:31.108 | INFO    | Task run 'download_era5_land_daily_batch-42e' -     North: 6.5°
+15:02:31.108 | INFO    | Task run 'download_era5_land_daily_batch-42e' -     West: -75.0°
+15:02:31.109 | INFO    | Task run 'download_era5_land_daily_batch-42e' -     South: -35.0°
+15:02:31.109 | INFO    | Task run 'download_era5_land_daily_batch-42e' -     East: -33.5°
+15:02:31.109 | INFO    | Task run 'download_era5_land_daily_batch-42e' - ================================================================================
+15:02:32.154 | INFO    | Task run 'download_era5_land_daily_batch-42e' - Submitting request to CDS...
+2025-10-29 15:02:32,750 INFO Request ID is 72a8b1ff-935a-450c-9125-901b7ebc603b
+15:02:32.750 | INFO    | ecmwf.datastores.legacy_client - Request ID is 72a8b1ff-935a-450c-9125-901b7ebc603b
+2025-10-29 15:02:33,019 INFO status has been updated to accepted
+15:02:33.019 | INFO    | ecmwf.datastores.legacy_client - status has been updated to accepted
+2025-10-29 15:02:42,346 INFO status has been updated to running
+15:02:42.346 | INFO    | ecmwf.datastores.legacy_client - status has been updated to running
+2025-10-29 15:02:47,679 INFO status has been updated to successful
+15:02:47.679 | INFO    | ecmwf.datastores.legacy_client - status has been updated to successful
+8f2a5da1dbe205eee3044d79ead3f732.nc:   0%|          | 0.00/13.4M [00:00<?, ?B/s]8f2a5da1dbe205eee3044d79ead3f732.nc:   7%|▋         | 1.00M/13.4M [00:02<00:32, 403kB/s]8f2a5da1dbe205eee3044d79ead3f732.nc:  15%|█▍        | 2.00M/13.4M [00:02<00:13, 861kB/s]8f2a5da1dbe205eee3044d79ead3f732.nc:  30%|██▉       | 4.00M/13.4M [00:03<00:05, 1.97MB/s]8f2a5da1dbe205eee3044d79ead3f732.nc:  52%|█████▏    | 7.00M/13.4M [00:03<00:01, 3.92MB/s]8f2a5da1dbe205eee3044d79ead3f732.nc:  74%|███████▍  | 10.0M/13.4M [00:03<00:00, 4.71MB/s]8f2a5da1dbe205eee3044d79ead3f732.nc:  97%|█████████▋| 13.0M/13.4M [00:04<00:00, 6.23MB/s]                                                                                         15:02:53.315 | INFO    | Task run 'download_era5_land_daily_batch-42e' - ✓ ERA5 Land Daily downloaded: /mnt/workwork/geoserver_data/raw/era5_land_daily/2mtemperature_daily_minimum_20150505_20150604.nc
+15:02:53.316 | INFO    | Task run 'download_era5_land_daily_batch-42e' - Finished in state Completed()
+15:02:53.317 | INFO    | Flow run 'ambitious-rabbit' -   Skipping GeoTIFF processing (all exist)
+15:02:53.325 | INFO    | Task run 'append_to_yearly_historical-bea' - 📦 Appending data from 2mtemperature_daily_minimum_20150505_20150604.nc to yearly historical files
+15:02:53.326 | INFO    | Task run 'append_to_yearly_historical-bea' -   Processing 31 specific dates
+15:02:53.332 | INFO    | Task run 'append_to_yearly_historical-bea' -   Source variables: ['t2m']
+15:02:53.447 | INFO    | Task run 'append_to_yearly_historical-bea' -   Converted temperature to Celsius
+15:02:53.448 | INFO    | Task run 'append_to_yearly_historical-bea' -   Clipped to bbox: (-75.0, -35.0, -33.5, 6.5)
+15:02:53.452 | INFO    | Task run 'append_to_yearly_historical-bea' -   Processing 31 dates
+15:02:53.453 | INFO    | Task run 'append_to_yearly_historical-bea' -   Dates span 1 year(s): [2015]
+15:02:53.453 | INFO    | Task run 'append_to_yearly_historical-bea' - 
+  📅 Processing year 2015 (31 dates)
+15:02:53.457 | INFO    | Task run 'append_to_yearly_historical-bea' -     Year file exists, checking for duplicates...
+15:02:53.469 | INFO    | Task run 'append_to_yearly_historical-bea' -     All 31 dates already exist, skipping
+15:02:53.471 | INFO    | Task run 'append_to_yearly_historical-bea' - 
+✓ Updated 0 yearly file(s)
+15:02:53.474 | INFO    | Task run 'append_to_yearly_historical-bea' - Finished in state Completed()
+15:02:53.474 | INFO    | Flow run 'ambitious-rabbit' - ✓ Updated 0 yearly historical file(s)
+15:02:53.485 | INFO    | Task run 'cleanup_raw_files-a97' - ✓ Cleaned up: 2mtemperature_daily_minimum_20150505_20150604.nc
+15:02:53.486 | INFO    | Task run 'cleanup_raw_files-a97' - Finished in state Completed()
+15:02:53.487 | INFO    | Flow run 'ambitious-rabbit' - ✓ Completed batch: 2015-05-05 to 2015-06-04
+15:02:53.487 | INFO    | Flow run 'ambitious-rabbit' - 
+Downloading batch: 2015-06-05 to 2015-07-05
+15:02:53.487 | INFO    | Flow run 'ambitious-rabbit' -   Will process 0 GeoTIFFs
+15:02:53.488 | INFO    | Flow run 'ambitious-rabbit' -   Will append 31 to historical
+15:02:53.495 | INFO    | Task run 'download_era5_land_daily_batch-f56' - Using CDS bbox [N, W, S, E]: [6.5, -75.0, -35.0, -33.5]
+15:02:53.495 | INFO    | Task run 'download_era5_land_daily_batch-f56' -   North: 6.5, South: -35.0 (span: 41.5°)
+15:02:53.495 | INFO    | Task run 'download_era5_land_daily_batch-f56' -   West: -75.0, East: -33.5 (span: 41.5°)
+15:02:53.496 | INFO    | Task run 'download_era5_land_daily_batch-f56' - Downloading ERA5 Land Daily: 2015-06-05 to 2015-07-05
+15:02:53.496 | INFO    | Task run 'download_era5_land_daily_batch-f56' - Variable: 2m_temperature, Statistic: daily_minimum
+15:02:53.497 | INFO    | Task run 'download_era5_land_daily_batch-f56' - ================================================================================
+15:02:53.497 | INFO    | Task run 'download_era5_land_daily_batch-f56' - CDS API REQUEST:
+15:02:53.497 | INFO    | Task run 'download_era5_land_daily_batch-f56' - ================================================================================
+15:02:53.497 | INFO    | Task run 'download_era5_land_daily_batch-f56' - {
+  "variable": [
+    "2m_temperature"
+  ],
+  "year": [
+    "2015"
+  ],
+  "month": [
+    "06",
+    "07"
+  ],
+  "day": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30"
+  ],
+  "daily_statistic": "daily_minimum",
+  "time_zone": "utc+00:00",
+  "frequency": "6_hourly",
+  "area": [
+    6.5,
+    -75.0,
+    -35.0,
+    -33.5
+  ]
+}
+15:02:53.498 | INFO    | Task run 'download_era5_land_daily_batch-f56' - ================================================================================
+15:02:53.498 | INFO    | Task run 'download_era5_land_daily_batch-f56' - REQUEST DETAILS:
+15:02:53.498 | INFO    | Task run 'download_era5_land_daily_batch-f56' -   Dataset: derived-era5-land-daily-statistics
+15:02:53.498 | INFO    | Task run 'download_era5_land_daily_batch-f56' -   Variable: ['2m_temperature']
+15:02:53.499 | INFO    | Task run 'download_era5_land_daily_batch-f56' -   Daily statistic: daily_minimum
+15:02:53.499 | INFO    | Task run 'download_era5_land_daily_batch-f56' -   Time zone: utc+00:00
+15:02:53.499 | INFO    | Task run 'download_era5_land_daily_batch-f56' -   Frequency: 6_hourly
+15:02:53.499 | INFO    | Task run 'download_era5_land_daily_batch-f56' -   Years: ['2015']
+15:02:53.499 | INFO    | Task run 'download_era5_land_daily_batch-f56' -   Months: ['06', '07']
+15:02:53.500 | INFO    | Task run 'download_era5_land_daily_batch-f56' -   Days: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30']
+15:02:53.500 | INFO    | Task run 'download_era5_land_daily_batch-f56' -   Area [N,W,S,E]: [6.5, -75.0, -35.0, -33.5]
+15:02:53.500 | INFO    | Task run 'download_era5_land_daily_batch-f56' -   Area interpretation:
+15:02:53.500 | INFO    | Task run 'download_era5_land_daily_batch-f56' -     North: 6.5°
+15:02:53.501 | INFO    | Task run 'download_era5_land_daily_batch-f56' -     West: -75.0°
+15:02:53.501 | INFO    | Task run 'download_era5_land_daily_batch-f56' -     South: -35.0°
+15:02:53.501 | INFO    | Task run 'download_era5_land_daily_batch-f56' -     East: -33.5°
+15:02:53.501 | INFO    | Task run 'download_era5_land_daily_batch-f56' - ================================================================================
+15:02:54.739 | INFO    | Task run 'download_era5_land_daily_batch-f56' - Submitting request to CDS...
+2025-10-29 15:02:55,291 INFO Request ID is 8e82cb2b-64f2-424e-b53b-ccdcf8e93c2a
+15:02:55.291 | INFO    | ecmwf.datastores.legacy_client - Request ID is 8e82cb2b-64f2-424e-b53b-ccdcf8e93c2a
+2025-10-29 15:02:55,549 INFO status has been updated to accepted
+15:02:55.549 | INFO    | ecmwf.datastores.legacy_client - status has been updated to accepted
+2025-10-29 15:03:10,368 INFO status has been updated to successful
+15:03:10.368 | INFO    | ecmwf.datastores.legacy_client - status has been updated to successful
+724823dba219a43ca91f4daf51714d95.nc:   0%|          | 0.00/15.0M [00:00<?, ?B/s]724823dba219a43ca91f4daf51714d95.nc:   7%|▋         | 1.00M/15.0M [00:02<00:37, 387kB/s]724823dba219a43ca91f4daf51714d95.nc:  13%|█▎        | 2.00M/15.0M [00:02<00:16, 832kB/s]724823dba219a43ca91f4daf51714d95.nc:  27%|██▋       | 4.00M/15.0M [00:03<00:06, 1.68MB/s]724823dba219a43ca91f4daf51714d95.nc:  33%|███▎      | 5.00M/15.0M [00:03<00:05, 2.01MB/s]724823dba219a43ca91f4daf51714d95.nc:  40%|████      | 6.00M/15.0M [00:03<00:03, 2.39MB/s]724823dba219a43ca91f4daf51714d95.nc:  47%|████▋     | 7.00M/15.0M [00:04<00:03, 2.75MB/s]724823dba219a43ca91f4daf51714d95.nc:  53%|█████▎    | 8.00M/15.0M [00:04<00:02, 2.66MB/s]724823dba219a43ca91f4daf51714d95.nc:  60%|██████    | 9.00M/15.0M [00:04<00:02, 2.87MB/s]724823dba219a43ca91f4daf51714d95.nc:  67%|██████▋   | 10.0M/15.0M [00:05<00:01, 3.15MB/s]724823dba219a43ca91f4daf51714d95.nc:  73%|███████▎  | 11.0M/15.0M [00:05<00:01, 2.78MB/s]724823dba219a43ca91f4daf51714d95.nc:  80%|████████  | 12.0M/15.0M [00:05<00:01, 3.00MB/s]724823dba219a43ca91f4daf51714d95.nc:  87%|████████▋ | 13.0M/15.0M [00:06<00:00, 2.74MB/s]724823dba219a43ca91f4daf51714d95.nc:  94%|█████████▎| 14.0M/15.0M [00:06<00:00, 2.52MB/s]724823dba219a43ca91f4daf51714d95.nc: 100%|██████████| 15.0M/15.0M [00:07<00:00, 2.38MB/s]                                                                                         15:03:19.353 | INFO    | Task run 'download_era5_land_daily_batch-f56' - ✓ ERA5 Land Daily downloaded: /mnt/workwork/geoserver_data/raw/era5_land_daily/2mtemperature_daily_minimum_20150605_20150705.nc
+15:03:19.355 | INFO    | Task run 'download_era5_land_daily_batch-f56' - Finished in state Completed()
+15:03:19.355 | INFO    | Flow run 'ambitious-rabbit' -   Skipping GeoTIFF processing (all exist)
+15:03:19.364 | INFO    | Task run 'append_to_yearly_historical-fb1' - 📦 Appending data from 2mtemperature_daily_minimum_20150605_20150705.nc to yearly historical files
+15:03:19.365 | INFO    | Task run 'append_to_yearly_historical-fb1' -   Processing 31 specific dates
+15:03:19.371 | INFO    | Task run 'append_to_yearly_historical-fb1' -   Source variables: ['t2m']
+15:03:19.485 | INFO    | Task run 'append_to_yearly_historical-fb1' -   Converted temperature to Celsius
+15:03:19.486 | INFO    | Task run 'append_to_yearly_historical-fb1' -   Clipped to bbox: (-75.0, -35.0, -33.5, 6.5)
+15:03:19.491 | INFO    | Task run 'append_to_yearly_historical-fb1' -   Processing 31 dates
+15:03:19.491 | INFO    | Task run 'append_to_yearly_historical-fb1' -   Dates span 1 year(s): [2015]
+15:03:19.491 | INFO    | Task run 'append_to_yearly_historical-fb1' - 
+  📅 Processing year 2015 (31 dates)
+15:03:19.495 | INFO    | Task run 'append_to_yearly_historical-fb1' -     Year file exists, checking for duplicates...
+15:03:19.513 | INFO    | Task run 'append_to_yearly_historical-fb1' -     All 31 dates already exist, skipping
+15:03:19.515 | INFO    | Task run 'append_to_yearly_historical-fb1' - 
+✓ Updated 0 yearly file(s)
+15:03:19.519 | INFO    | Task run 'append_to_yearly_historical-fb1' - Finished in state Completed()
+15:03:19.519 | INFO    | Flow run 'ambitious-rabbit' - ✓ Updated 0 yearly historical file(s)
+15:03:19.528 | INFO    | Task run 'cleanup_raw_files-bdf' - ✓ Cleaned up: 2mtemperature_daily_minimum_20150605_20150705.nc
+15:03:19.529 | INFO    | Task run 'cleanup_raw_files-bdf' - Finished in state Completed()
+15:03:19.530 | INFO    | Flow run 'ambitious-rabbit' - ✓ Completed batch: 2015-06-05 to 2015-07-05
+15:03:19.530 | INFO    | Flow run 'ambitious-rabbit' - 
+Downloading batch: 2015-07-06 to 2015-08-05
+15:03:19.531 | INFO    | Flow run 'ambitious-rabbit' -   Will process 0 GeoTIFFs
+15:03:19.531 | INFO    | Flow run 'ambitious-rabbit' -   Will append 31 to historical
+15:03:19.543 | INFO    | Task run 'download_era5_land_daily_batch-99b' - Using CDS bbox [N, W, S, E]: [6.5, -75.0, -35.0, -33.5]
+15:03:19.543 | INFO    | Task run 'download_era5_land_daily_batch-99b' -   North: 6.5, South: -35.0 (span: 41.5°)
+15:03:19.544 | INFO    | Task run 'download_era5_land_daily_batch-99b' -   West: -75.0, East: -33.5 (span: 41.5°)
+15:03:19.546 | INFO    | Task run 'download_era5_land_daily_batch-99b' - Batch already downloaded: /mnt/workwork/geoserver_data/raw/era5_land_daily/2mtemperature_daily_minimum_20150706_20150805.nc
+15:03:19.547 | INFO    | Task run 'download_era5_land_daily_batch-99b' - Finished in state Completed()
+15:03:19.548 | INFO    | Flow run 'ambitious-rabbit' -   Skipping GeoTIFF processing (all exist)
+15:03:19.558 | INFO    | Task run 'append_to_yearly_historical-644' - 📦 Appending data from 2mtemperature_daily_minimum_20150706_20150805.nc to yearly historical files
+15:03:19.559 | INFO    | Task run 'append_to_yearly_historical-644' -   Processing 31 specific dates
+15:03:19.608 | INFO    | Task run 'append_to_yearly_historical-644' -   Source variables: ['t2m']
+15:03:19.777 | INFO    | Task run 'append_to_yearly_historical-644' -   Converted temperature to Celsius
+15:03:19.778 | INFO    | Task run 'append_to_yearly_historical-644' -   Clipped to bbox: (-75.0, -35.0, -33.5, 6.5)
+15:03:19.784 | INFO    | Task run 'append_to_yearly_historical-644' -   Processing 31 dates
+15:03:19.784 | INFO    | Task run 'append_to_yearly_historical-644' -   Dates span 1 year(s): [2015]
+15:03:19.784 | INFO    | Task run 'append_to_yearly_historical-644' - 
+  📅 Processing year 2015 (31 dates)
+15:03:19.789 | INFO    | Task run 'append_to_yearly_historical-644' -     Year file exists, checking for duplicates...
+15:03:19.800 | INFO    | Task run 'append_to_yearly_historical-644' -     Adding 31 new dates
+15:03:19.824 | INFO    | Task run 'append_to_yearly_historical-644' -     Writing to temp file...
+15:03:21.426 | INFO    | Task run 'append_to_yearly_historical-644' -     ✓ Temp file written successfully
+15:03:21.426 | INFO    | Task run 'append_to_yearly_historical-644' -     Copying to: /mnt/workwork/geoserver_data/temp_min_hist/temp_min_2015.nc
+15:03:21.647 | INFO    | Task run 'append_to_yearly_historical-644' -     ✓ Updated temp_min_2015.nc
+15:03:21.648 | INFO    | Task run 'append_to_yearly_historical-644' -       Time range: 2015-01-01 to 2015-08-05
+15:03:21.648 | INFO    | Task run 'append_to_yearly_historical-644' -       Total days: 217
+15:03:21.649 | INFO    | Task run 'append_to_yearly_historical-644' - 
+✓ Updated 1 yearly file(s)
+15:03:21.658 | INFO    | Task run 'append_to_yearly_historical-644' - Finished in state Completed()
+15:03:21.658 | INFO    | Flow run 'ambitious-rabbit' - ✓ Updated 1 yearly historical file(s)
+15:03:21.667 | INFO    | Task run 'cleanup_raw_files-387' - ✓ Cleaned up: 2mtemperature_daily_minimum_20150706_20150805.nc
+15:03:21.668 | INFO    | Task run 'cleanup_raw_files-387' - Finished in state Completed()
+15:03:21.668 | INFO    | Flow run 'ambitious-rabbit' - ✓ Completed batch: 2015-07-06 to 2015-08-05
+15:03:21.669 | INFO    | Flow run 'ambitious-rabbit' - 
+Downloading batch: 2015-08-06 to 2015-09-05
+15:03:21.669 | INFO    | Flow run 'ambitious-rabbit' -   Will process 0 GeoTIFFs
+15:03:21.669 | INFO    | Flow run 'ambitious-rabbit' -   Will append 31 to historical
+15:03:21.677 | INFO    | Task run 'download_era5_land_daily_batch-7fa' - Using CDS bbox [N, W, S, E]: [6.5, -75.0, -35.0, -33.5]
+15:03:21.678 | INFO    | Task run 'download_era5_land_daily_batch-7fa' -   North: 6.5, South: -35.0 (span: 41.5°)
+15:03:21.678 | INFO    | Task run 'download_era5_land_daily_batch-7fa' -   West: -75.0, East: -33.5 (span: 41.5°)
+15:03:21.680 | INFO    | Task run 'download_era5_land_daily_batch-7fa' - Batch already downloaded: /mnt/workwork/geoserver_data/raw/era5_land_daily/2mtemperature_daily_minimum_20150806_20150905.nc
+15:03:21.681 | INFO    | Task run 'download_era5_land_daily_batch-7fa' - Finished in state Completed()
+15:03:21.681 | INFO    | Flow run 'ambitious-rabbit' -   Skipping GeoTIFF processing (all exist)
+15:03:21.690 | INFO    | Task run 'append_to_yearly_historical-d15' - 📦 Appending data from 2mtemperature_daily_minimum_20150806_20150905.nc to yearly historical files
+15:03:21.690 | INFO    | Task run 'append_to_yearly_historical-d15' -   Processing 31 specific dates
+15:03:21.730 | INFO    | Task run 'append_to_yearly_historical-d15' -   Source variables: ['t2m']
+15:03:21.918 | INFO    | Task run 'append_to_yearly_historical-d15' -   Converted temperature to Celsius
+15:03:21.919 | INFO    | Task run 'append_to_yearly_historical-d15' -   Clipped to bbox: (-75.0, -35.0, -33.5, 6.5)
+15:03:21.924 | INFO    | Task run 'append_to_yearly_historical-d15' -   Processing 31 dates
+15:03:21.925 | INFO    | Task run 'append_to_yearly_historical-d15' -   Dates span 1 year(s): [2015]
+15:03:21.925 | INFO    | Task run 'append_to_yearly_historical-d15' - 
+  📅 Processing year 2015 (31 dates)
+15:03:21.930 | INFO    | Task run 'append_to_yearly_historical-d15' -     Year file exists, checking for duplicates...
+15:03:21.941 | INFO    | Task run 'append_to_yearly_historical-d15' -     Adding 31 new dates
+15:03:21.960 | INFO    | Task run 'append_to_yearly_historical-d15' -     Writing to temp file...
+15:03:23.524 | INFO    | Task run 'append_to_yearly_historical-d15' -     ✓ Temp file written successfully
+15:03:23.524 | INFO    | Task run 'append_to_yearly_historical-d15' -     Copying to: /mnt/workwork/geoserver_data/temp_min_hist/temp_min_2015.nc
+15:03:23.723 | INFO    | Task run 'append_to_yearly_historical-d15' -     ✓ Updated temp_min_2015.nc
+15:03:23.723 | INFO    | Task run 'append_to_yearly_historical-d15' -       Time range: 2015-01-01 to 2015-09-05
+15:03:23.723 | INFO    | Task run 'append_to_yearly_historical-d15' -       Total days: 248
+15:03:23.724 | INFO    | Task run 'append_to_yearly_historical-d15' - 
+✓ Updated 1 yearly file(s)
+15:03:23.731 | INFO    | Task run 'append_to_yearly_historical-d15' - Finished in state Completed()
+15:03:23.731 | INFO    | Flow run 'ambitious-rabbit' - ✓ Updated 1 yearly historical file(s)
+15:03:23.741 | INFO    | Task run 'cleanup_raw_files-ae7' - ✓ Cleaned up: 2mtemperature_daily_minimum_20150806_20150905.nc
+15:03:23.742 | INFO    | Task run 'cleanup_raw_files-ae7' - Finished in state Completed()
+15:03:23.743 | INFO    | Flow run 'ambitious-rabbit' - ✓ Completed batch: 2015-08-06 to 2015-09-05
+15:03:23.743 | INFO    | Flow run 'ambitious-rabbit' - 
+Downloading batch: 2015-09-06 to 2015-10-06
+15:03:23.743 | INFO    | Flow run 'ambitious-rabbit' -   Will process 31 GeoTIFFs
+15:03:23.744 | INFO    | Flow run 'ambitious-rabbit' -   Will append 31 to historical
+15:03:23.752 | INFO    | Task run 'download_era5_land_daily_batch-38d' - Using CDS bbox [N, W, S, E]: [6.5, -75.0, -35.0, -33.5]
+15:03:23.752 | INFO    | Task run 'download_era5_land_daily_batch-38d' -   North: 6.5, South: -35.0 (span: 41.5°)
+15:03:23.753 | INFO    | Task run 'download_era5_land_daily_batch-38d' -   West: -75.0, East: -33.5 (span: 41.5°)
+15:03:23.753 | INFO    | Task run 'download_era5_land_daily_batch-38d' - Downloading ERA5 Land Daily: 2015-09-06 to 2015-10-06
+15:03:23.754 | INFO    | Task run 'download_era5_land_daily_batch-38d' - Variable: 2m_temperature, Statistic: daily_minimum
+15:03:23.754 | INFO    | Task run 'download_era5_land_daily_batch-38d' - ================================================================================
+15:03:23.754 | INFO    | Task run 'download_era5_land_daily_batch-38d' - CDS API REQUEST:
+15:03:23.754 | INFO    | Task run 'download_era5_land_daily_batch-38d' - ================================================================================
+15:03:23.755 | INFO    | Task run 'download_era5_land_daily_batch-38d' - {
+  "variable": [
+    "2m_temperature"
+  ],
+  "year": [
+    "2015"
+  ],
+  "month": [
+    "09",
+    "10"
+  ],
+  "day": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30"
+  ],
+  "daily_statistic": "daily_minimum",
+  "time_zone": "utc+00:00",
+  "frequency": "6_hourly",
+  "area": [
+    6.5,
+    -75.0,
+    -35.0,
+    -33.5
+  ]
+}
+15:03:23.755 | INFO    | Task run 'download_era5_land_daily_batch-38d' - ================================================================================
+15:03:23.755 | INFO    | Task run 'download_era5_land_daily_batch-38d' - REQUEST DETAILS:
+15:03:23.756 | INFO    | Task run 'download_era5_land_daily_batch-38d' -   Dataset: derived-era5-land-daily-statistics
+15:03:23.756 | INFO    | Task run 'download_era5_land_daily_batch-38d' -   Variable: ['2m_temperature']
+15:03:23.756 | INFO    | Task run 'download_era5_land_daily_batch-38d' -   Daily statistic: daily_minimum
+15:03:23.757 | INFO    | Task run 'download_era5_land_daily_batch-38d' -   Time zone: utc+00:00
+15:03:23.757 | INFO    | Task run 'download_era5_land_daily_batch-38d' -   Frequency: 6_hourly
+15:03:23.757 | INFO    | Task run 'download_era5_land_daily_batch-38d' -   Years: ['2015']
+15:03:23.757 | INFO    | Task run 'download_era5_land_daily_batch-38d' -   Months: ['09', '10']
+15:03:23.758 | INFO    | Task run 'download_era5_land_daily_batch-38d' -   Days: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30']
+15:03:23.758 | INFO    | Task run 'download_era5_land_daily_batch-38d' -   Area [N,W,S,E]: [6.5, -75.0, -35.0, -33.5]
+15:03:23.758 | INFO    | Task run 'download_era5_land_daily_batch-38d' -   Area interpretation:
+15:03:23.758 | INFO    | Task run 'download_era5_land_daily_batch-38d' -     North: 6.5°
+15:03:23.759 | INFO    | Task run 'download_era5_land_daily_batch-38d' -     West: -75.0°
+15:03:23.759 | INFO    | Task run 'download_era5_land_daily_batch-38d' -     South: -35.0°
+15:03:23.759 | INFO    | Task run 'download_era5_land_daily_batch-38d' -     East: -33.5°
+15:03:23.759 | INFO    | Task run 'download_era5_land_daily_batch-38d' - ================================================================================
+15:03:24.785 | INFO    | Task run 'download_era5_land_daily_batch-38d' - Submitting request to CDS...
+2025-10-29 15:03:25,387 INFO Request ID is 741afed4-5cff-4f57-81f6-d0545e8499e6
+15:03:25.387 | INFO    | ecmwf.datastores.legacy_client - Request ID is 741afed4-5cff-4f57-81f6-d0545e8499e6
+2025-10-29 15:03:25,671 INFO status has been updated to accepted
+15:03:25.671 | INFO    | ecmwf.datastores.legacy_client - status has been updated to accepted
+2025-10-29 15:03:40,512 INFO status has been updated to running
+15:03:40.512 | INFO    | ecmwf.datastores.legacy_client - status has been updated to running
+2025-10-29 15:04:43,328 INFO status has been updated to successful
+15:04:43.328 | INFO    | ecmwf.datastores.legacy_client - status has been updated to successful
+941e08bc720594a4393298fd16ddbbf.nc:   0%|          | 0.00/15.7M [00:00<?, ?B/s]941e08bc720594a4393298fd16ddbbf.nc:   6%|▋         | 1.00M/15.7M [00:02<00:36, 426kB/s]941e08bc720594a4393298fd16ddbbf.nc:  13%|█▎        | 2.00M/15.7M [00:02<00:15, 905kB/s]941e08bc720594a4393298fd16ddbbf.nc:  26%|██▌       | 4.00M/15.7M [00:02<00:05, 2.05MB/s]941e08bc720594a4393298fd16ddbbf.nc:  45%|████▍     | 7.00M/15.7M [00:03<00:02, 3.71MB/s]941e08bc720594a4393298fd16ddbbf.nc:  51%|█████     | 8.00M/15.7M [00:03<00:01, 4.11MB/s]941e08bc720594a4393298fd16ddbbf.nc:  70%|███████   | 11.0M/15.7M [00:03<00:00, 6.05MB/s]941e08bc720594a4393298fd16ddbbf.nc:  83%|████████▎ | 13.0M/15.7M [00:04<00:00, 6.14MB/s]                                                                                        15:04:48.731 | INFO    | Task run 'download_era5_land_daily_batch-38d' - ✓ ERA5 Land Daily downloaded: /mnt/workwork/geoserver_data/raw/era5_land_daily/2mtemperature_daily_minimum_20150906_20151006.nc
+15:04:48.733 | INFO    | Task run 'download_era5_land_daily_batch-38d' - Finished in state Completed()
+15:04:48.741 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - Saving 2m_temperature (daily_minimum) to: /mnt/workwork/geoserver_data/temp_min
+15:04:48.742 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - Processing only 31 specific dates
+15:04:48.748 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - NetCDF variables: ['t2m']
+15:04:48.853 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-06 -> temp_min_20150906.tif
+15:04:48.916 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-07 -> temp_min_20150907.tif
+15:04:48.977 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-08 -> temp_min_20150908.tif
+15:04:49.039 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-09 -> temp_min_20150909.tif
+15:04:49.100 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-10 -> temp_min_20150910.tif
+15:04:49.164 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-11 -> temp_min_20150911.tif
+15:04:49.226 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-12 -> temp_min_20150912.tif
+15:04:49.289 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-13 -> temp_min_20150913.tif
+15:04:49.369 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-14 -> temp_min_20150914.tif
+15:04:49.433 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-15 -> temp_min_20150915.tif
+15:04:49.494 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-16 -> temp_min_20150916.tif
+15:04:49.558 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-17 -> temp_min_20150917.tif
+15:04:49.618 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-18 -> temp_min_20150918.tif
+15:04:49.680 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-19 -> temp_min_20150919.tif
+15:04:49.742 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-20 -> temp_min_20150920.tif
+15:04:49.804 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-21 -> temp_min_20150921.tif
+15:04:49.866 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-22 -> temp_min_20150922.tif
+15:04:49.928 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-23 -> temp_min_20150923.tif
+15:04:49.989 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-24 -> temp_min_20150924.tif
+15:04:50.051 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-25 -> temp_min_20150925.tif
+15:04:50.113 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-26 -> temp_min_20150926.tif
+15:04:50.174 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-27 -> temp_min_20150927.tif
+15:04:50.235 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-28 -> temp_min_20150928.tif
+15:04:50.296 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-29 -> temp_min_20150929.tif
+15:04:50.358 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-09-30 -> temp_min_20150930.tif
+15:04:50.419 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-10-01 -> temp_min_20151001.tif
+15:04:50.480 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-10-02 -> temp_min_20151002.tif
+15:04:50.542 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-10-03 -> temp_min_20151003.tif
+15:04:50.603 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-10-04 -> temp_min_20151004.tif
+15:04:50.666 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-10-05 -> temp_min_20151005.tif
+15:04:50.727 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Processed: 2015-10-06 -> temp_min_20151006.tif
+15:04:50.732 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - ✓ Successfully processed 31 days
+15:04:50.733 | INFO    | Task run 'process_era5_land_daily_to_geotiff-19c' - Finished in state Completed()
+15:04:50.742 | INFO    | Task run 'append_to_yearly_historical-4d1' - 📦 Appending data from 2mtemperature_daily_minimum_20150906_20151006.nc to yearly historical files
+15:04:50.742 | INFO    | Task run 'append_to_yearly_historical-4d1' -   Processing 31 specific dates
+15:04:50.747 | INFO    | Task run 'append_to_yearly_historical-4d1' -   Source variables: ['t2m']
+15:04:50.833 | INFO    | Task run 'append_to_yearly_historical-4d1' -   Converted temperature to Celsius
+15:04:50.834 | INFO    | Task run 'append_to_yearly_historical-4d1' -   Clipped to bbox: (-75.0, -35.0, -33.5, 6.5)
+15:04:50.838 | INFO    | Task run 'append_to_yearly_historical-4d1' -   Processing 31 dates
+15:04:50.838 | INFO    | Task run 'append_to_yearly_historical-4d1' -   Dates span 1 year(s): [2015]
+15:04:50.838 | INFO    | Task run 'append_to_yearly_historical-4d1' - 
+  📅 Processing year 2015 (31 dates)
+15:04:50.843 | INFO    | Task run 'append_to_yearly_historical-4d1' -     Year file exists, checking for duplicates...
+15:04:50.854 | INFO    | Task run 'append_to_yearly_historical-4d1' -     Adding 31 new dates
+15:04:50.874 | INFO    | Task run 'append_to_yearly_historical-4d1' -     Writing to temp file...
+15:04:50.882 | ERROR   | Task run 'append_to_yearly_historical-4d1' -     ✗ Failed to write NetCDF: 'temp_min'
+15:04:50.882 | ERROR   | Task run 'append_to_yearly_historical-4d1' -     ✗ Failed to process year 2015: 'temp_min'
+15:04:50.883 | ERROR   | Task run 'append_to_yearly_historical-4d1' - ✗ Failed to append to yearly historical: 'temp_min'
+15:04:50.883 | INFO    | Task run 'append_to_yearly_historical-4d1' - Task run failed with exception: KeyError('temp_min') - Retry 1/3 will start 30 second(s) from now
+15:05:20.917 | INFO    | Task run 'append_to_yearly_historical-4d1' - 📦 Appending data from 2mtemperature_daily_minimum_20150906_20151006.nc to yearly historical files
+15:05:20.918 | INFO    | Task run 'append_to_yearly_historical-4d1' -   Processing 31 specific dates
+15:05:20.923 | INFO    | Task run 'append_to_yearly_historical-4d1' -   Source variables: ['t2m']
+15:05:21.034 | INFO    | Task run 'append_to_yearly_historical-4d1' -   Converted temperature to Celsius
+15:05:21.035 | INFO    | Task run 'append_to_yearly_historical-4d1' -   Clipped to bbox: (-75.0, -35.0, -33.5, 6.5)
+15:05:21.040 | INFO    | Task run 'append_to_yearly_historical-4d1' -   Processing 31 dates
+15:05:21.040 | INFO    | Task run 'append_to_yearly_historical-4d1' -   Dates span 1 year(s): [2015]
+15:05:21.040 | INFO    | Task run 'append_to_yearly_historical-4d1' - 
+  📅 Processing year 2015 (31 dates)
+15:05:21.045 | INFO    | Task run 'append_to_yearly_historical-4d1' -     Year file exists, checking for duplicates...
+15:05:21.056 | INFO    | Task run 'append_to_yearly_historical-4d1' -     Adding 31 new dates
+15:05:21.075 | INFO    | Task run 'append_to_yearly_historical-4d1' -     Writing to temp file...
+15:20:15.946 | ERROR   | prefect.server.services.telemetry - Failed to send telemetry:
+Shutting down telemetry service...

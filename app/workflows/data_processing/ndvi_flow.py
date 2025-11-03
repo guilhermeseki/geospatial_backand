@@ -387,7 +387,7 @@ def download_sentinel2_batch(
         raise
 
 
-@task(retries=2, retry_delay_seconds=600, timeout_seconds=7200)
+@task(retries=2, retry_delay_seconds=600, timeout_seconds=14400)
 def download_modis_batch(
     start_date: date,
     end_date: date,
@@ -439,75 +439,102 @@ def download_modis_batch(
         
         items = list(search.items())
         logger.info(f"Found {len(items)} MODIS composites")
-        
+
         if len(items) == 0:
             raise ValueError("No MODIS data found")
-        
+
+        # OPTIMIZATION: Limit number of items to process (most recent first)
+        # MODIS produces ~23 composites per tile per year, multiple tiles overlap
+        # For a 16-day window, we typically get many redundant tiles
+        # MEMORY: Each composite ~381.5 MB, so 15 items = ~5.7 GB RAM (safe for 8GB systems)
+        max_items = 15  # Process at most 15 composites per batch to avoid OOM kills
+        if len(items) > max_items:
+            # Sort by date (most recent first) and limit
+            # MODIS composites use start_datetime instead of datetime
+            def get_item_time(item):
+                if item.datetime:
+                    return item.datetime
+                elif 'start_datetime' in item.properties:
+                    import dateutil.parser
+                    return dateutil.parser.isoparse(item.properties['start_datetime'])
+                return None
+
+            items = sorted(items, key=get_item_time, reverse=True)[:max_items]
+            logger.info(f"Limited to {max_items} most recent composites to reduce processing time")
+
         ndvi_data_list = []
         time_list = []
         
-        # Define common grid from bbox at ~250m resolution for MODIS
+        # Define common grid from bbox at native MODIS 250m resolution
+        # OPTIMIZATION: Use actual MODIS resolution instead of oversampling
         lat_range = north - south
         lon_range = east - west
-        
-        # 250m resolution in degrees
-        resolution = 0.0025  # ~250m
-        
+
+        # MODIS native 250m resolution in degrees (~0.002245 degrees at equator)
+        # Using 0.0023 for slight oversampling margin
+        resolution = 0.0023  # ~250m native MODIS resolution
+
         n_lat = int(lat_range / resolution)
         n_lon = int(lon_range / resolution)
-        
-        # Limit grid size
-        max_pixels = 20000
+
+        # Much more reasonable limits for 250m data
+        max_pixels = 10000  # Reduced from 20000
         if n_lat > max_pixels:
             n_lat = max_pixels
+            logger.warning(f"Limiting latitude pixels to {max_pixels}")
         if n_lon > max_pixels:
             n_lon = max_pixels
-        
+            logger.warning(f"Limiting longitude pixels to {max_pixels}")
+
         # Create common grid
         lats = np.linspace(north, south, n_lat)
         lons = np.linspace(west, east, n_lon)
-        
+
         common_transform = transform_from_bounds(west, south, east, north, n_lon, n_lat)
+
+        logger.info(f"Common grid: {n_lat} x {n_lon} pixels (~250m native MODIS resolution)")
+        logger.info(f"Grid size optimized: ~{(n_lat * n_lon * 4 / 1024 / 1024):.1f} MB per composite")
         
-        logger.info(f"Common grid: {n_lat} x {n_lon} pixels (~250m)")
-        
+        # OPTIMIZATION: Pre-transform bbox to MODIS coordinates once
+        modis_bbox = transform_bounds(
+            CRS.from_epsg(4326),  # WGS84
+            CRS.from_string('PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1]]'),  # MODIS sinusoidal
+            west, south, east, north
+        )
+        modis_west, modis_south, modis_east, modis_north = modis_bbox
+        logger.info(f"Target MODIS bbox: W={modis_west:.0f}, S={modis_south:.0f}, E={modis_east:.0f}, N={modis_north:.0f}")
+
+        processed_count = 0
+        skipped_count = 0
+
         for i, item in enumerate(items):
             logger.info(f"Processing composite {i+1}/{len(items)}: {item.id}")
-            
+
             try:
                 ndvi_href = planetary_computer.sign(item.assets["250m_16_days_NDVI"].href)
-                
+
                 with rasterio.open(ndvi_href) as src:
-                    # MODIS uses sinusoidal projection - need to transform bbox
-                    src_crs = src.crs
-                    logger.info(f"  MODIS CRS: {src_crs}")
-                    
-                    # Transform our WGS84 bbox to MODIS CRS
-                    modis_bbox = transform_bounds(
-                        CRS.from_epsg(4326),  # WGS84
-                        src_crs,               # MODIS sinusoidal
-                        west, south, east, north
-                    )
-                    
-                    modis_west, modis_south, modis_east, modis_north = modis_bbox
-                    logger.info(f"  Transformed bbox: W={modis_west:.0f}, S={modis_south:.0f}, E={modis_east:.0f}, N={modis_north:.0f}")
-                    
                     # Get scene bounds
                     scene_bounds = src.bounds
-                    logger.info(f"  Scene bounds: W={scene_bounds.left:.0f}, S={scene_bounds.bottom:.0f}, E={scene_bounds.right:.0f}, N={scene_bounds.top:.0f}")
-                    
-                    # Calculate intersection in MODIS coordinates
+
+                    # OPTIMIZATION: Quick intersection check before processing
                     intersect_west = max(modis_west, scene_bounds.left)
                     intersect_south = max(modis_south, scene_bounds.bottom)
                     intersect_east = min(modis_east, scene_bounds.right)
                     intersect_north = min(modis_north, scene_bounds.top)
-                    
+
                     # Check if there's actual intersection
                     if intersect_west >= intersect_east or intersect_south >= intersect_north:
-                        logger.warning(f"  No intersection, skipping")
+                        logger.info(f"  No intersection with target area, skipping")
+                        skipped_count += 1
                         continue
-                    
-                    logger.info(f"  Intersection found: {intersect_east-intersect_west:.0f}m x {intersect_north-intersect_south:.0f}m")
+
+                    # Calculate intersection area as percentage of tile
+                    tile_area = (scene_bounds.right - scene_bounds.left) * (scene_bounds.top - scene_bounds.bottom)
+                    intersect_area = (intersect_east - intersect_west) * (intersect_north - intersect_south)
+                    overlap_pct = 100 * intersect_area / tile_area if tile_area > 0 else 0
+
+                    logger.info(f"  Intersection: {intersect_east-intersect_west:.0f}m x {intersect_north-intersect_south:.0f}m ({overlap_pct:.1f}% of tile)")
                     
                     window = from_bounds(intersect_west, intersect_south,
                                         intersect_east, intersect_north,
@@ -520,6 +547,7 @@ def download_modis_batch(
                     ndvi_src = src.read(1, window=window).astype(np.float32)
                     src_transform = src.window_transform(window)
                     src_crs = src.crs
+                    nodata_value = src.nodata
 
                     logger.info(f"  Read {ndvi_src.shape[0]}x{ndvi_src.shape[1]} pixels")
 
@@ -528,8 +556,15 @@ def download_modis_batch(
                         logger.warning(f"  Empty data, skipping")
                         continue
 
+                    # CRITICAL FIX: Mask nodata values BEFORE reprojection
+                    # MODIS uses -3000 as nodata, which becomes -0.3 after scaling!
+                    if nodata_value is not None:
+                        ndvi_src = np.where(ndvi_src == nodata_value, np.nan, ndvi_src)
+                        logger.info(f"  Masked nodata value: {nodata_value}")
+
                     # Reproject to common grid (WGS84)
                     ndvi_raw = np.empty((n_lat, n_lon), dtype=np.float32)
+                    ndvi_raw[:] = np.nan  # Initialize with NaN
                     reproject(
                         source=ndvi_src,
                         destination=ndvi_raw,
@@ -537,12 +572,18 @@ def download_modis_batch(
                         src_crs=src_crs,
                         dst_transform=common_transform,
                         dst_crs=CRS.from_epsg(4326),  # Reproject to WGS84
-                        resampling=Resampling.bilinear
+                        resampling=Resampling.bilinear,
+                        src_nodata=np.nan,
+                        dst_nodata=np.nan
                     )
-                
-                # Scale MODIS NDVI
+
+                # Scale MODIS NDVI (after masking nodata!)
+                # MODIS NDVI is stored as int16 with scale factor 0.0001
+                # Valid range: -2000 to 10000 -> -0.2 to 1.0 after scaling
                 ndvi = ndvi_raw * 0.0001
-                ndvi = np.where((ndvi < -1) | (ndvi > 1), np.nan, ndvi)
+
+                # Mask invalid values (should already be handled, but be defensive)
+                ndvi = np.where((ndvi < -0.2) | (ndvi > 1.0), np.nan, ndvi)
                 
                 # Check for valid data
                 if np.all(np.isnan(ndvi)):
@@ -550,19 +591,42 @@ def download_modis_batch(
                     continue
                 
                 ndvi_data_list.append(ndvi)
-                time_list.append(item.datetime)
-                
+
+                # MODIS composites don't have single datetime, use start_datetime
+                # or calculate midpoint of composite period
+                if item.datetime:
+                    time_list.append(item.datetime)
+                elif 'start_datetime' in item.properties:
+                    # Use start date of composite period
+                    import dateutil.parser
+                    start_dt = dateutil.parser.isoparse(item.properties['start_datetime'])
+                    # Remove timezone for NetCDF compatibility
+                    if start_dt.tzinfo:
+                        start_dt = start_dt.replace(tzinfo=None)
+                    time_list.append(start_dt)
+                else:
+                    raise ValueError(f"No datetime found for item {item.id}")
+
+                processed_count += 1
+
                 valid_pct = 100 * np.sum(~np.isnan(ndvi)) / ndvi.size
                 logger.info(f"  ✓ Processed successfully ({valid_pct:.1f}% valid pixels)")
-                
+
             except Exception as e:
                 logger.error(f"  Failed: {e}")
                 import traceback
                 logger.error(traceback.format_exc())
                 continue
-        
+
+        # Summary
+        logger.info(f"\nProcessing summary:")
+        logger.info(f"  Total composites found: {len(items)}")
+        logger.info(f"  Successfully processed: {processed_count}")
+        logger.info(f"  Skipped (no overlap): {skipped_count}")
+        logger.info(f"  Failed: {len(items) - processed_count - skipped_count}")
+
         if len(ndvi_data_list) == 0:
-            raise RuntimeError("All composites failed")
+            raise RuntimeError("All composites failed or were skipped")
         
         ndvi_array = np.stack(ndvi_data_list)
 
@@ -633,8 +697,19 @@ def process_ndvi_to_geotiff(
         
         for time_val in da.time.values:
             daily_data = da.sel(time=time_val)
-            day_date = pd.Timestamp(time_val).date()
-            
+
+            # Skip NaT (Not a Time) values
+            try:
+                day_date = pd.Timestamp(time_val).date()
+            except (ValueError, pd.errors.OutOfBoundsDatetime):
+                logger.warning(f"Skipping invalid time value: {time_val}")
+                continue
+
+            # Also check if it's a NaT after conversion
+            if pd.isna(day_date):
+                logger.warning(f"Skipping NaT time value: {time_val}")
+                continue
+
             if dates_to_process and day_date not in dates_to_process:
                 continue
             
@@ -1073,22 +1148,41 @@ def ndvi_data_flow(
                         continue
                     
                     # Process GeoTIFFs
-                    if geotiff_dates:
+                    # For MODIS: Don't filter by dates - composites have their own timestamps
+                    # For Sentinel-2: Filter to only requested dates
+                    if source == 'modis':
+                        # Process all composites in the downloaded file
                         processed = process_ndvi_to_geotiff(
                             batch_path, source,
                             settings.latam_bbox_raster,
-                            geotiff_dates
+                            dates_to_process=None  # No filtering for composites
                         )
                         all_processed.extend(processed)
-                    
-                    # Append to yearly historical
-                    if hist_dates:
+
+                        # Append all composites to historical
                         yearly_files = append_to_yearly_historical_ndvi(
                             batch_path, source,
                             settings.latam_bbox_raster,
-                            hist_dates
+                            dates_to_append=None  # No filtering for composites
                         )
                         logger.info(f"✓ Updated {len(yearly_files)} yearly historical file(s)")
+                    else:
+                        # Sentinel-2 has daily data, so filter by requested dates
+                        if geotiff_dates:
+                            processed = process_ndvi_to_geotiff(
+                                batch_path, source,
+                                settings.latam_bbox_raster,
+                                geotiff_dates
+                            )
+                            all_processed.extend(processed)
+
+                        if hist_dates:
+                            yearly_files = append_to_yearly_historical_ndvi(
+                                batch_path, source,
+                                settings.latam_bbox_raster,
+                                hist_dates
+                            )
+                            logger.info(f"✓ Updated {len(yearly_files)} yearly historical file(s)")
                     
                     cleanup_raw_files(batch_path)
                     logger.info(f"✓ Completed batch")

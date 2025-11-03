@@ -19,7 +19,10 @@ _dask_client: Optional[Client] = None
 # Global datasets organized by type
 _climate_datasets: Dict[str, Dict[str, xr.Dataset]] = {
     'precipitation': {},
-    'temperature': {}
+    'temperature': {},
+    'ndvi': {},
+    'wind': {},
+    'lightning': {}
 }
 
 
@@ -65,11 +68,11 @@ def load_precipitation_datasets():
     source_configs = {
         "chirps": {
             "dir_suffix": "chirps_hist",
-            "file_glob": "chirps_*.nc",
+            "file_glob": "*chirps_*.nc",
         },
         "merge": {
             "dir_suffix": "merge_hist",
-            "file_glob": "merge_*.nc",
+            "file_glob": "*merge_*.nc",
         },
     }
     
@@ -196,14 +199,251 @@ def load_temperature_datasets():
             logger.error(traceback.format_exc())
 
 
+def load_ndvi_datasets():
+    """
+    Load all NDVI datasets (Sentinel-2, MODIS).
+    Uses the SAME SHARED Dask client as precipitation and temperature datasets.
+
+    Uses YEARLY historical files:
+    - ndvi_s2_hist/ndvi_s2_2024.nc, ndvi_s2_2025.nc, etc.
+    - ndvi_modis_hist/ndvi_modis_2024.nc, ndvi_modis_2025.nc, etc.
+
+    All yearly files are combined seamlessly with open_mfdataset.
+    """
+    global _climate_datasets
+
+    # Map source names to their historical directory names
+    ndvi_sources = {
+        "sentinel2": "ndvi_s2_hist",
+        "modis": "ndvi_modis_hist"
+    }
+
+    # Get the shared Dask client (same one precipitation and temperature use)
+    client = get_dask_client()
+
+    if client:
+        logger.info(f"Loading NDVI datasets using SAME shared Dask client: {client.scheduler.address}")
+        logger.info(f"  Client workers: {len(client.cluster.workers)} (shared with all datasets)")
+    else:
+        logger.warning("Loading NDVI datasets without Dask (no parallelization)")
+
+    for source, hist_dir_name in ndvi_sources.items():
+        try:
+            hist_dir = Path(settings.DATA_DIR) / hist_dir_name
+            # Look for yearly files pattern
+            prefix = "ndvi_s2" if source == "sentinel2" else "ndvi_modis"
+            nc_files = sorted(hist_dir.glob(f"{prefix}_*.nc"))
+
+            if not nc_files:
+                logger.warning(f"No NDVI yearly files found for '{source}' in {hist_dir}")
+                logger.info(f"  Expected pattern: {prefix}_YYYY.nc (e.g., {prefix}_2024.nc)")
+                logger.info(f"  Make sure NDVI flow has run and created yearly files")
+                continue
+
+            logger.info(f"Found {len(nc_files)} yearly file(s) for {source}")
+
+            # EXPLICIT: Use parallel=True only if we have the shared Dask client
+            # MODIS uses larger chunks: time=full_year, lat=1000, lon=1000
+            # Sentinel-2 uses: time=-1, lat=20, lon=20
+            ds = xr.open_mfdataset(
+                nc_files,
+                combine="nested",
+                concat_dim="time",
+                engine="netcdf4",
+                parallel=True if client else False,  # ← Uses SHARED client
+                chunks="auto",  # Let xarray determine optimal chunks from file metadata
+                cache=False,
+            )
+
+            # Verify the variable exists in the dataset
+            if 'ndvi' not in ds.data_vars:
+                logger.warning(f"Variable 'ndvi' not found in {source} dataset")
+                logger.info(f"  Available variables: {list(ds.data_vars)}")
+                ds.close()
+                continue
+
+            _climate_datasets['ndvi'][source] = ds
+            logger.info(f"✓ Loaded NDVI dataset: {source}")
+            logger.info(f"  Files: {len(nc_files)} yearly files")
+            logger.info(f"  Variable: ndvi")
+            logger.info(f"  Using shared Dask client: {bool(client)}")
+            logger.info(f"  Chunks: {ds.chunks}")
+
+            # Log time range
+            if 'time' in ds.dims:
+                time_min = ds.time.min().values
+                time_max = ds.time.max().values
+                logger.info(f"  Time range: {time_min} to {time_max}")
+                logger.info(f"  Total composites: {len(ds.time)}")
+
+            # Log spatial dimensions
+            if 'latitude' in ds.dims and 'longitude' in ds.dims:
+                logger.info(f"  Spatial dims: {len(ds.latitude)}×{len(ds.longitude)} (lat×lon)")
+
+        except Exception as e:
+            logger.error(f"✗ Error loading NDVI source '{source}': {e}")
+            import traceback
+            logger.error(traceback.format_exc())
+
+
+def load_wind_datasets():
+    """
+    Load wind speed datasets (ERA5 Land wind speed).
+    Uses the SAME SHARED Dask client as all other datasets.
+
+    Uses YEARLY historical files:
+    - wind_speed_hist/wind_speed_2015.nc, wind_speed_2016.nc, etc.
+
+    All yearly files are combined seamlessly with open_mfdataset.
+    """
+    global _climate_datasets
+
+    # Get the shared Dask client (same one all datasets use)
+    client = get_dask_client()
+
+    if client:
+        logger.info(f"Loading wind datasets using SAME shared Dask client: {client.scheduler.address}")
+        logger.info(f"  Client workers: {len(client.cluster.workers)} (shared with all datasets)")
+    else:
+        logger.warning("Loading wind datasets without Dask (no parallelization)")
+
+    try:
+        hist_dir = Path(settings.DATA_DIR) / "wind_speed_hist"
+        nc_files = sorted(hist_dir.glob("wind_speed_*.nc"))
+
+        if not nc_files:
+            logger.warning(f"No wind speed yearly files found in {hist_dir}")
+            logger.info(f"  Expected pattern: wind_speed_YYYY.nc (e.g., wind_speed_2024.nc)")
+            logger.info(f"  Run 'python app/build_wind_historical.py' to create historical files")
+            return
+
+        logger.info(f"Found {len(nc_files)} yearly file(s) for wind_speed")
+
+        # EXPLICIT: Use parallel=True only if we have the shared Dask client
+        ds = xr.open_mfdataset(
+            nc_files,
+            combine="nested",
+            concat_dim="time",
+            engine="netcdf4",
+            parallel=True if client else False,  # ← Uses SHARED client
+            chunks={"time": -1, "latitude": 20, "longitude": 20},
+            cache=False,
+        )
+
+        # Verify the variable exists in the dataset
+        if 'wind_speed' not in ds.data_vars:
+            logger.warning(f"Variable 'wind_speed' not found in dataset")
+            logger.info(f"  Available variables: {list(ds.data_vars)}")
+            ds.close()
+            return
+
+        _climate_datasets['wind']['wind_speed'] = ds
+        logger.info(f"✓ Loaded wind dataset: wind_speed")
+        logger.info(f"  Files: {len(nc_files)} yearly files")
+        logger.info(f"  Variable: wind_speed")
+        logger.info(f"  Using shared Dask client: {bool(client)}")
+        logger.info(f"  Chunks: {ds.chunks}")
+
+        # Log time range
+        if 'time' in ds.dims:
+            time_min = ds.time.min().values
+            time_max = ds.time.max().values
+            logger.info(f"  Time range: {time_min} to {time_max}")
+            logger.info(f"  Total days: {len(ds.time)}")
+
+        # Log spatial dimensions
+        if 'latitude' in ds.dims and 'longitude' in ds.dims:
+            logger.info(f"  Spatial dims: {len(ds.latitude)}×{len(ds.longitude)} (lat×lon)")
+
+    except Exception as e:
+        logger.error(f"✗ Error loading wind speed dataset: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
+
+
+def load_lightning_datasets():
+    """
+    Load GLM Flash Extent Density datasets.
+    Uses the SAME SHARED Dask client as all other datasets.
+
+    Uses YEARLY historical files:
+    - glm_fed_hist/glm_fed_2020.nc, glm_fed_2021.nc, etc.
+
+    All yearly files are combined seamlessly with open_mfdataset.
+    """
+    global _climate_datasets
+
+    # Get the shared Dask client (same one all datasets use)
+    client = get_dask_client()
+
+    if client:
+        logger.info(f"Loading lightning datasets using SAME shared Dask client: {client.scheduler.address}")
+        logger.info(f"  Client workers: {len(client.cluster.workers)} (shared with all datasets)")
+    else:
+        logger.warning("Loading lightning datasets without Dask (no parallelization)")
+
+    try:
+        hist_dir = Path(settings.DATA_DIR) / "glm_fed_hist"
+        nc_files = sorted(hist_dir.glob("glm_fed_*.nc"))
+
+        if not nc_files:
+            logger.warning(f"No GLM FED yearly files found in {hist_dir}")
+            logger.info(f"  Expected pattern: glm_fed_YYYY.nc (e.g., glm_fed_2020.nc)")
+            logger.info(f"  Run 'python app/run_glm_fed.py' to download and process GLM FED data")
+            return
+
+        logger.info(f"Found {len(nc_files)} yearly file(s) for glm_fed")
+
+        # EXPLICIT: Use parallel=True only if we have the shared Dask client
+        ds = xr.open_mfdataset(
+            nc_files,
+            combine="nested",
+            concat_dim="time",
+            engine="netcdf4",
+            parallel=True if client else False,  # ← Uses SHARED client
+            chunks={"time": -1, "latitude": 20, "longitude": 20},
+            cache=False,
+        )
+
+        # Verify the variable exists in the dataset
+        if 'fed_30min_max' not in ds.data_vars:
+            logger.warning(f"Variable 'fed_30min_max' not found in dataset")
+            logger.info(f"  Available variables: {list(ds.data_vars)}")
+            ds.close()
+            return
+
+        _climate_datasets['lightning']['glm_fed'] = ds
+        logger.info(f"✓ Loaded lightning dataset: glm_fed")
+        logger.info(f"  Files: {len(nc_files)} yearly files")
+        logger.info(f"  Variables: fed_30min_max (max 30-min window), fed_30min_time (timestamp)")
+        logger.info(f"  Using shared Dask client: {bool(client)}")
+        logger.info(f"  Chunks: {ds.chunks}")
+
+        # Log time range
+        if 'time' in ds.dims:
+            time_min = ds.time.min().values
+            time_max = ds.time.max().values
+            logger.info(f"  Time range: {time_min} to {time_max}")
+            logger.info(f"  Total days: {len(ds.time)}")
+
+        # Log spatial dimensions
+        if 'latitude' in ds.dims and 'longitude' in ds.dims:
+            logger.info(f"  Spatial dims: {len(ds.latitude)}×{len(ds.longitude)} (lat×lon)")
+
+    except Exception as e:
+        logger.error(f"✗ Error loading GLM FED dataset: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
+
+
 def get_dataset(data_type: str, source: str) -> Optional[xr.Dataset]:
     """
     Get a loaded climate dataset.
-    
+
     Args:
-        data_type: 'precipitation' or 'temperature'
-        source: Source name (e.g., 'chirps', 'temp_max')
-    
+        data_type: 'precipitation', 'temperature', 'ndvi', 'wind', or 'lightning'
+        source: Source name (e.g., 'chirps', 'temp_max', 'sentinel2', 'modis', 'wind_speed', 'glm_fed')
+
     Returns:
         xarray Dataset or None if not loaded
     """
@@ -213,10 +453,10 @@ def get_dataset(data_type: str, source: str) -> Optional[xr.Dataset]:
 def get_available_sources(data_type: str) -> list:
     """
     Get list of available sources for a data type.
-    
+
     Args:
-        data_type: 'precipitation' or 'temperature'
-    
+        data_type: 'precipitation', 'temperature', 'ndvi', 'wind', or 'lightning'
+
     Returns:
         List of available source names
     """
@@ -281,16 +521,19 @@ def initialize_climate_data():
     """
     Initialize all climate datasets with a SINGLE SHARED Dask client.
     Call this on application startup.
-    
+
     Steps:
     1. Start ONE shared Dask client
     2. Load precipitation datasets (using shared client)
     3. Load temperature datasets (using SAME shared client)
+    4. Load NDVI datasets (using SAME shared client)
+    5. Load wind datasets (using SAME shared client)
+    6. Load lightning datasets (using SAME shared client)
     """
     logger.info("=" * 80)
     logger.info("Initializing Climate Data Service")
     logger.info("=" * 80)
-    
+
     # Step 1: Start THE shared Dask client (only one!)
     client = get_dask_client()
     if client:
@@ -303,40 +546,67 @@ def initialize_climate_data():
         logger.info(f"  This client will be shared by ALL datasets!")
     else:
         logger.warning("⚠ Dask client not available - datasets will load without parallelization")
-    
+
     logger.info("")
-    
+
     # Step 2: Load precipitation datasets (will use shared client)
     logger.info("Loading precipitation datasets...")
     logger.info("-" * 80)
     load_precipitation_datasets()
-    
+
     logger.info("")
-    
+
     # Step 3: Load temperature datasets (will use SAME shared client)
     logger.info("Loading temperature datasets...")
     logger.info("-" * 80)
     load_temperature_datasets()
-    
+
+    logger.info("")
+
+    # Step 4: Load NDVI datasets (will use SAME shared client)
+    logger.info("Loading NDVI datasets...")
+    logger.info("-" * 80)
+    load_ndvi_datasets()
+
+    logger.info("")
+
+    # Step 5: Load wind datasets (will use SAME shared client)
+    logger.info("Loading wind datasets...")
+    logger.info("-" * 80)
+    load_wind_datasets()
+
+    logger.info("")
+
+    # Step 6: Load lightning datasets (will use SAME shared client)
+    logger.info("Loading lightning datasets...")
+    logger.info("-" * 80)
+    load_lightning_datasets()
+
     # Summary
     logger.info("")
     logger.info("=" * 80)
     logger.info("Climate Data Service Summary")
     logger.info("=" * 80)
-    
+
     precip_sources = get_available_sources('precipitation')
     temp_sources = get_available_sources('temperature')
-    total_sources = len(precip_sources) + len(temp_sources)
-    
+    ndvi_sources = get_available_sources('ndvi')
+    wind_sources = get_available_sources('wind')
+    lightning_sources = get_available_sources('lightning')
+    total_sources = len(precip_sources) + len(temp_sources) + len(ndvi_sources) + len(wind_sources) + len(lightning_sources)
+
     logger.info(f"Precipitation sources: {len(precip_sources)} - {precip_sources}")
     logger.info(f"Temperature sources: {len(temp_sources)} - {temp_sources}")
+    logger.info(f"NDVI sources: {len(ndvi_sources)} - {ndvi_sources}")
+    logger.info(f"Wind sources: {len(wind_sources)} - {wind_sources}")
+    logger.info(f"Lightning sources: {len(lightning_sources)} - {lightning_sources}")
     logger.info(f"Total datasets loaded: {total_sources}")
-    
+
     if client:
         logger.info(f"")
         logger.info(f"✓ All {total_sources} datasets share ONE Dask client")
         logger.info(f"  Memory efficiency: ~50% savings vs separate clients")
-    
+
     logger.info("=" * 80)
 
 

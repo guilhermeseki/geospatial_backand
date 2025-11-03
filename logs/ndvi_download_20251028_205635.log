@@ -1,0 +1,311 @@
+20:56:36.794 | INFO    | prefect - Starting temporary server on http://127.0.0.1:8631
+See https://docs.prefect.io/v3/concepts/server#how-to-guides for more information on running a dedicated Prefect server.
+20:56:38.892 | INFO    | Flow run 'real-butterfly' - Beginning flow run 'real-butterfly' for flow 'process-ndvi-data'
+20:56:38.893 | INFO    | Flow run 'real-butterfly' - ================================================================================
+20:56:38.894 | INFO    | Flow run 'real-butterfly' - NDVI DATA PROCESSING FLOW
+20:56:38.894 | INFO    | Flow run 'real-butterfly' - ================================================================================
+20:56:38.894 | INFO    | Flow run 'real-butterfly' - Period: 2015-01-01 to 2025-10-28
+20:56:38.894 | INFO    | Flow run 'real-butterfly' - Sources: modis
+20:56:38.894 | INFO    | Flow run 'real-butterfly' - ================================================================================
+20:56:38.895 | INFO    | Flow run 'real-butterfly' - 
+Processing: MODIS
+20:56:38.911 | INFO    | Task run 'check_missing_dates-fee' - Checking for 3954 dates: 2015-01-01 to 2025-10-28
+20:56:38.912 | INFO    | Task run 'check_missing_dates-fee' - Found 0 existing GeoTIFF files
+20:56:38.913 | INFO    | Task run 'check_missing_dates-fee' - Historical NetCDF does not exist yet
+20:56:38.916 | INFO    | Task run 'check_missing_dates-fee' - Missing from GeoTIFF: 3954 dates
+20:56:38.916 | INFO    | Task run 'check_missing_dates-fee' - Missing from historical: 3954 dates
+20:56:38.917 | INFO    | Task run 'check_missing_dates-fee' - Need to download: 3954 dates
+20:56:38.918 | INFO    | Task run 'check_missing_dates-fee' - Finished in state Completed()
+20:56:38.919 | INFO    | Flow run 'real-butterfly' - 
+Batch: 2015-01-01 to 2015-02-01
+20:56:38.929 | INFO    | Task run 'download_modis_batch-94e' - ================================================================================
+20:56:38.929 | INFO    | Task run 'download_modis_batch-94e' - MODIS NDVI DOWNLOAD (Microsoft Planetary Computer - FREE!)
+20:56:38.929 | INFO    | Task run 'download_modis_batch-94e' - ================================================================================
+20:56:42.281 | INFO    | Task run 'download_modis_batch-94e' - Found 138 MODIS composites
+20:56:42.282 | INFO    | Task run 'download_modis_batch-94e' - Common grid: 16600 x 16600 pixels (~250m)
+20:56:42.282 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 1/138: MYD13Q1.A2015025.h15v11.061.2021319212829
+20:56:43.473 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+20:56:43.480 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+20:56:43.481 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-3335852, S=-3335852, E=-2223901, N=-2223901
+20:56:43.481 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 284482m x 1111951m
+20:56:44.341 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x1228 pixels
+20:56:45.889 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+20:56:45.890 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 2/138: MYD13Q1.A2015025.h14v11.061.2021319212936
+20:56:46.526 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+20:56:46.529 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+20:56:46.530 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-4447802, S=-3335852, E=-3335852, N=-2223901
+20:56:46.530 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+20:56:49.628 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels
+20:56:51.685 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+20:56:51.685 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 3/138: MYD13Q1.A2015025.h14v10.061.2021319213746
+20:56:52.308 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+20:56:52.312 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+20:56:52.312 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-4447802, S=-2223901, E=-3335852, N=-1111951
+20:56:52.312 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+20:57:14.238 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels
+20:57:15.777 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+20:57:15.777 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 4/138: MYD13Q1.A2015025.h14v09.061.2021319213625
+20:57:16.384 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+20:57:16.387 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+20:57:16.387 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-4447802, S=-1111951, E=-3335852, N=0
+20:57:16.388 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+20:57:43.392 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels
+20:57:44.929 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+20:57:44.929 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 5/138: MYD13Q1.A2015025.h13v12.061.2021319212259
+20:57:45.636 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+20:57:45.640 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+20:57:45.640 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-5559753, S=-4447802, E=-4447802, N=-3335852
+20:57:45.641 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 555975m
+20:58:19.926 | INFO    | Task run 'download_modis_batch-94e' -   Read 2400x4800 pixels
+20:58:21.618 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+20:58:21.619 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 6/138: MYD13Q1.A2015025.h13v11.061.2021319213103
+20:58:22.239 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+20:58:22.242 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+20:58:22.242 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-5559753, S=-3335852, E=-4447802, N=-2223901
+20:58:22.243 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+21:00:16.422 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels
+21:00:18.305 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:00:18.305 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 7/138: MYD13Q1.A2015025.h13v10.061.2021319212605
+21:00:18.955 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:00:18.959 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:00:18.959 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-5559753, S=-2223901, E=-4447802, N=-1111951
+21:00:18.959 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+21:02:16.415 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels
+21:02:18.302 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:02:18.302 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 8/138: MYD13Q1.A2015025.h13v09.061.2021319212308
+21:02:18.926 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:02:18.929 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:02:18.930 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-5559753, S=-1111951, E=-4447802, N=0
+21:02:18.930 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+21:03:55.685 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels
+21:03:57.380 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:03:57.381 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 9/138: MYD13Q1.A2015025.h13v08.061.2021319213005
+21:03:57.979 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:03:57.982 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:03:57.982 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-5559753, S=0, E=-4447802, N=1111951
+21:03:57.983 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 722768m
+21:03:58.419 | INFO    | Task run 'download_modis_batch-94e' -   Read 3120x4800 pixels
+21:03:59.965 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:03:59.965 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 10/138: MYD13Q1.A2015025.h12v12.061.2021319212137
+21:04:00.610 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:04:00.614 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:04:00.614 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-6671703, S=-4447802, E=-5559753, N=-3335852
+21:04:00.615 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 555975m
+21:05:11.863 | INFO    | Task run 'download_modis_batch-94e' -   Read 2400x4800 pixels
+21:05:13.608 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:05:13.608 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 11/138: MYD13Q1.A2015025.h12v11.061.2021319212056
+21:05:14.296 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:05:14.299 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:05:14.300 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-6671703, S=-3335852, E=-5559753, N=-2223901
+21:05:14.300 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+21:07:07.964 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels
+21:07:09.845 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:07:09.845 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 12/138: MYD13Q1.A2015025.h12v10.061.2021319212657
+21:07:10.467 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:07:10.470 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:07:10.471 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-6671703, S=-2223901, E=-5559753, N=-1111951
+21:07:10.471 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+21:09:05.360 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels
+21:09:07.541 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:09:07.542 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 13/138: MYD13Q1.A2015025.h12v09.061.2021319212342
+21:09:08.198 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:09:08.201 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:09:08.202 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-6671703, S=-1111951, E=-5559753, N=0
+21:09:08.202 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+21:10:49.331 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels
+21:10:51.572 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:10:51.572 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 14/138: MYD13Q1.A2015025.h12v08.061.2021319212531
+21:10:52.424 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:10:52.428 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:10:52.428 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-6671703, S=0, E=-5559753, N=1111951
+21:10:52.429 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 722768m
+21:12:25.551 | INFO    | Task run 'download_modis_batch-94e' -   Read 3120x4800 pixels
+21:12:27.731 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:12:27.732 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 15/138: MYD13Q1.A2015025.h11v12.061.2021319211901
+21:12:28.359 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:12:28.362 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:12:28.363 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-7783654, S=-4447802, E=-6671703, N=-3335852
+21:12:28.363 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 555975m
+21:12:31.021 | INFO    | Task run 'download_modis_batch-94e' -   Read 2400x4800 pixels
+21:12:32.735 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:12:32.736 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 16/138: MYD13Q1.A2015025.h11v11.061.2021319212218
+21:12:33.425 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:12:33.429 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:12:33.429 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-7783654, S=-3335852, E=-6671703, N=-2223901
+21:12:33.429 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+21:13:38.049 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels
+21:13:40.033 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:13:40.034 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 17/138: MYD13Q1.A2015025.h11v10.061.2021319212428
+21:13:40.701 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:13:40.705 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:13:40.705 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-7783654, S=-2223901, E=-6671703, N=-1111951
+21:13:40.706 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+21:15:26.629 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels
+21:15:28.602 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:15:28.602 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 18/138: MYD13Q1.A2015025.h11v09.061.2021319212139
+21:15:29.226 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:15:29.230 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:15:29.230 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-7783654, S=-1111951, E=-6671703, N=0
+21:15:29.230 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+21:17:44.830 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels
+21:17:47.131 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:17:47.132 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 19/138: MYD13Q1.A2015025.h11v08.061.2021319212852
+21:17:47.810 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:17:47.814 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:17:47.814 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-7783654, S=0, E=-6671703, N=1111951
+21:17:47.814 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 722768m
+21:18:49.827 | INFO    | Task run 'download_modis_batch-94e' -   Read 3120x4800 pixels
+21:18:51.514 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:18:51.514 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 20/138: MYD13Q1.A2015025.h10v11.061.2021319211750
+21:18:52.152 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:18:52.156 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:18:52.157 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-8895604, S=-3335852, E=-7783654, N=-2223901
+21:18:52.157 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 555077m x 1111951m
+21:18:53.062 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x2396 pixels
+21:18:54.653 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:18:54.653 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 21/138: MYD13Q1.A2015025.h10v10.061.2021319212225
+21:18:55.535 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:18:55.539 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:18:55.539 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-8895604, S=-2223901, E=-7783654, N=-1111951
+21:18:55.540 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 555077m x 1111951m
+21:19:03.305 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x2396 pixels
+21:19:04.997 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:19:04.998 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 22/138: MYD13Q1.A2015025.h10v09.061.2021319212245
+21:19:05.646 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:19:05.650 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:19:05.651 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-8895604, S=-1111951, E=-7783654, N=0
+21:19:05.651 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 555077m x 1111951m
+21:20:15.629 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x2396 pixels
+21:20:17.341 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:20:17.341 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 23/138: MYD13Q1.A2015025.h10v08.061.2021319212228
+21:20:18.001 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:20:18.005 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:20:18.005 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-8895604, S=0, E=-7783654, N=1111951
+21:20:18.006 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 555077m x 722768m
+21:20:52.449 | INFO    | Task run 'download_modis_batch-94e' -   Read 3120x2396 pixels
+21:20:53.993 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:20:53.994 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 24/138: MOD13Q1.A2015017.h15v11.061.2021318022450
+21:20:54.823 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:20:54.827 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:20:54.827 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-3335852, S=-3335852, E=-2223901, N=-2223901
+21:20:54.828 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 284482m x 1111951m
+21:20:55.626 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x1228 pixels
+21:20:57.481 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:20:57.482 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 25/138: MOD13Q1.A2015017.h14v11.061.2021318032744
+21:20:58.105 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:20:58.108 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:20:58.109 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-4447802, S=-3335852, E=-3335852, N=-2223901
+21:20:58.109 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+21:21:05.535 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels
+21:21:07.648 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:21:07.649 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 26/138: MOD13Q1.A2015017.h14v10.061.2021318030427
+21:21:08.258 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:21:08.261 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:21:08.262 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-4447802, S=-2223901, E=-3335852, N=-1111951
+21:21:08.262 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+21:21:32.399 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels
+21:21:34.563 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:21:34.564 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 27/138: MOD13Q1.A2015017.h14v09.061.2021318032324
+21:21:35.210 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:21:35.214 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:21:35.215 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-4447802, S=-1111951, E=-3335852, N=0
+21:21:35.215 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+21:21:43.932 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels
+21:21:45.935 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:21:45.936 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 28/138: MOD13Q1.A2015017.h13v12.061.2021318030253
+21:21:46.574 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:21:46.577 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:21:46.578 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-5559753, S=-4447802, E=-4447802, N=-3335852
+21:21:46.578 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 555975m
+21:22:12.027 | INFO    | Task run 'download_modis_batch-94e' -   Read 2400x4800 pixels
+21:22:14.312 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:22:14.313 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 29/138: MOD13Q1.A2015017.h13v11.061.2021318044507
+21:22:14.990 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:22:14.994 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:22:14.994 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-5559753, S=-3335852, E=-4447802, N=-2223901
+21:22:14.994 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+21:23:44.192 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels
+21:23:46.342 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:23:46.343 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 30/138: MOD13Q1.A2015017.h13v10.061.2021318031948
+21:23:46.947 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:23:46.951 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:23:46.951 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-5559753, S=-2223901, E=-4447802, N=-1111951
+21:23:46.951 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+21:25:37.176 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels
+21:25:39.693 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:25:39.694 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 31/138: MOD13Q1.A2015017.h13v09.061.2021318042929
+21:25:40.299 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:25:40.303 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:25:40.304 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-5559753, S=-1111951, E=-4447802, N=0
+21:25:40.304 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+21:27:30.535 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels
+21:27:33.046 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:27:33.047 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 32/138: MOD13Q1.A2015017.h13v08.061.2021318032009
+21:27:33.673 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:27:33.676 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:27:33.677 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-5559753, S=0, E=-4447802, N=1111951
+21:27:33.677 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 722768m
+21:27:34.147 | INFO    | Task run 'download_modis_batch-94e' -   Read 3120x4800 pixels
+21:27:36.242 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:27:36.243 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 33/138: MOD13Q1.A2015017.h12v12.061.2021318034244
+21:27:36.888 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:27:36.891 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:27:36.892 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-6671703, S=-4447802, E=-5559753, N=-3335852
+21:27:36.892 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 555975m
+21:28:21.231 | INFO    | Task run 'download_modis_batch-94e' -   Read 2400x4800 pixels
+21:28:23.455 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:28:23.456 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 34/138: MOD13Q1.A2015017.h12v11.061.2021318043815
+21:28:24.070 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:28:24.074 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:28:24.074 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-6671703, S=-3335852, E=-5559753, N=-2223901
+21:28:24.074 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+21:30:02.819 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels
+21:30:05.187 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:30:05.188 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 35/138: MOD13Q1.A2015017.h12v10.061.2021318044211
+21:30:05.787 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:30:05.790 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:30:05.791 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-6671703, S=-2223901, E=-5559753, N=-1111951
+21:30:05.791 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+21:32:21.586 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels
+21:32:23.898 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:32:23.899 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 36/138: MOD13Q1.A2015017.h12v09.061.2021318031743
+21:32:24.499 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:32:24.502 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:32:24.503 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-6671703, S=-1111951, E=-5559753, N=0
+21:32:24.503 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+21:34:42.492 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels
+21:34:45.094 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:34:45.095 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 37/138: MOD13Q1.A2015017.h12v08.061.2021318032013
+21:34:45.719 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:34:45.723 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:34:45.724 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-6671703, S=0, E=-5559753, N=1111951
+21:34:45.724 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 722768m
+21:36:02.955 | INFO    | Task run 'download_modis_batch-94e' -   Read 3120x4800 pixels
+21:36:05.172 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:36:05.173 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 38/138: MOD13Q1.A2015017.h11v12.061.2021318041440
+21:36:05.811 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:36:05.815 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:36:05.815 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-7783654, S=-4447802, E=-6671703, N=-3335852
+21:36:05.816 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 555975m
+21:36:08.485 | INFO    | Task run 'download_modis_batch-94e' -   Read 2400x4800 pixels
+21:36:10.719 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:36:10.719 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 39/138: MOD13Q1.A2015017.h11v11.061.2021318044045
+21:36:11.352 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:36:11.355 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:36:11.356 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-7783654, S=-3335852, E=-6671703, N=-2223901
+21:36:11.356 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+21:36:58.195 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels
+21:37:00.884 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:37:00.884 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 40/138: MOD13Q1.A2015017.h11v10.061.2021318043954
+21:37:01.557 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:37:01.560 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:37:01.561 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-7783654, S=-2223901, E=-6671703, N=-1111951
+21:37:01.561 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+21:38:38.733 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels
+21:38:42.058 | INFO    | Task run 'download_modis_batch-94e' -   ✓ Processed successfully (100.0% valid pixels)
+21:38:42.061 | INFO    | Task run 'download_modis_batch-94e' - Processing composite 41/138: MOD13Q1.A2015017.h11v09.061.2021318024027
+21:38:42.716 | INFO    | Task run 'download_modis_batch-94e' -   MODIS CRS: PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]
+21:38:42.720 | INFO    | Task run 'download_modis_batch-94e' -   Transformed bbox: W=-8338731, S=-3891827, E=-3051369, N=722768
+21:38:42.721 | INFO    | Task run 'download_modis_batch-94e' -   Scene bounds: W=-7783654, S=-1111951, E=-6671703, N=0
+21:38:42.721 | INFO    | Task run 'download_modis_batch-94e' -   Intersection found: 1111951m x 1111951m
+21:40:41.503 | INFO    | Task run 'download_modis_batch-94e' -   Read 4800x4800 pixels

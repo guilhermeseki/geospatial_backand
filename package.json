@@ -1,0 +1,26 @@
+{
+  "name": "geospatial_backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "iso8601.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/guilhermeseki/geospatial_backand.git"
+  },
+  "keywords": [
+    "geoserver",
+    "api"
+  ],
+  "author": "guilherme",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/guilhermeseki/geospatial_backand/issues"
+  },
+  "homepage": "https://github.com/guilhermeseki/geospatial_backand#readme"
+}

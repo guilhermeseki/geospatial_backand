@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/opt/geospatial_backend/app/process_existing_modis.py", line 21, in <module>
+    raw_dir = settings.DATA_DIR / "raw" / "modis"
+              ~~~~~~~~~~~~~~~~~~^~~~~~~
+TypeError: unsupported operand type(s) for /: 'str' and 'str'

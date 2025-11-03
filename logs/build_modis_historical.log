@@ -1,0 +1,173 @@
+2025-10-30 20:55:30,436 - INFO - ================================================================================
+2025-10-30 20:55:30,436 - INFO - BUILDING MODIS YEARLY HISTORICAL FILES
+2025-10-30 20:55:30,436 - INFO - ================================================================================
+2025-10-30 20:55:30,436 - INFO - Found 241 MODIS GeoTIFF files
+2025-10-30 20:55:30,446 - INFO - Files span 11 year(s): [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
+2025-10-30 20:55:30,447 - INFO - 
+📅 Processing year 2015 (23 files)
+2025-10-30 20:55:30,525 - INFO -   Loaded 23 files (lazy loading with Dask)
+/opt/geospatial_backend/app/build_modis_historical.py:142: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  lat_size = min(1000, ds.dims['latitude'])
+/opt/geospatial_backend/app/build_modis_historical.py:143: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  lon_size = min(1000, ds.dims['longitude'])
+2025-10-30 20:55:30,540 - INFO -   Rechunking for optimal storage...
+2025-10-30 20:55:30,685 - INFO -   Writing to temp file with optimized chunking...
+2025-10-30 20:55:30,685 - INFO -     Chunks: time=23 (entire year), lat=1000, lon=1000
+2025-10-30 20:55:30,685 - INFO -     This will take a while - Dask is processing 23 files...
+2025-10-30 20:57:36,467 - INFO -   Copying to: /mnt/workwork/geoserver_data/ndvi_modis_hist/ndvi_modis_2015.nc
+2025-10-30 20:57:36,600 - INFO -   ✓ Created ndvi_modis_2015.nc
+2025-10-30 20:57:36,600 - INFO -     Time range: 2015-01-09 to 2015-12-27
+2025-10-30 20:57:36,600 - INFO -     Total composites: 23
+2025-10-30 20:57:36,600 - INFO - 
+📅 Processing year 2016 (23 files)
+2025-10-30 20:57:36,667 - INFO -   Loaded 23 files (lazy loading with Dask)
+/opt/geospatial_backend/app/build_modis_historical.py:142: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  lat_size = min(1000, ds.dims['latitude'])
+/opt/geospatial_backend/app/build_modis_historical.py:143: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  lon_size = min(1000, ds.dims['longitude'])
+2025-10-30 20:57:36,678 - INFO -   Rechunking for optimal storage...
+2025-10-30 20:57:36,715 - INFO -   Writing to temp file with optimized chunking...
+2025-10-30 20:57:36,715 - INFO -     Chunks: time=23 (entire year), lat=1000, lon=1000
+2025-10-30 20:57:36,715 - INFO -     This will take a while - Dask is processing 23 files...
+2025-10-30 20:59:39,812 - INFO -   Copying to: /mnt/workwork/geoserver_data/ndvi_modis_hist/ndvi_modis_2016.nc
+2025-10-30 20:59:39,905 - INFO -   ✓ Created ndvi_modis_2016.nc
+2025-10-30 20:59:39,905 - INFO -     Time range: 2016-01-09 to 2016-12-26
+2025-10-30 20:59:39,905 - INFO -     Total composites: 23
+2025-10-30 20:59:39,905 - INFO - 
+📅 Processing year 2017 (23 files)
+2025-10-30 20:59:39,967 - INFO -   Loaded 23 files (lazy loading with Dask)
+/opt/geospatial_backend/app/build_modis_historical.py:142: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  lat_size = min(1000, ds.dims['latitude'])
+/opt/geospatial_backend/app/build_modis_historical.py:143: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  lon_size = min(1000, ds.dims['longitude'])
+2025-10-30 20:59:39,978 - INFO -   Rechunking for optimal storage...
+2025-10-30 20:59:40,009 - INFO -   Writing to temp file with optimized chunking...
+2025-10-30 20:59:40,009 - INFO -     Chunks: time=23 (entire year), lat=1000, lon=1000
+2025-10-30 20:59:40,009 - INFO -     This will take a while - Dask is processing 23 files...
+2025-10-30 21:01:42,318 - INFO -   Copying to: /mnt/workwork/geoserver_data/ndvi_modis_hist/ndvi_modis_2017.nc
+2025-10-30 21:01:42,416 - INFO -   ✓ Created ndvi_modis_2017.nc
+2025-10-30 21:01:42,416 - INFO -     Time range: 2017-01-09 to 2017-12-27
+2025-10-30 21:01:42,416 - INFO -     Total composites: 23
+2025-10-30 21:01:42,416 - INFO - 
+📅 Processing year 2018 (23 files)
+2025-10-30 21:01:42,477 - INFO -   Loaded 23 files (lazy loading with Dask)
+/opt/geospatial_backend/app/build_modis_historical.py:142: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  lat_size = min(1000, ds.dims['latitude'])
+/opt/geospatial_backend/app/build_modis_historical.py:143: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  lon_size = min(1000, ds.dims['longitude'])
+2025-10-30 21:01:42,489 - INFO -   Rechunking for optimal storage...
+2025-10-30 21:01:42,520 - INFO -   Writing to temp file with optimized chunking...
+2025-10-30 21:01:42,520 - INFO -     Chunks: time=23 (entire year), lat=1000, lon=1000
+2025-10-30 21:01:42,520 - INFO -     This will take a while - Dask is processing 23 files...
+2025-10-30 21:03:46,112 - INFO -   Copying to: /mnt/workwork/geoserver_data/ndvi_modis_hist/ndvi_modis_2018.nc
+2025-10-30 21:03:46,217 - INFO -   ✓ Created ndvi_modis_2018.nc
+2025-10-30 21:03:46,217 - INFO -     Time range: 2018-01-09 to 2018-12-27
+2025-10-30 21:03:46,217 - INFO -     Total composites: 23
+2025-10-30 21:03:46,217 - INFO - 
+📅 Processing year 2019 (23 files)
+2025-10-30 21:03:46,278 - INFO -   Loaded 23 files (lazy loading with Dask)
+/opt/geospatial_backend/app/build_modis_historical.py:142: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  lat_size = min(1000, ds.dims['latitude'])
+/opt/geospatial_backend/app/build_modis_historical.py:143: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  lon_size = min(1000, ds.dims['longitude'])
+2025-10-30 21:03:46,291 - INFO -   Rechunking for optimal storage...
+2025-10-30 21:03:46,324 - INFO -   Writing to temp file with optimized chunking...
+2025-10-30 21:03:46,324 - INFO -     Chunks: time=23 (entire year), lat=1000, lon=1000
+2025-10-30 21:03:46,324 - INFO -     This will take a while - Dask is processing 23 files...
+2025-10-30 21:05:50,643 - INFO -   Copying to: /mnt/workwork/geoserver_data/ndvi_modis_hist/ndvi_modis_2019.nc
+2025-10-30 21:05:50,742 - INFO -   ✓ Created ndvi_modis_2019.nc
+2025-10-30 21:05:50,742 - INFO -     Time range: 2019-01-09 to 2019-12-27
+2025-10-30 21:05:50,742 - INFO -     Total composites: 23
+2025-10-30 21:05:50,742 - INFO - 
+📅 Processing year 2020 (23 files)
+2025-10-30 21:05:50,804 - INFO -   Loaded 23 files (lazy loading with Dask)
+/opt/geospatial_backend/app/build_modis_historical.py:142: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  lat_size = min(1000, ds.dims['latitude'])
+/opt/geospatial_backend/app/build_modis_historical.py:143: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  lon_size = min(1000, ds.dims['longitude'])
+2025-10-30 21:05:50,816 - INFO -   Rechunking for optimal storage...
+2025-10-30 21:05:50,900 - INFO -   Writing to temp file with optimized chunking...
+2025-10-30 21:05:50,901 - INFO -     Chunks: time=23 (entire year), lat=1000, lon=1000
+2025-10-30 21:05:50,901 - INFO -     This will take a while - Dask is processing 23 files...
+2025-10-30 21:07:56,992 - INFO -   Copying to: /mnt/workwork/geoserver_data/ndvi_modis_hist/ndvi_modis_2020.nc
+2025-10-30 21:07:57,093 - INFO -   ✓ Created ndvi_modis_2020.nc
+2025-10-30 21:07:57,094 - INFO -     Time range: 2020-01-09 to 2020-12-26
+2025-10-30 21:07:57,094 - INFO -     Total composites: 23
+2025-10-30 21:07:57,094 - INFO - 
+📅 Processing year 2021 (23 files)
+2025-10-30 21:07:57,156 - INFO -   Loaded 23 files (lazy loading with Dask)
+/opt/geospatial_backend/app/build_modis_historical.py:142: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  lat_size = min(1000, ds.dims['latitude'])
+/opt/geospatial_backend/app/build_modis_historical.py:143: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  lon_size = min(1000, ds.dims['longitude'])
+2025-10-30 21:07:57,167 - INFO -   Rechunking for optimal storage...
+2025-10-30 21:07:57,201 - INFO -   Writing to temp file with optimized chunking...
+2025-10-30 21:07:57,201 - INFO -     Chunks: time=23 (entire year), lat=1000, lon=1000
+2025-10-30 21:07:57,201 - INFO -     This will take a while - Dask is processing 23 files...
+2025-10-30 21:10:01,555 - INFO -   Copying to: /mnt/workwork/geoserver_data/ndvi_modis_hist/ndvi_modis_2021.nc
+2025-10-30 21:10:01,647 - INFO -   ✓ Created ndvi_modis_2021.nc
+2025-10-30 21:10:01,647 - INFO -     Time range: 2021-01-09 to 2021-12-27
+2025-10-30 21:10:01,647 - INFO -     Total composites: 23
+2025-10-30 21:10:01,647 - INFO - 
+📅 Processing year 2022 (23 files)
+2025-10-30 21:10:01,707 - INFO -   Loaded 23 files (lazy loading with Dask)
+/opt/geospatial_backend/app/build_modis_historical.py:142: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  lat_size = min(1000, ds.dims['latitude'])
+/opt/geospatial_backend/app/build_modis_historical.py:143: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  lon_size = min(1000, ds.dims['longitude'])
+2025-10-30 21:10:01,718 - INFO -   Rechunking for optimal storage...
+2025-10-30 21:10:01,750 - INFO -   Writing to temp file with optimized chunking...
+2025-10-30 21:10:01,751 - INFO -     Chunks: time=23 (entire year), lat=1000, lon=1000
+2025-10-30 21:10:01,751 - INFO -     This will take a while - Dask is processing 23 files...
+2025-10-30 21:12:05,437 - INFO -   Copying to: /mnt/workwork/geoserver_data/ndvi_modis_hist/ndvi_modis_2022.nc
+2025-10-30 21:12:05,539 - INFO -   ✓ Created ndvi_modis_2022.nc
+2025-10-30 21:12:05,539 - INFO -     Time range: 2022-01-09 to 2022-12-27
+2025-10-30 21:12:05,540 - INFO -     Total composites: 23
+2025-10-30 21:12:05,540 - INFO - 
+📅 Processing year 2023 (23 files)
+2025-10-30 21:12:05,599 - INFO -   Loaded 23 files (lazy loading with Dask)
+/opt/geospatial_backend/app/build_modis_historical.py:142: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  lat_size = min(1000, ds.dims['latitude'])
+/opt/geospatial_backend/app/build_modis_historical.py:143: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  lon_size = min(1000, ds.dims['longitude'])
+2025-10-30 21:12:05,610 - INFO -   Rechunking for optimal storage...
+2025-10-30 21:12:05,642 - INFO -   Writing to temp file with optimized chunking...
+2025-10-30 21:12:05,642 - INFO -     Chunks: time=23 (entire year), lat=1000, lon=1000
+2025-10-30 21:12:05,642 - INFO -     This will take a while - Dask is processing 23 files...
+2025-10-30 21:14:09,551 - INFO -   Copying to: /mnt/workwork/geoserver_data/ndvi_modis_hist/ndvi_modis_2023.nc
+2025-10-30 21:14:09,673 - INFO -   ✓ Created ndvi_modis_2023.nc
+2025-10-30 21:14:09,673 - INFO -     Time range: 2023-01-09 to 2023-12-27
+2025-10-30 21:14:09,673 - INFO -     Total composites: 23
+2025-10-30 21:14:09,673 - INFO - 
+📅 Processing year 2024 (23 files)
+2025-10-30 21:14:09,929 - INFO -   Loaded 23 files (lazy loading with Dask)
+/opt/geospatial_backend/app/build_modis_historical.py:142: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  lat_size = min(1000, ds.dims['latitude'])
+/opt/geospatial_backend/app/build_modis_historical.py:143: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  lon_size = min(1000, ds.dims['longitude'])
+2025-10-30 21:14:09,940 - INFO -   Rechunking for optimal storage...
+2025-10-30 21:14:10,018 - INFO -   Writing to temp file with optimized chunking...
+2025-10-30 21:14:10,018 - INFO -     Chunks: time=23 (entire year), lat=1000, lon=1000
+2025-10-30 21:14:10,018 - INFO -     This will take a while - Dask is processing 23 files...
+2025-10-30 21:16:14,438 - INFO -   Copying to: /mnt/workwork/geoserver_data/ndvi_modis_hist/ndvi_modis_2024.nc
+2025-10-30 21:16:14,540 - INFO -   ✓ Created ndvi_modis_2024.nc
+2025-10-30 21:16:14,540 - INFO -     Time range: 2024-01-09 to 2024-12-26
+2025-10-30 21:16:14,540 - INFO -     Total composites: 23
+2025-10-30 21:16:14,540 - INFO - 
+📅 Processing year 2025 (11 files)
+2025-10-30 21:16:14,663 - INFO -   Loaded 11 files (lazy loading with Dask)
+/opt/geospatial_backend/app/build_modis_historical.py:142: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  lat_size = min(1000, ds.dims['latitude'])
+/opt/geospatial_backend/app/build_modis_historical.py:143: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  lon_size = min(1000, ds.dims['longitude'])
+2025-10-30 21:16:14,669 - INFO -   Rechunking for optimal storage...
+2025-10-30 21:16:14,690 - INFO -   Writing to temp file with optimized chunking...
+2025-10-30 21:16:14,690 - INFO -     Chunks: time=11 (entire year), lat=1000, lon=1000
+2025-10-30 21:16:14,690 - INFO -     This will take a while - Dask is processing 11 files...
+2025-10-30 21:17:07,021 - INFO -   Copying to: /mnt/workwork/geoserver_data/ndvi_modis_hist/ndvi_modis_2025.nc
+2025-10-30 21:17:07,078 - INFO -   ✓ Created ndvi_modis_2025.nc
+2025-10-30 21:17:07,078 - INFO -     Time range: 2025-01-09 to 2025-06-10
+2025-10-30 21:17:07,078 - INFO -     Total composites: 11
+2025-10-30 21:17:07,078 - INFO - 
+✓ Created 11 yearly file(s)
+2025-10-30 21:17:07,078 - INFO - ================================================================================
