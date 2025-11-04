@@ -447,7 +447,9 @@ def download_modis_batch(
         # MODIS produces ~23 composites per tile per year, multiple tiles overlap
         # For a 16-day window, we typically get many redundant tiles
         # MEMORY: Each composite ~381.5 MB, so 15 items = ~5.7 GB RAM (safe for 8GB systems)
-        max_items = 15  # Process at most 15 composites per batch to avoid OOM kills
+        # Allow test script to override max_items (for testing single composite)
+        import app.workflows.data_processing.ndvi_flow as this_module
+        max_items = getattr(this_module, '_TEST_MAX_ITEMS', 15)  # Default: 15, test can set to 1
         if len(items) > max_items:
             # Sort by date (most recent first) and limit
             # MODIS composites use start_datetime instead of datetime
@@ -464,6 +466,7 @@ def download_modis_batch(
 
         ndvi_data_list = []
         time_list = []
+        composite_dates_seen = set()  # Track composite dates to avoid duplicates
         
         # Define common grid from bbox at native MODIS 250m resolution
         # OPTIMIZATION: Use actual MODIS resolution instead of oversampling
@@ -590,22 +593,45 @@ def download_modis_batch(
                     logger.warning(f"  All values are NaN, skipping")
                     continue
                 
-                ndvi_data_list.append(ndvi)
-
-                # MODIS composites don't have single datetime, use start_datetime
-                # or calculate midpoint of composite period
+                # MODIS composites don't have single datetime
+                # Use END date of composite period and deduplicate overlapping tiles
+                import dateutil.parser
+                composite_dt = None
+                
                 if item.datetime:
-                    time_list.append(item.datetime)
+                    composite_dt = item.datetime
                 elif 'start_datetime' in item.properties:
-                    # Use start date of composite period
-                    import dateutil.parser
                     start_dt = dateutil.parser.isoparse(item.properties['start_datetime'])
+                    composite_date = start_dt.date()  # Use date for deduplication
+                    
+                    # DEDUPLICATION: Skip if we've already processed this composite date
+                    # Multiple overlapping tiles (h12v08, h12v09, etc.) share same composite date
+                    if composite_date in composite_dates_seen:
+                        logger.info(f"  Skipping duplicate composite date: {composite_date} (item: {item.id[:50]}...)")
+                        skipped_count += 1
+                        continue
+                    
+                    composite_dates_seen.add(composite_date)
+                    
+                    # Use END date of composite period (not midpoint)
+                    if 'end_datetime' in item.properties:
+                        end_dt = dateutil.parser.isoparse(item.properties['end_datetime'])
+                        composite_dt = end_dt  # Use end date
+                    else:
+                        # Fallback: add 15 days (end of 16-day composite period)
+                        from datetime import timedelta
+                        composite_dt = start_dt + timedelta(days=15)
+                    
                     # Remove timezone for NetCDF compatibility
-                    if start_dt.tzinfo:
-                        start_dt = start_dt.replace(tzinfo=None)
-                    time_list.append(start_dt)
+                    if composite_dt.tzinfo:
+                        composite_dt = composite_dt.replace(tzinfo=None)
                 else:
                     raise ValueError(f"No datetime found for item {item.id}")
+                
+                # Store data and timestamp
+                ndvi_data_list.append(ndvi)
+                time_list.append(composite_dt)
+                logger.info(f"  ✓ Processed composite date {composite_date} (datetime: {composite_dt})")
 
                 processed_count += 1
 
@@ -628,12 +654,36 @@ def download_modis_batch(
         if len(ndvi_data_list) == 0:
             raise RuntimeError("All composites failed or were skipped")
         
+        # VALIDATION: Check for duplicate timestamps and warn
+        if len(time_list) != len(set(time_list)):
+            duplicates = [t for t in set(time_list) if time_list.count(t) > 1]
+            logger.warning(f"⚠️  Found {len(duplicates)} duplicate timestamps: {duplicates[:5]}...")
+            logger.warning(f"   This may cause issues. Total unique timestamps: {len(set(time_list))} of {len(time_list)}")
+        
         ndvi_array = np.stack(ndvi_data_list)
+
+        # Create time coordinates - ensure unique if there were duplicates
+        time_coords = pd.to_datetime(time_list)
+        if len(time_coords) != len(set(time_coords)):
+            logger.warning("⚠️  Duplicate timestamps detected in time coordinates, ensuring uniqueness...")
+            # Add small increments to make them unique while preserving order
+            unique_times = []
+            seen = {}
+            for t in time_coords:
+                base_time = t
+                offset = timedelta(microseconds=0)
+                while base_time + offset in seen:
+                    offset += timedelta(microseconds=1)
+                unique_time = base_time + offset
+                seen[unique_time] = True
+                unique_times.append(unique_time)
+            time_coords = pd.to_datetime(unique_times)
+            logger.info(f"✓ Made {len(time_coords)} timestamps unique")
 
         ds = xr.Dataset(
             {'ndvi': (['time', 'latitude', 'longitude'], ndvi_array)},
             coords={
-                'time': pd.to_datetime(time_list),
+                'time': time_coords,
                 'latitude': lats,
                 'longitude': lons,
             },
@@ -643,6 +693,9 @@ def download_modis_batch(
                 'provider': 'Microsoft Planetary Computer'
             }
         )
+        
+        logger.info(f"✓ Created dataset with {len(time_coords)} unique time steps")
+        logger.info(f"   Time range: {time_coords.min()} to {time_coords.max()}")
 
         # FUSE FIX: Write to /tmp first, then copy to FUSE filesystem
         import tempfile
@@ -914,7 +967,8 @@ def append_to_yearly_historical_ndvi(
             da = da.rename(coord_mapping)
 
         # Get and filter dates
-        all_dates = set(pd.to_datetime(da.time.values).date)
+        # Fix: .date is not a method on array, need to convert each timestamp
+        all_dates = set([pd.Timestamp(t).date() for t in da.time.values])
         if dates_to_append:
             all_dates = all_dates & set(dates_to_append)
             # Filter to only dates we want to append - compare dates directly
@@ -952,10 +1006,10 @@ def append_to_yearly_historical_ndvi(
                     logger.info(f"    Year file exists, checking for duplicates...")
                     # FUSE FIX: Copy to temp for safe processing
                     shutil.copy2(year_file, temp_file)
-                    existing = xr.open_dataset(temp_file, chunks='auto')
+                    existing = xr.open_dataset(temp_file)  # Remove chunks='auto' to load into memory
                     existing_da = existing['ndvi']
 
-                    existing_dates = set(pd.to_datetime(existing_da.time.values).date)
+                    existing_dates = set([pd.Timestamp(t).date() for t in existing_da.time.values])
                     new_dates = set(year_dates) - existing_dates
 
                     if not new_dates:
@@ -968,8 +1022,12 @@ def append_to_yearly_historical_ndvi(
                     new_dates_set = set(new_dates)
                     new_dates_mask = [pd.Timestamp(t).date() in new_dates_set for t in year_da.time.values]
                     year_da_filtered = year_da.isel(time=new_dates_mask)
-                    combined = xr.concat([existing_da, year_da_filtered], dim='time').sortby('time')
+                    
+                    # Compute existing data before closing to avoid lazy evaluation issues
+                    existing_da_loaded = existing_da.load()
                     existing.close()
+                    
+                    combined = xr.concat([existing_da_loaded, year_da_filtered], dim='time').sortby('time')
                 else:
                     logger.info(f"    Creating new year file with {len(year_dates)} dates")
                     combined = year_da
