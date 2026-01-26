@@ -8,47 +8,33 @@
   <NamedLayer>
     <Name>wind_speed</Name>
     <UserStyle>
-      <Title>Wind Speed - Intensity (m/s)</Title>
-      <Abstract>Color ramp for wind speed from 0 m/s (calm) to 25+ m/s (very strong)</Abstract>
+      <Title>Wind Speed - Intensity (km/h)</Title>
+      <Abstract>Color ramp for wind speed from 0 km/h (calm) to 200+ km/h (extreme)</Abstract>
       <FeatureTypeStyle>
         <Rule>
           <RasterSymbolizer>
             <ColorMap type="ramp">
-              <!-- Calm to light breeze: White to Light Blue -->
-              <ColorMapEntry color="#FFFFFF" quantity="0" label="Calm (0 m/s)" opacity="0"/>
-              <ColorMapEntry color="#E6F2FF" quantity="0.5" label="Light Air" opacity="0.7"/>
-              <ColorMapEntry color="#CCE5FF" quantity="1" label="Light Air (1 m/s)" opacity="0.8"/>
-
-              <!-- Light breeze: Light Blue to Blue -->
-              <ColorMapEntry color="#99CCFF" quantity="2" label="Light Breeze" opacity="0.85"/>
-              <ColorMapEntry color="#66B3FF" quantity="3" label="Light Breeze" opacity="0.9"/>
-
-              <!-- Gentle to moderate breeze: Blue to Green -->
-              <ColorMapEntry color="#3399FF" quantity="4" label="Gentle Breeze" opacity="0.95"/>
-              <ColorMapEntry color="#00BFFF" quantity="5" label="Gentle Breeze" opacity="1"/>
-              <ColorMapEntry color="#00CED1" quantity="6" label="Moderate Breeze" opacity="1"/>
-
-              <!-- Fresh breeze: Cyan to Yellow-Green -->
-              <ColorMapEntry color="#00E5B8" quantity="7" label="Fresh Breeze" opacity="1"/>
-              <ColorMapEntry color="#00FF9F" quantity="8" label="Fresh Breeze" opacity="1"/>
-              <ColorMapEntry color="#7FFF00" quantity="9" label="Strong Breeze" opacity="1"/>
-
-              <!-- Strong breeze to gale: Yellow to Orange -->
-              <ColorMapEntry color="#ADFF2F" quantity="10" label="Strong Breeze" opacity="1"/>
-              <ColorMapEntry color="#FFFF00" quantity="11" label="Near Gale" opacity="1"/>
-              <ColorMapEntry color="#FFD700" quantity="12" label="Near Gale" opacity="1"/>
-              <ColorMapEntry color="#FFAA00" quantity="13" label="Gale" opacity="1"/>
-
-              <!-- Gale to strong gale: Orange to Red -->
-              <ColorMapEntry color="#FF8800" quantity="15" label="Gale" opacity="1"/>
-              <ColorMapEntry color="#FF6600" quantity="17" label="Strong Gale" opacity="1"/>
-              <ColorMapEntry color="#FF4400" quantity="20" label="Storm" opacity="1"/>
-
-              <!-- Storm to hurricane: Red to Dark Red -->
-              <ColorMapEntry color="#FF0000" quantity="25" label="Violent Storm" opacity="1"/>
-              <ColorMapEntry color="#CC0000" quantity="30" label="Hurricane" opacity="1"/>
-              <ColorMapEntry color="#990000" quantity="35" label="Violent Hurricane" opacity="1"/>
-              <ColorMapEntry color="#660000" quantity="40" label="Extreme" opacity="1"/>
+              <ColorMapEntry color="#E6F2FF" quantity="0"   label="0 km/h" opacity="0"/>
+              <ColorMapEntry color="#CCE5FF" quantity="5"   label="5 km/h"/>
+              <ColorMapEntry color="#99CCFF" quantity="10"  label="10 km/h"/>
+              <ColorMapEntry color="#66B3FF" quantity="15"  label="15 km/h"/>
+              <ColorMapEntry color="#3399FF" quantity="20"  label="20 km/h"/>
+              <ColorMapEntry color="#00BFFF" quantity="25"  label="25 km/h"/>
+              <ColorMapEntry color="#00CED1" quantity="30"  label="30 km/h"/>
+              <ColorMapEntry color="#00E5B8" quantity="35"  label="35 km/h"/>
+              <ColorMapEntry color="#00FF9F" quantity="40"  label="40 km/h"/>
+              <ColorMapEntry color="#7FFF00" quantity="45"  label="45 km/h"/>
+              <ColorMapEntry color="#ADFF2F" quantity="50"  label="50 km/h"/>
+              <ColorMapEntry color="#FFFF00" quantity="60"  label="60 km/h"/>
+              <ColorMapEntry color="#FFD700" quantity="70"  label="70 km/h"/>
+              <ColorMapEntry color="#FFAA00" quantity="80"  label="80 km/h"/>
+              <ColorMapEntry color="#FF8800" quantity="90"  label="90 km/h"/>
+              <ColorMapEntry color="#FF6600" quantity="100" label="100 km/h"/>
+              <ColorMapEntry color="#FF4400" quantity="120" label="120 km/h"/>
+              <ColorMapEntry color="#FF0000" quantity="140" label="140 km/h"/>
+              <ColorMapEntry color="#CC0000" quantity="160" label="160 km/h"/>
+              <ColorMapEntry color="#990000" quantity="180" label="180 km/h"/>
+              <ColorMapEntry color="#660000" quantity="200" label="200 km/h"/>
             </ColorMap>
           </RasterSymbolizer>
         </Rule>

@@ -12,27 +12,8 @@ from .schemas import DataSource
 from app.config.settings import get_settings
 
 
-# Mapping from ERA5 variable and statistic to directory names
-VARIABLE_MAPPING = {
-    "2m_temperature": {
-        "daily_maximum": "temp_max",
-        "daily_minimum": "temp_min",
-        "daily_mean": "temp"
-    },
-    "total_precipitation": {
-        "daily_sum": "precipitation"
-    },
-    "10m_u_component_of_wind": {
-        "daily_mean": "wind_u",
-        "daily_maximum": "wind_u_max",
-        "daily_minimum": "wind_u_min"
-    },
-    "10m_v_component_of_wind": {
-        "daily_mean": "wind_v",
-        "daily_maximum": "wind_v_max",
-        "daily_minimum": "wind_v_min"
-    },
-}
+# Import centralized data source configuration
+from app.config.data_sources import ERA5_VARIABLE_MAPPING as VARIABLE_MAPPING
 
 
 def get_output_directory(variable: str, daily_statistic: str, settings) -> Path:
@@ -47,7 +28,7 @@ def get_output_directory(variable: str, daily_statistic: str, settings) -> Path:
             elif "minimum" in daily_statistic:
                 dir_name = "temp_min"
             else:
-                dir_name = "temp"
+                dir_name = "temp_mean"
         elif "precipitation" in variable:
             dir_name = "precipitation"
         elif "wind" in variable:
@@ -367,17 +348,80 @@ def process_era5_land_daily_to_geotiff(
             # Convert temperature from Kelvin to Celsius
             if "temperature" in variable.lower() or "t2m" in var_name.lower():
                 daily_data = daily_data - 273.15
-            
+
+            # Convert wind speed/gust from m/s to km/h
+            if (("wind" in variable.lower() and ("speed" in variable.lower() or "gust" in variable.lower()))
+                or "maximum_10m_wind" in variable.lower()):
+                daily_data = daily_data * 3.6
+
+            # Convert solar radiation from J/m² to kWh/m²/day
+            if "solar" in variable.lower() or "radiation" in variable.lower():
+                daily_data = daily_data / 3600000  # 1 kWh = 3,600,000 J
+
             daily_data = daily_data.rio.write_crs("EPSG:4326")
-            
+
             try:
                 daily_data = daily_data.rio.clip_box(*bbox)
             except Exception as e:
                 logger.warning(f"Could not clip to bbox: {e}")
-            
+
+            # CONSISTENCY FIX: Reproject to consistent 0.1° grid (416x416)
+            # This ensures all years have the same spatial dimensions
+            target_resolution = 0.1
+            target_shape = (416, 416)
+            target_bounds = (-75.05, -35.05, -33.45, 6.55)  # (minx, miny, maxx, maxy)
+
+            # Only reproject if dimensions don't match
+            if daily_data.shape != target_shape:
+                import numpy as np
+                from rasterio.transform import from_bounds
+
+                # Create target transform
+                target_transform = from_bounds(*target_bounds, target_shape[1], target_shape[0])
+
+                logger.info(f"  Reprojecting from {daily_data.shape} to {target_shape} (0.1° resolution)")
+
+                # Reproject to target grid
+                daily_data = daily_data.rio.reproject(
+                    "EPSG:4326",
+                    shape=target_shape,
+                    transform=target_transform,
+                    resampling=5  # 5 = bilinear interpolation
+                )
+
             output_path = output_dir / f"{output_dir.name}_{day_date.strftime('%Y%m%d')}.tif"
-            
-            daily_data.rio.to_raster(output_path, driver="COG", compress="LZW")
+
+            # Write to temporary file first
+            temp_output = output_path.parent / f"{output_path.stem}_temp.tif"
+            daily_data.rio.to_raster(temp_output, driver="COG", compress="LZW")
+
+            # Clip with Brazil shapefile if it exists (preserves grid alignment)
+            shapefile = Path("/opt/geospatial_backend/data/shapefiles/br_shp/brazil_b10km.shp")
+            if shapefile.exists():
+                import subprocess
+                try:
+                    result = subprocess.run([
+                        "gdalwarp",
+                        "-q",
+                        "-cutline", str(shapefile),
+                        "-dstnodata", "nan",
+                        "-overwrite",
+                        str(temp_output),
+                        str(output_path)
+                    ], capture_output=True, text=True, timeout=30, check=True)
+                    temp_output.unlink()  # Remove temp file
+                    logger.info(f"✓ Clipped with shapefile: {day_date}")
+                except subprocess.CalledProcessError as e:
+                    logger.warning(f"Shapefile clipping failed, using original: {e.stderr[:100]}")
+                    temp_output.rename(output_path)
+                except Exception as e:
+                    logger.warning(f"Shapefile clipping error, using original: {e}")
+                    if temp_output.exists():
+                        temp_output.rename(output_path)
+            else:
+                # No shapefile, just use temp file
+                temp_output.rename(output_path)
+
             processed_paths.append(output_path)
             logger.info(f"✓ Processed: {day_date} -> {output_path.name}")
         
@@ -412,6 +456,7 @@ def append_to_yearly_historical(
     settings = get_settings()
     import tempfile
     import shutil
+    import numpy as np
     from collections import defaultdict
 
     dir_name = get_output_directory(variable, daily_statistic, settings).name
@@ -475,6 +520,17 @@ def append_to_yearly_historical(
             da = da - 273.15
             logger.info("  Converted temperature to Celsius")
 
+        # Convert wind speed/gust from m/s to km/h
+        if (("wind" in variable.lower() and ("speed" in variable.lower() or "gust" in variable.lower()))
+            or "maximum_10m_wind" in variable.lower()):
+            da = da * 3.6
+            logger.info("  Converted wind speed/gust to km/h")
+
+        # Convert solar radiation from J/m² to kWh/m²/day
+        if "solar" in variable.lower() or "radiation" in variable.lower():
+            da = da / 3600000  # 1 kWh = 3,600,000 J
+            logger.info("  Converted solar radiation from J/m² to kWh/m²/day")
+
         # Clip to bbox
         if isinstance(bbox, list):
             bbox = (bbox[1], bbox[2], bbox[3], bbox[0])
@@ -484,6 +540,13 @@ def append_to_yearly_historical(
             logger.info(f"  Clipped to bbox: {bbox}")
         except Exception as e:
             logger.warning(f"  Could not clip to bbox: {e}")
+
+        # Verify grid dimensions (should be 416x416 natively from Brazil bbox request)
+        current_shape = (len(da.latitude), len(da.longitude))
+        logger.info(f"  Grid shape: {current_shape}")
+
+        # No interpolation needed - data comes in at correct resolution from CDS
+        # Brazil bbox [6.55, -75.05, -35.05, -33.45] returns native 416×416 grid at 0.1° resolution
 
         # Standardize variable name and attributes
         var_short_name = dir_name
@@ -752,7 +815,7 @@ def era5_land_daily_flow(
                         end_date=current_end,
                         variable=variable,
                         daily_statistic=statistic,
-                        area=settings.latam_bbox_cds
+                        area=settings.brazil_bbox_cds
                     )
                     
                     # Process to GeoTIFFs (only missing dates)

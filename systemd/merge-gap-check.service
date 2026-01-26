@@ -1,0 +1,22 @@
+[Unit]
+Description=MERGE Data Gap Check (Weekly)
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=guilherme
+Group=guilherme
+WorkingDirectory=/opt/geospatial_backend
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+Environment="PYTHONPATH=/opt/geospatial_backend"
+
+# Run gap detection script
+ExecStart=/usr/bin/python3 /opt/geospatial_backend/app/check_merge_gaps.py
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=merge-gap-check
+
+[Install]
+WantedBy=multi-user.target

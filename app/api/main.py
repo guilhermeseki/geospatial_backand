@@ -1,4 +1,13 @@
 # app/api/main.py
+
+# Fix imports to work from any directory
+import sys
+from pathlib import Path
+# Add project root to Python path
+project_root = Path(__file__).parent.parent.parent
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,8 +19,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 import os
 import asyncio
-from app.api.routers import temperature, precipitation, georisk, ndvi, wind, lightning
-from pathlib import Path
+from app.api.routers import temperature, precipitation, georisk, ndvi, wind, lightning, solar, locations, batch_analysis, available_dates
 from datetime import datetime
 import httpx
 
@@ -64,7 +72,40 @@ INIT_RETRY_DELAY = 2
 
 app = FastAPI(
     title="Geospatial Backend - Climate Data API",
-    description="Unified API for precipitation and temperature data with shared Dask processing",
+    description="""
+    Unified API for accessing climate and geospatial data for Latin America.
+
+    ## Features
+
+    - **Temperature Data** (ERA5-Land): Daily max/min/mean temperature at 2m height (~9km resolution)
+    - **Precipitation Data** (CHIRPS, MERGE): Daily rainfall estimates (5-10km resolution)
+    - **NDVI Data** (Sentinel-2, MODIS): Vegetation health indices
+    - **Wind Data** (ERA5-Land): Surface wind speed
+    - **Lightning Data** (GLM): Flash extent density
+
+    ## Data Coverage
+
+    - **Spatial:** Latin America (-94°W to -34°W, -53°S to 25°N)
+    - **Temporal:** 2015-present (updated regularly, ~7 day lag)
+    - **Update Frequency:** Daily processing of new data
+
+    ## Key Endpoints
+
+    - `/temperature/history` - Temperature time series for a location
+    - `/temperature/triggers` - Temperature threshold exceedances
+    - `/precipitation/history` - Precipitation time series
+    - `/ndvi/history` - NDVI time series for vegetation monitoring
+
+    ## Performance
+
+    - Shared Dask cluster for parallel processing
+    - NetCDF files for fast time-series queries
+    - GeoTIFF mosaics for spatial analysis and WMS layers
+
+    ## Support
+
+    For issues or questions, see the documentation at `/docs` or `/redoc`
+    """,
     version="2.0.0",
 )
 
@@ -99,6 +140,7 @@ async def startup_event():
         temp_sources = get_available_sources('temperature')
         ndvi_sources = get_available_sources('ndvi')
         lightning_sources = get_available_sources('lightning')
+        solar_sources = get_available_sources('solar')
         dask_info = get_dask_client_info()
 
         logger.info("")
@@ -109,6 +151,7 @@ async def startup_event():
         logger.info(f"Temperature sources: {len(temp_sources)} - {temp_sources}")
         logger.info(f"NDVI sources: {len(ndvi_sources)} - {ndvi_sources}")
         logger.info(f"Lightning sources: {len(lightning_sources)} - {lightning_sources}")
+        logger.info(f"Solar sources: {len(solar_sources)} - {solar_sources}")
         
         if dask_info:
             logger.info(f"Dask client: RUNNING")
@@ -158,6 +201,7 @@ async def status_check():
     temp_sources = get_available_sources('temperature')
     ndvi_sources = get_available_sources('ndvi')
     lightning_sources = get_available_sources('lightning')
+    solar_sources = get_available_sources('solar')
     dask_info = get_dask_client_info()
 
     return {
@@ -168,7 +212,8 @@ async def status_check():
             "temperature_sources": temp_sources,
             "ndvi_sources": ndvi_sources,
             "lightning_sources": lightning_sources,
-            "total_datasets": len(precip_sources) + len(temp_sources) + len(ndvi_sources) + len(lightning_sources)
+            "solar_sources": solar_sources,
+            "total_datasets": len(precip_sources) + len(temp_sources) + len(ndvi_sources) + len(lightning_sources) + len(solar_sources)
         },
         "dask_client": {
             "available": dask_info is not None,
@@ -225,14 +270,17 @@ async def root():
     return {
         "title": "Geospatial Backend - Climate Data API",
         "version": "2.0.0",
-        "description": "Unified API for precipitation, temperature, NDVI, wind, and lightning data",
+        "description": "Unified API for precipitation, temperature, NDVI, wind, lightning data, and location management",
         "endpoints": {
             "precipitation": "/precipitation",
             "temperature": "/temperature",
             "ndvi": "/ndvi",
             "wind": "/wind",
             "lightning": "/lightning",
-            "georisk": "/georisk"
+            "solar": "/solar",
+            "georisk": "/georisk",
+            "locations": "/locations",
+            "batch_analysis": "/batch_analysis"
         },
         "documentation": {
             "swagger": "/docs",
@@ -251,6 +299,10 @@ app.include_router(temperature.router)
 app.include_router(ndvi.router)
 app.include_router(wind.router)
 app.include_router(lightning.router)
+app.include_router(solar.router)
 app.include_router(georisk.router)
+app.include_router(locations.router)
+app.include_router(batch_analysis.router)
+app.include_router(available_dates.router)
 
-logger.info("🔌 Routers registered: precipitation, temperature, ndvi, wind, lightning, georisk")
+logger.info("🔌 Routers registered: precipitation, temperature, ndvi, wind, lightning, solar, georisk, locations, batch_analysis, available_dates")

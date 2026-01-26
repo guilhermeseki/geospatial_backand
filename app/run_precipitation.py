@@ -3,7 +3,7 @@
 Unified Precipitation Data Processing Script
 Creates yearly historical NetCDF from existing CHIRPS and MERGE GeoTIFFs
 """
-from app.workflows.data_processing.flows import build_precipitation_yearly_historical
+from app.workflows.data_processing.precipitation_flow import build_precipitation_yearly_historical
 from app.workflows.data_processing.schemas import DataSource
 
 if __name__ == "__main__":

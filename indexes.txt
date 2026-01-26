@@ -1,0 +1,211 @@
+ MSAVI at the start of the growing season, NDVI during the active crop growth stage, and NDRE during crop maturity.
+
+ 2. MSAVI – Emergência
+Período: 1ª a 3ª semana após plantio (V0–V2)
+Fórmula
+$$\text{MSAVI} = \frac{2 \cdot \text{NIR} + 1 - \sqrt{(2 \cdot \text{NIR} + 1)^2 - 8 \cdot (\text{NIR} - \text{Red})}}{2}$$
+Por que MSAVI (e não NDVI)?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Problema no NDVISolução do MSAVISolo exposto infla o valorAjuste dinâmico de soloFalso verde em plantio raloDetecta cobertura real < 30%
+Gatilho de Pagamento
+
+
+
+
+
+
+
+
+
+
+
+
+
+CondiçãoPagamentoMSAVI < 0,30 por 2 semanas consecutivasR$ 400/ha (replantio)
+
+3. NDVI – Crescimento Ativo
+Período: Floração até enchimento (R1–R5)
+Fórmula
+$$\text{NDVI} = \frac{\text{NIR} - \text{Red}}{\text{NIR} + \text{Red}}$$
+Uso no Seguro
+
+Monitora biomassa verde
+Detecta déficit hídrico, pragas, adubação falha
+
+Gatilho de Pagamento
+
+
+
+
+
+
+
+
+
+
+
+
+
+CondiçãoPagamentoNDVI < 0,65 (vs. média 3 anos) por 10 diasR$ 600/ha (perda de produtividade)
+
+4. NDRE – Maturação / Enchimento de Grãos
+Período: R6–R7 (grão cheio)
+Fórmula
+$$\text{NDRE} = \frac{\text{NIR} - \text{RedEdge}}{\text{NIR} + \text{RedEdge}}$$
+Vantagem sobre NDVI
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Limite do NDVIVantagem do NDRESatura em dossel densoLinear em alta biomassaNão vê clorofila internaSensível a teor de nitrogênio
+Gatilho de Pagamento
+
+
+
+
+
+
+
+
+
+
+
+
+
+CondiçãoPagamentoQueda de NDRE > 15% em 10 diasR$ 500/ha (perda de qualidade)
+
+
+
+
+2. MSAVI – Emergência
+Período: 1ª a 3ª semana após plantio (V0–V2)
+Fórmula
+$$\text{MSAVI} = \frac{2 \cdot \text{NIR} + 1 - \sqrt{(2 \cdot \text{NIR} + 1)^2 - 8 \cdot (\text{NIR} - \text{Red})}}{2}$$
+Por que MSAVI (e não NDVI)?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Problema no NDVISolução do MSAVISolo exposto infla o valorAjuste dinâmico de soloFalso verde em plantio raloDetecta cobertura real < 30%
+Gatilho de Pagamento
+
+
+
+
+
+
+
+
+
+
+
+
+
+CondiçãoPagamentoMSAVI < 0,30 por 2 semanas consecutivasR$ 400/ha (replantio)
+
+3. NDVI – Crescimento Ativo
+Período: Floração até enchimento (R1–R5)
+Fórmula
+$$\text{NDVI} = \frac{\text{NIR} - \text{Red}}{\text{NIR} + \text{Red}}$$
+Uso no Seguro
+
+Monitora biomassa verde
+Detecta déficit hídrico, pragas, adubação falha
+
+Gatilho de Pagamento
+
+
+
+
+
+
+
+
+
+
+
+
+
+CondiçãoPagamentoNDVI < 0,65 (vs. média 3 anos) por 10 diasR$ 600/ha (perda de produtividade)
+
+4. NDRE – Maturação / Enchimento de Grãos
+Período: R6–R7 (grão cheio)
+Fórmula
+$$\text{NDRE} = \frac{\text{NIR} - \text{RedEdge}}{\text{NIR} + \text{RedEdge}}$$
+Vantagem sobre NDVI
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Limite do NDVIVantagem do NDRESatura em dossel densoLinear em alta biomassaNão vê clorofila internaSensível a teor de nitrogênio
+Gatilho de Pagamento
+
+
+
+
+
+
+
+
+
+
+
+
+
+CondiçãoPagamentoQueda de NDRE > 15% em 10 diasR$ 500/ha (perda de qualidade)
+

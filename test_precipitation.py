@@ -2,7 +2,7 @@
 """
 Test precipitation yearly historical build with a single year
 """
-from app.workflows.data_processing.flows import build_precipitation_yearly_historical
+from app.workflows.data_processing.precipitation_flow import build_precipitation_yearly_historical
 from app.workflows.data_processing.schemas import DataSource
 from pathlib import Path
 from app.config.settings import get_settings

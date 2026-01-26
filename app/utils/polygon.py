@@ -77,9 +77,20 @@ class PolygonProcessor:
         """Crop dataset to polygon bounds and apply mask."""
         # Get bounds and slice
         lon_min, lat_min, lon_max, lat_max = polygon.bounds
-        
+
+        # FIX: Handle both ascending and descending latitude coordinates
+        # xarray slice requires bounds to match coordinate order
+        lat_coords = ds[lat_dim].values
+        lat_ascending = lat_coords[0] < lat_coords[-1]
+
+        if lat_ascending:
+            lat_slice = slice(lat_min, lat_max)
+        else:
+            # Descending order (e.g., CHIRPS): swap min/max
+            lat_slice = slice(lat_max, lat_min)
+
         ds_slice = ds.sel(
-            **{lat_dim: slice(lat_min, lat_max),
+            **{lat_dim: lat_slice,
                lon_dim: slice(lon_min, lon_max)}
         )
         
@@ -135,12 +146,13 @@ class PolygonProcessor:
                                end_date: str,
                                statistic: Optional[str] = None,
                                trigger: Optional[float] = None,
+                               consecutive_days: Optional[int] = 1,
                                lat_dim: str = "latitude",
                                lon_dim: str = "longitude",
                                time_dim: str = "time") -> dict:
         """
         Process a complete polygon request.
-        
+
         Args:
             ds: xarray Dataset
             polygon: Shapely Polygon
@@ -149,7 +161,8 @@ class PolygonProcessor:
             end_date: End date string
             statistic: Optional statistic to calculate
             trigger: Optional trigger threshold
-            
+            consecutive_days: Minimum consecutive days for trigger (default=1)
+
         Returns:
             dict with results
         """
@@ -188,25 +201,69 @@ class PolygonProcessor:
                 point=[time_dim, lat_dim, lon_dim]
             )
             exceeding_computed = exceeding_flat.compute().to_series().dropna()
-            
+
+            # Apply consecutive days filter if requested
+            if consecutive_days and consecutive_days > 1:
+                from collections import defaultdict
+
+                # Reorganize by (lat, lon) to check consecutive dates
+                points_by_location = defaultdict(list)
+                for index, value in exceeding_computed.items():
+                    time_val, lat_val, lon_val = index
+                    date_val = pd.to_datetime(time_val).date()
+                    points_by_location[(lat_val, lon_val)].append((date_val, value))
+
+                # Filter points that meet consecutive day requirement
+                valid_points = {}
+                for (lat_val, lon_val), date_values in points_by_location.items():
+                    # Sort by date
+                    date_values.sort(key=lambda x: x[0])
+                    dates = [dv[0] for dv in date_values]
+
+                    # Find consecutive sequences
+                    consecutive_count = 1
+                    for i in range(1, len(dates)):
+                        if (dates[i] - dates[i-1]).days == 1:
+                            consecutive_count += 1
+                            if consecutive_count >= consecutive_days:
+                                # This location meets the requirement
+                                # Include all dates in the consecutive sequence
+                                for j in range(i - consecutive_count + 1, i + 1):
+                                    key = (dates[j], lat_val, lon_val)
+                                    valid_points[key] = date_values[j][1]
+                        else:
+                            consecutive_count = 1
+
+                # Rebuild exceeding_computed with only valid points
+                exceeding_computed_filtered = pd.Series(valid_points)
+            else:
+                exceeding_computed_filtered = exceeding_computed
+
             grouped_exceedances = {}
-            for index, value in exceeding_computed.items():
-                time_val, lat_val, lon_val = index
-                date_str = str(pd.to_datetime(time_val).date())
-                
+            for index, value in exceeding_computed_filtered.items():
+                if consecutive_days and consecutive_days > 1:
+                    date_val, lat_val, lon_val = index
+                    date_str = str(date_val)
+                else:
+                    time_val, lat_val, lon_val = index
+                    date_str = str(pd.to_datetime(time_val).date())
+
                 point_data = {
                     "latitude": round(float(lat_val), 5),
                     "longitude": round(float(lon_val), 5),
                     f"{variable_name}_value": round(float(value), 2)
                 }
-                
+
                 if date_str not in grouped_exceedances:
                     grouped_exceedances[date_str] = []
                 grouped_exceedances[date_str].append(point_data)
-            
+
             result["trigger_dates"] = grouped_exceedances
             result["num_trigger_dates"] = len(grouped_exceedances)
             result["metadata"]["trigger"] = trigger
+
+            if consecutive_days and consecutive_days > 1:
+                result["metadata"]["consecutive_days"] = consecutive_days
         
         # If statistic is provided, calculate it
         if statistic is not None:

@@ -60,6 +60,9 @@ def calculate_wind_speed_for_date(day_date: date, settings) -> bool:
         # Calculate wind speed: sqrt(u² + v²)
         wind_speed = np.sqrt(u_data**2 + v_data**2)
 
+        # Convert from m/s to km/h (multiply by 3.6)
+        wind_speed = wind_speed * 3.6
+
         # Handle nodata values
         nodata = profile.get('nodata', -9999.0)
         if nodata is not None:

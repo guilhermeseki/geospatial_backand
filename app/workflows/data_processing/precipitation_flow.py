@@ -15,6 +15,7 @@ import cdsapi
 import pandas as pd
 import xarray as xr
 import rioxarray
+import numpy as np
 import shutil
 import tempfile
 
@@ -34,7 +35,11 @@ def merge_daily_flow(...):
     retries=2,
     retry_delay_seconds=300,
 )
-def chirps_daily_flow(source: DataSource = DataSource.CHIRPS):
+def chirps_daily_flow(
+    source: DataSource = DataSource.CHIRPS,
+    start_date: date = None,
+    end_date: date = None
+):
     logger = get_run_logger()
     settings = get_settings()
     processed_paths = []
@@ -42,13 +47,17 @@ def chirps_daily_flow(source: DataSource = DataSource.CHIRPS):
     mosaic_dir = Path(settings.DATA_DIR) / source.value
     # Setup mosaic store
     #setup_mosaic.submit(mosaic_dir, source).result()
-    # Define date range - OPERATIONAL: Check only previous month
+    # Define date range - OPERATIONAL: Check only last 30 days (unless overridden)
     today = date.today()
-    last_month_end = today.replace(day=1) - timedelta(days=1)
-    start_date = last_month_end.replace(day=1)  # First day of previous month
+    if start_date is None:
+        start_date = today - timedelta(days=30)
+    if end_date is None:
+        end_date = today - timedelta(days=1)  # Yesterday
+
+    logger.info(f"Processing date range: {start_date} to {end_date}")
     current_date = start_date
 
-    while current_date <= last_month_end:
+    while current_date <= end_date:
         output_path = mosaic_dir / f"{source.value}_{current_date.strftime('%Y%m%d')}.tif"
         if output_path.exists():
             logger.info(f"File already exists locally: {output_path}, skipping download and processing")
@@ -75,7 +84,11 @@ def chirps_daily_flow(source: DataSource = DataSource.CHIRPS):
     retries=2,
     retry_delay_seconds=300,
 )
-def merge_daily_flow(source: DataSource = DataSource.MERGE):
+def merge_daily_flow(
+    source: DataSource = DataSource.MERGE,
+    start_date: date = None,
+    end_date: date = None
+):
     logger = get_run_logger()
     settings = get_settings()
     processed_paths = []
@@ -83,12 +96,14 @@ def merge_daily_flow(source: DataSource = DataSource.MERGE):
     mosaic_dir = Path(settings.DATA_DIR) / source.value
     # Setup mosaic store
     #setup_mosaic.submit(mosaic_dir, source).result()
-    # Define date range - OPERATIONAL: Check only last 30 days
+    # Define date range - OPERATIONAL: Check only last 30 days (unless overridden)
     today = date.today()
-    start_date = today - timedelta(days=30)  # 30 days ago
-    end_date = today - timedelta(days=1)     # Yesterday (1-2 day lag)
+    if start_date is None:
+        start_date = today - timedelta(days=30)  # 30 days ago
+    if end_date is None:
+        end_date = today - timedelta(days=1)     # Yesterday (1-2 day lag)
 
-
+    logger.info(f"Processing date range: {start_date} to {end_date}")
     current_date = start_date
     while current_date <= end_date:
         output_path = mosaic_dir / f"{source.value}_{current_date.strftime('%Y%m%d')}.tif"
@@ -122,12 +137,19 @@ def merge_daily_flow(source: DataSource = DataSource.MERGE):
 )
 def build_precipitation_yearly_historical(
     source: DataSource,
-    start_year: int = None,
-    end_year: int = None
+    start_year: int | None = None,
+    end_year: int | None = None,
+    clip_geojson: str | None = None
 ):
     """
     Create yearly historical NetCDF files from existing GeoTIFF mosaics.
     This is a one-time operation to backfill historical data.
+
+    Args:
+        source: Data source (CHIRPS or MERGE)
+        start_year: Start year for processing
+        end_year: End year for processing
+        clip_geojson: Path to GeoJSON file for clipping (optional)
     """
     logger = get_run_logger()
     settings = get_settings()
@@ -136,6 +158,7 @@ def build_precipitation_yearly_historical(
     import tempfile
     import shutil
     from collections import defaultdict
+    import geopandas as gpd
 
     # Get directories
     geotiff_dir = Path(settings.DATA_DIR) / source.value
@@ -149,6 +172,20 @@ def build_precipitation_yearly_historical(
     logger.info("=" * 80)
     logger.info(f"BUILDING YEARLY HISTORICAL FOR {source.value.upper()}")
     logger.info("=" * 80)
+
+    # Load clipping geometry if provided
+    clip_geometry = None
+    if clip_geojson:
+        try:
+            gdf = gpd.read_file(clip_geojson)
+            clip_geometry = gdf.geometry.unary_union
+            logger.info(f"Loaded clipping geometry from: {clip_geojson}")
+            logger.info(f"  Geometry type: {clip_geometry.geom_type}")
+            logger.info(f"  Bounds: {clip_geometry.bounds}")
+        except Exception as e:
+            logger.warning(f"Could not load clipping geometry: {e}")
+            logger.warning("Proceeding without clipping")
+            clip_geometry = None
 
     # Find all GeoTIFF files
     geotiff_files = sorted(geotiff_dir.glob(f"{source.value}_*.tif"))
@@ -200,12 +237,26 @@ def build_precipitation_yearly_historical(
             data_arrays = []
             time_coords = []
 
+            # Load first file to get reference coordinates
+            first_file_date, first_tif = year_files[0]
+            ref_da = rioxarray.open_rasterio(first_tif, masked=True).squeeze()
+            if 'band' in ref_da.dims:
+                ref_da = ref_da.isel(band=0)
+            ref_x = ref_da.x.values
+            ref_y = ref_da.y.values
+
             for file_date, tif_file in year_files:
                 try:
                     da = rioxarray.open_rasterio(tif_file, masked=True).squeeze()
                     # Remove band dimension if present
                     if 'band' in da.dims:
                         da = da.isel(band=0)
+
+                    # FIX: Assign reference coordinates to all arrays to ensure perfect alignment
+                    # This prevents tiny floating-point differences from creating union grids
+                    if 'x' in da.coords and 'y' in da.coords:
+                        da = da.assign_coords(x=ref_x, y=ref_y)
+
                     data_arrays.append(da)
                     time_coords.append(pd.Timestamp(file_date))
                 except Exception as e:
@@ -219,7 +270,8 @@ def build_precipitation_yearly_historical(
             logger.info(f"  Loaded {len(data_arrays)} files into memory")
 
             # Stack along time dimension
-            combined = xr.concat(data_arrays, dim='time')
+            # Use join='exact' since all arrays now have identical coordinates (assigned from first file)
+            combined = xr.concat(data_arrays, dim='time', join='exact', combine_attrs='override')
             combined = combined.assign_coords(time=time_coords)
 
             # Rename spatial coordinates
@@ -232,8 +284,21 @@ def build_precipitation_yearly_historical(
             if coord_mapping:
                 combined = combined.rename(coord_mapping)
 
+            # Clip to geometry if provided
+            if clip_geometry is not None:
+                logger.info(f"  Clipping to geometry...")
+                original_size = combined.sizes
+                combined = combined.rio.write_crs("EPSG:4326")
+                combined = combined.rio.clip([clip_geometry], crs="EPSG:4326", drop=True, all_touched=True)
+                clipped_size = combined.sizes
+                logger.info(f"    Original: {original_size.get('longitude', 'N/A')} x {original_size.get('latitude', 'N/A')}")
+                logger.info(f"    Clipped: {clipped_size.get('longitude', 'N/A')} x {clipped_size.get('latitude', 'N/A')}")
+                reduction = (1 - (clipped_size.get('longitude', 1) * clipped_size.get('latitude', 1)) /
+                            (original_size.get('longitude', 1) * original_size.get('latitude', 1))) * 100
+                logger.info(f"    Size reduction: {reduction:.1f}%")
+
             # Create dataset
-            var_name = 'precipitation'
+            var_name = 'precip'
             ds = combined.to_dataset(name=var_name)
             ds.attrs['source'] = source.value
             ds.attrs['year'] = year

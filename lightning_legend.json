@@ -1,0 +1,66 @@
+{
+  "lightningLegend": [
+    { "value": 0, "color": "#000000", "label": "Nenhuma", "opacity": 0 },
+    { "value": 1, "color": "#1a0033", "label": "Muito Baixa (1-5)", "opacity": 0.3 },
+    { "value": 5, "color": "#330066", "label": "Baixa (5-10)", "opacity": 0.5 },
+    { "value": 10, "color": "#4d0099", "label": "Moderada Baixa (10-20)", "opacity": 0.7 },
+    { "value": 20, "color": "#6600cc", "label": "Moderada (20-50)", "opacity": 0.8 },
+    { "value": 50, "color": "#0000ff", "label": "Moderada Alta (50-100)", "opacity": 0.85 },
+    { "value": 100, "color": "#00ccff", "label": "Alta (100-200)", "opacity": 0.9 },
+    { "value": 200, "color": "#00ff99", "label": "Muito Alta (200-400)", "opacity": 0.95 },
+    { "value": 400, "color": "#ffff00", "label": "Intensa (400-800)", "opacity": 0.95 },
+    { "value": 800, "color": "#ff9900", "label": "Muito Intensa (800-1500)", "opacity": 1.0 },
+    { "value": 1500, "color": "#ff0000", "label": "Extrema (>1500)", "opacity": 1.0 }
+  ],
+  "lightningColors": {
+    "0": { "color": "#000000", "label": "Nenhuma" },
+    "1": { "color": "#1a0033", "label": "Muito Baixa" },
+    "5": { "color": "#330066", "label": "Baixa" },
+    "10": { "color": "#4d0099", "label": "Moderada Baixa" },
+    "20": { "color": "#6600cc", "label": "Moderada" },
+    "50": { "color": "#0000ff", "label": "Moderada Alta" },
+    "100": { "color": "#00ccff", "label": "Alta" },
+    "200": { "color": "#00ff99", "label": "Muito Alta" },
+    "400": { "color": "#ffff00", "label": "Intensa" },
+    "800": { "color": "#ff9900", "label": "Muito Intensa" },
+    "1500": { "color": "#ff0000", "label": "Extrema" }
+  },
+  "lightningCategories": [
+    { "min": 0, "max": 1, "color": "#000000", "label": "Sem Atividade", "description": "0 flashes/km²" },
+    { "min": 1, "max": 10, "color": "#330066", "label": "Atividade Baixa", "description": "1-10 flashes/km²" },
+    { "min": 10, "max": 50, "color": "#6600cc", "label": "Atividade Moderada", "description": "10-50 flashes/km²" },
+    { "min": 50, "max": 200, "color": "#00ccff", "label": "Atividade Alta", "description": "50-200 flashes/km²" },
+    { "min": 200, "max": 800, "color": "#ffff00", "label": "Atividade Intensa", "description": "200-800 flashes/km²" },
+    { "min": 800, "max": 1500, "color": "#ff9900", "label": "Atividade Muito Intensa", "description": "800-1500 flashes/km²" },
+    { "min": 1500, "max": 99999, "color": "#ff0000", "label": "Atividade Extrema", "description": ">1500 flashes/km²" }
+  ],
+  "stormClassification": [
+    { "fedRange": "0-0.1", "category": 0, "label": "Sem Atividade", "description": "Ruído ou atividade isolada", "color": "#F0F0F0" },
+    { "fedRange": "0.1-1", "category": 1, "label": "Tempestade Fraca", "description": "Célula jovem, convecção inicial", "color": "#90EE90" },
+    { "fedRange": "1-4", "category": 2, "label": "Tempestade Moderada", "description": "Convecção madura, chuva intensa", "color": "#FFD700" },
+    { "fedRange": "4-12", "category": 3, "label": "Tempestade Forte", "description": "Corrente ascendente forte, possível granizo", "color": "#FF7F00" },
+    { "fedRange": "12-30", "category": 4, "label": "Tempestade Muito Forte", "description": "Estruturas organizadas, multicélulas", "color": "#FF3300" },
+    { "fedRange": "30-60", "category": 5, "label": "Tempestade Severa", "description": "Sinal típico de tempestades severas", "color": "#B22222" },
+    { "fedRange": "60-100", "category": 6, "label": "Supercélula Provável", "description": "Corrente ascendente persistente e possível rotação", "color": "#C71585" },
+    { "fedRange": ">100", "category": 7, "label": "Sistema Explosivo / MCS Intenso", "description": "Risco extremo", "color": "#6A0DAD" }
+  ],
+  "metadata": {
+    "unit": "flashes/km²/30min",
+    "fullName": "Flash Extent Density (FED) - Maximum 30-Minute Window",
+    "title": "Densidade de Raios",
+    "description": "Densidade máxima de raios em qualquer janela de 30 minutos. Valores representam o número de flashes (raios) por km² durante o período de 30 minutos com maior atividade do dia.",
+    "source": "GOES-16/19 GLM (Geostationary Lightning Mapper)",
+    "satelliteInfo": {
+      "GOES-16": "Janeiro 2018 - Abril 6, 2025 (GOES-East histórico)",
+      "GOES-18": "Janeiro 2023 - presente (GOES-West)",
+      "GOES-19": "Abril 7, 2025 - presente (GOES-East atual, substituiu GOES-16)"
+    },
+    "spatialResolution": "~3.23 km × 3.23 km",
+    "pixelArea": "10.41 km²",
+    "temporalResolution": "Agregação de janelas de 30 minutos (valor máximo diário)",
+    "normalization": "Valores normalizados pela área do pixel",
+    "dataType": "Maximum lightning flash density in any 30-minute window",
+    "lastUpdated": "2025-12-18",
+    "notes": "Duas escalas disponíveis: (1) Densidade de flashes bruta (0-1500+ flashes/km²/30min) e (2) Classificação de tempestades FED (0-7). Os dados de 2025 em diante são do GOES-19, que substituiu o GOES-16 em abril de 2025."
+  }
+}

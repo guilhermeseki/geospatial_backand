@@ -111,7 +111,9 @@ if __name__ == "__main__":
     print("ERA5 Historical → Yearly Migration")
     print("="*60)
 
-    sources = ['temp_max', 'temp_min', 'temp']
+    # Import from centralized config
+    from app.config.data_sources import TEMPERATURE_SOURCES
+    sources = TEMPERATURE_SOURCES
 
     for source in sources:
         split_historical_to_yearly(source)

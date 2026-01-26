@@ -22,7 +22,8 @@ _climate_datasets: Dict[str, Dict[str, xr.Dataset]] = {
     'temperature': {},
     'ndvi': {},
     'wind': {},
-    'lightning': {}
+    'lightning': {},
+    'solar': {}
 }
 
 
@@ -94,16 +95,22 @@ def load_precipitation_datasets():
                 continue
             
             # EXPLICIT: Use parallel=True only if we have the shared Dask client
+            # Optimized chunking: time=365 for fast time-series queries (vs time=-1 which is 400x slower)
+            # coords='minimal' to handle files with/without 'band' coordinate
+            # join='override' to handle tiny floating-point coordinate differences between files
             ds = xr.open_mfdataset(
                 nc_files,
                 combine="nested",
                 concat_dim="time",
                 engine="netcdf4",
                 parallel=True if client else False,  # ← Uses SHARED client
-                chunks={"time": -1, "latitude": 20, "longitude": 20},
+                chunks={"time": 365, "latitude": 20, "longitude": 20},
                 cache=False,
+                coords='minimal',  # Ignore non-dimensional coords like 'band'
+                join='override',  # Use first file's coordinates
+                combine_attrs='override'
             )
-            
+
             _climate_datasets['precipitation'][source] = ds
             logger.info(f"✓ Loaded precipitation dataset: {source}")
             logger.info(f"  Using Dask: {bool(client)}")
@@ -121,18 +128,14 @@ def load_temperature_datasets():
     NEW: Uses YEARLY historical files for better manageability:
     - temp_max_hist/temp_max_2024.nc, temp_max_2025.nc, etc.
     - temp_min_hist/temp_min_2024.nc, temp_min_2025.nc, etc.
-    - temp_hist/temp_2024.nc, temp_2025.nc, etc.
+    - temp_mean_hist/temp_2024.nc, temp_2025.nc, etc.
 
     All yearly files are combined seamlessly with open_mfdataset.
     """
     global _climate_datasets
 
-    # Map source names to their historical directory names
-    temp_sources = {
-        "temp_max": "temp_max_hist",
-        "temp_min": "temp_min_hist",
-        "temp": "temp_hist"
-    }
+    # Import from centralized config
+    from app.config.data_sources import TEMPERATURE_HIST_DIRS as temp_sources
 
     # Get the shared Dask client (same one precipitation uses)
     client = get_dask_client()
@@ -158,14 +161,17 @@ def load_temperature_datasets():
             logger.info(f"Found {len(nc_files)} yearly file(s) for {source}")
 
             # EXPLICIT: Use parallel=True only if we have the shared Dask client
+            # Optimized chunking: time=365 for fast time-series queries (vs time=-1 which is 400x slower)
+            # coords='minimal' to handle files with/without 'band' coordinate
             ds = xr.open_mfdataset(
                 nc_files,
                 combine="nested",
                 concat_dim="time",
                 engine="netcdf4",
                 parallel=True if client else False,  # ← Uses SHARED client
-                chunks={"time": -1, "latitude": 20, "longitude": 20},
+                chunks={"time": 365, "latitude": 20, "longitude": 20},
                 cache=False,
+                coords='minimal',  # Ignore non-dimensional coords like 'band'
             )
 
             # Verify the variable exists in the dataset
@@ -320,13 +326,14 @@ def load_wind_datasets():
         logger.info(f"Found {len(nc_files)} yearly file(s) for wind_speed")
 
         # EXPLICIT: Use parallel=True only if we have the shared Dask client
+        # Optimized chunking: time=365 for fast time-series queries (vs time=-1 which is 400x slower)
         ds = xr.open_mfdataset(
             nc_files,
             combine="nested",
             concat_dim="time",
             engine="netcdf4",
             parallel=True if client else False,  # ← Uses SHARED client
-            chunks={"time": -1, "latitude": 20, "longitude": 20},
+            chunks={"time": 365, "latitude": 20, "longitude": 20},
             cache=False,
         )
 
@@ -395,13 +402,14 @@ def load_lightning_datasets():
         logger.info(f"Found {len(nc_files)} yearly file(s) for glm_fed")
 
         # EXPLICIT: Use parallel=True only if we have the shared Dask client
+        # Optimized chunking: time=365 for fast time-series queries (vs time=-1 which is 400x slower)
         ds = xr.open_mfdataset(
             nc_files,
             combine="nested",
             concat_dim="time",
             engine="netcdf4",
             parallel=True if client else False,  # ← Uses SHARED client
-            chunks={"time": -1, "latitude": 20, "longitude": 20},
+            chunks={"time": 365, "latitude": 20, "longitude": 20},
             cache=False,
         )
 
@@ -436,13 +444,98 @@ def load_lightning_datasets():
         logger.error(traceback.format_exc())
 
 
+def load_solar_datasets():
+    """
+    Load NASA POWER solar radiation datasets (GHI - Global Horizontal Irradiance).
+    Uses the SAME SHARED Dask client as all other datasets.
+
+    Uses YEARLY historical files:
+    - solar_radiation_hist/solar_radiation_2024.nc, solar_radiation_2025.nc, etc.
+
+    All yearly files are combined seamlessly with open_mfdataset.
+    """
+    global _climate_datasets
+
+    # Import from centralized config
+    from app.config.data_sources import SOLAR_HIST_DIRS, SOLAR_VAR_NAMES
+
+    # Get the shared Dask client (same one all datasets use)
+    client = get_dask_client()
+
+    if client:
+        logger.info(f"Loading solar datasets using SAME shared Dask client: {client.scheduler.address}")
+        logger.info(f"  Client workers: {len(client.cluster.workers)} (shared with all datasets)")
+    else:
+        logger.warning("Loading solar datasets without Dask (no parallelization)")
+
+    for source, hist_dir_name in SOLAR_HIST_DIRS.items():
+        try:
+            hist_dir = Path(settings.DATA_DIR) / hist_dir_name
+            # Look for yearly files pattern
+            prefix = source
+            nc_files = sorted(hist_dir.glob(f"{prefix}_*.nc"))
+
+            if not nc_files:
+                logger.warning(f"No solar yearly files found for '{source}' in {hist_dir}")
+                logger.info(f"  Expected pattern: {prefix}_YYYY.nc (e.g., {prefix}_2024.nc)")
+                logger.info(f"  Run 'python app/run_nasa_power_solar.py' to download data")
+                continue
+
+            logger.info(f"Found {len(nc_files)} yearly file(s) for {source}")
+
+            # EXPLICIT: Use parallel=True only if we have the shared Dask client
+            # Optimized chunking: time=365 for fast time-series queries
+            ds = xr.open_mfdataset(
+                nc_files,
+                combine="nested",
+                concat_dim="time",
+                engine="netcdf4",
+                parallel=True if client else False,  # ← Uses SHARED client
+                chunks={"time": 365, "latitude": 20, "longitude": 20},
+                cache=False,
+                coords='minimal',  # Ignore non-dimensional coords
+            )
+
+            # Verify the variable exists in the dataset
+            if source not in ds.data_vars:
+                logger.warning(f"Variable '{source}' not found in combined dataset")
+                logger.info(f"  Available variables: {list(ds.data_vars)}")
+                ds.close()
+                continue
+
+            _climate_datasets['solar'][source] = ds
+            logger.info(f"✓ Loaded solar dataset: {source}")
+            logger.info(f"  Files: {len(nc_files)} yearly files")
+            logger.info(f"  Variable: {source} (ALLSKY_SFC_SW_DWN = GHI)")
+            logger.info(f"  Units: kWh/m²/day")
+            logger.info(f"  Source: NASA POWER")
+            logger.info(f"  Using shared Dask client: {bool(client)}")
+            logger.info(f"  Chunks: {ds.chunks}")
+
+            # Log time range
+            if 'time' in ds.dims:
+                time_min = ds.time.min().values
+                time_max = ds.time.max().values
+                logger.info(f"  Time range: {time_min} to {time_max}")
+                logger.info(f"  Total days: {len(ds.time)}")
+
+            # Log spatial dimensions
+            if 'latitude' in ds.dims and 'longitude' in ds.dims:
+                logger.info(f"  Spatial dims: {len(ds.latitude)}×{len(ds.longitude)} (lat×lon)")
+
+        except Exception as e:
+            logger.error(f"✗ Error loading solar source '{source}': {e}")
+            import traceback
+            logger.error(traceback.format_exc())
+
+
 def get_dataset(data_type: str, source: str) -> Optional[xr.Dataset]:
     """
     Get a loaded climate dataset.
 
     Args:
-        data_type: 'precipitation', 'temperature', 'ndvi', 'wind', or 'lightning'
-        source: Source name (e.g., 'chirps', 'temp_max', 'sentinel2', 'modis', 'wind_speed', 'glm_fed')
+        data_type: 'precipitation', 'temperature', 'ndvi', 'wind', 'lightning', or 'solar'
+        source: Source name (e.g., 'chirps', 'temp_max', 'sentinel2', 'modis', 'wind_speed', 'glm_fed', 'ghi')
 
     Returns:
         xarray Dataset or None if not loaded
@@ -455,7 +548,7 @@ def get_available_sources(data_type: str) -> list:
     Get list of available sources for a data type.
 
     Args:
-        data_type: 'precipitation', 'temperature', 'ndvi', 'wind', or 'lightning'
+        data_type: 'precipitation', 'temperature', 'ndvi', 'wind', 'lightning', or 'solar'
 
     Returns:
         List of available source names
@@ -529,6 +622,7 @@ def initialize_climate_data():
     4. Load NDVI datasets (using SAME shared client)
     5. Load wind datasets (using SAME shared client)
     6. Load lightning datasets (using SAME shared client)
+    7. Load solar datasets (using SAME shared client)
     """
     logger.info("=" * 80)
     logger.info("Initializing Climate Data Service")
@@ -582,6 +676,13 @@ def initialize_climate_data():
     logger.info("-" * 80)
     load_lightning_datasets()
 
+    logger.info("")
+
+    # Step 7: Load solar datasets (will use SAME shared client)
+    logger.info("Loading solar radiation datasets...")
+    logger.info("-" * 80)
+    load_solar_datasets()
+
     # Summary
     logger.info("")
     logger.info("=" * 80)
@@ -593,13 +694,15 @@ def initialize_climate_data():
     ndvi_sources = get_available_sources('ndvi')
     wind_sources = get_available_sources('wind')
     lightning_sources = get_available_sources('lightning')
-    total_sources = len(precip_sources) + len(temp_sources) + len(ndvi_sources) + len(wind_sources) + len(lightning_sources)
+    solar_sources = get_available_sources('solar')
+    total_sources = len(precip_sources) + len(temp_sources) + len(ndvi_sources) + len(wind_sources) + len(lightning_sources) + len(solar_sources)
 
     logger.info(f"Precipitation sources: {len(precip_sources)} - {precip_sources}")
     logger.info(f"Temperature sources: {len(temp_sources)} - {temp_sources}")
     logger.info(f"NDVI sources: {len(ndvi_sources)} - {ndvi_sources}")
     logger.info(f"Wind sources: {len(wind_sources)} - {wind_sources}")
     logger.info(f"Lightning sources: {len(lightning_sources)} - {lightning_sources}")
+    logger.info(f"Solar sources: {len(solar_sources)} - {solar_sources}")
     logger.info(f"Total datasets loaded: {total_sources}")
 
     if client:

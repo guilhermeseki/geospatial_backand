@@ -13,6 +13,8 @@ import numpy as np
 import xarray as xr
 import pandas as pd
 import rasterio
+import rioxarray
+from pyproj import CRS
 from prefect import flow, task, get_run_logger
 from app.config.settings import get_settings
 import requests
@@ -27,17 +29,22 @@ settings = get_settings()
 def check_earthdata_credentials() -> tuple:
     """
     Check for NASA Earthdata credentials.
-    
+
     Returns:
         (username, password) tuple or raises error if not found
     """
     logger = get_run_logger()
-    
+
+    # Check Settings object first (from .env file)
+    if settings.EARTHDATA_USERNAME and settings.EARTHDATA_PASSWORD:
+        logger.info("✓ Found Earthdata credentials in Settings (.env file)")
+        return (settings.EARTHDATA_USERNAME, settings.EARTHDATA_PASSWORD)
+
     # Check environment variables
     import os
     username = os.getenv('EARTHDATA_USERNAME')
     password = os.getenv('EARTHDATA_PASSWORD')
-    
+
     if username and password:
         logger.info("✓ Found Earthdata credentials in environment variables")
         return (username, password)
@@ -129,8 +136,8 @@ def check_missing_dates_fed(
         for nc_file in hist_dir.glob("glm_fed_*.nc"):
             try:
                 ds = xr.open_dataset(nc_file, chunks='auto')
-                if 'flash_extent_density' in ds.data_vars:
-                    existing_hist_dates.update(set(pd.to_datetime(ds['flash_extent_density'].time.values).date))
+                if 'fed_30min_max' in ds.data_vars:
+                    existing_hist_dates.update(set(pd.to_datetime(ds['fed_30min_max'].time.values).date))
                 ds.close()
             except Exception as e:
                 logger.warning(f"Could not read {nc_file.name}: {e}")
@@ -158,23 +165,27 @@ def get_satellite_for_date(target_date: date) -> str:
     """
     Determine which GOES satellite to use based on date.
 
-    GOES-16 (GOES-East): Jan 2018 - Dec 2024
+    GOES-16 (GOES-East): Jan 2018 - April 6, 2025
     GOES-18 (GOES-West): Jan 2023 - present
-    GOES-19 (GOES-East): Jan 2025 - present (replaced GOES-16)
+    GOES-19 (GOES-East): April 7, 2025 - present (replaced GOES-16)
 
-    Strategy: Use GOES-19 for 2025+, GOES-16 for earlier dates
+    Strategy: Use GOES-19 for April 7 2025+, GOES-16 for earlier dates
     """
-    if target_date.year >= 2025:
-        return "G19"  # GOES-19 for 2025 onwards
+    # GOES-19 became operational on April 7, 2025
+    goes19_start = date(2025, 4, 7)
+
+    if target_date >= goes19_start:
+        return "G19"  # GOES-19 for April 7, 2025 onwards
     else:
         return "G16"  # GOES-16 for historical data
 
 
-@task(retries=3, retry_delay_seconds=300, timeout_seconds=7200)
+@task(retries=3, retry_delay_seconds=300, timeout_seconds=14400)  # 4 hours timeout
 def download_glm_fed_daily(
     target_date: date,
     username: str,
-    password: str
+    password: str,
+    rolling_step_minutes: int = 10
 ) -> Optional[Path]:
     """
     Download GLM FED minute files for target day + 29 minutes from previous day.
@@ -359,123 +370,172 @@ def download_glm_fed_daily(
         # Sort files by filename to ensure chronological order
         sorted_files = sorted(downloaded_files, key=lambda f: f.name)
 
-        # Load all minute data into a time series
-        minute_data_list = []
-        timestamps = []
-        files_loaded = 0
+        # Build file metadata without loading data into memory
+        file_metadata = []
 
         for nc_file in sorted_files:
             try:
-                ds = xr.open_dataset(nc_file)
-
-                # The variable name might be 'flash_extent_density' or 'FED'
-                var_name = None
-                if 'flash_extent_density' in ds.data_vars:
-                    var_name = 'flash_extent_density'
-                elif 'FED' in ds.data_vars:
-                    var_name = 'FED'
-                else:
-                    # Try to find it
-                    possible_names = [v for v in ds.data_vars if 'fed' in v.lower() or 'flash' in v.lower()]
-                    if possible_names:
-                        var_name = possible_names[0]
-
-                if var_name is None:
-                    logger.warning(f"  Could not find FED variable in {nc_file.name}")
-                    ds.close()
+                # Extract timestamp from filename first (before opening file)
+                # NASA GLM format: OR_GLM-L3-GLMF-M6_G{sat}_sYYYYDDDHHMMSS[SS]_e..._c...nc
+                # where s = start time, YYYY = year, DDD = day of year, HHMMSS = time
+                # GOES-16/18: 13 digits (YYYYDDDHHMMSS)
+                # GOES-19: 15 digits (YYYYDDDHHMMSSSS) - has extra subsecond precision
+                filename = nc_file.stem
+                start_idx = filename.find('_s')
+                if start_idx == -1:
+                    logger.warning(f"  No start time '_s' found in {nc_file.name}")
                     continue
 
-                fed_data = ds[var_name]
-                minute_data_list.append(fed_data)
+                # Extract start time string after '_s'
+                start_time_str = filename[start_idx + 2:]  # Skip '_s'
+                # Get just the timestamp part (before next underscore)
+                if '_' in start_time_str:
+                    start_time_str = start_time_str.split('_')[0]
 
-                # Extract timestamp from filename
-                # Filename format: GLM_Gridded_FED_G16_YYYYMMDD_HHMMSS.nc
-                try:
-                    parts = nc_file.stem.split('_')
-                    date_str = parts[-2]  # YYYYMMDD
-                    time_str = parts[-1]  # HHMMSS
-
-                    year = int(date_str[0:4])
-                    month = int(date_str[4:6])
-                    day = int(date_str[6:8])
-                    hour = int(time_str[0:2])
-                    minute = int(time_str[2:4])
-                    second = int(time_str[4:6])
-
-                    timestamp = pd.Timestamp(year=year, month=month, day=day,
-                                            hour=hour, minute=minute, second=second)
-                    timestamps.append(timestamp)
-                except Exception as e:
-                    logger.warning(f"  Could not parse timestamp from {nc_file.name}: {e}")
-                    ds.close()
+                # Parse: YYYYDDDHHMMSS[SS] (13 or 15 digits)
+                # First 13 characters are always: YYYYDDDHHMMSS
+                if len(start_time_str) < 13:
+                    logger.warning(f"  Timestamp too short in {nc_file.name}: {start_time_str}")
                     continue
 
-                files_loaded += 1
-                ds.close()
+                year = int(start_time_str[0:4])
+                day_of_year = int(start_time_str[4:7])
+                hour = int(start_time_str[7:9])
+                minute = int(start_time_str[9:11])
+                second = int(start_time_str[11:13])
+                # Ignore extra digits (subsecond precision) if present
 
-                if files_loaded % 100 == 0:
-                    logger.info(f"  Loaded {files_loaded}/{len(downloaded_files)} files")
+                # Convert day-of-year to datetime
+                timestamp = pd.Timestamp(year=year, month=1, day=1) + pd.Timedelta(days=day_of_year - 1)
+                timestamp = timestamp.replace(hour=hour, minute=minute, second=second)
+
+                file_metadata.append({
+                    'path': nc_file,
+                    'timestamp': timestamp
+                })
 
             except Exception as e:
-                logger.warning(f"  Failed to load {nc_file.name}: {e}")
+                logger.warning(f"  Could not parse timestamp from {nc_file.name}: {e}")
                 continue
 
-        if len(minute_data_list) == 0:
-            logger.error("✗ Failed to load any files")
+        if len(file_metadata) == 0:
+            logger.error("✗ Failed to parse any file timestamps")
             shutil.rmtree(temp_dir, ignore_errors=True)
             return None
 
-        logger.info(f"✓ Loaded {files_loaded} minute files")
+        logger.info(f"✓ Parsed {len(file_metadata)} file timestamps")
 
-        # Combine into time series dataset
-        logger.info(f"Creating time series dataset with {files_loaded} time steps...")
-        time_series = xr.concat(minute_data_list, dim='time')
-        time_series['time'] = timestamps
+        # Sort by timestamp
+        file_metadata.sort(key=lambda x: x['timestamp'])
 
-        # Verify timestamps span the correct range
-        time_min = pd.Timestamp(timestamps).min()
-        time_max = pd.Timestamp(timestamps).max()
-        logger.info(f"  Time range: {time_min} to {time_max}")
+        # MEMORY-EFFICIENT APPROACH: Process files in small batches
+        # Instead of loading all 1400+ files at once, we:
+        # 1. Process files in batches of 60 (1 hour of data)
+        # 2. Compute running max across batches
+        # 3. Never hold more than 60 files in memory at once
 
-        # Calculate 30-minute rolling sum
-        logger.info(f"Calculating 30-minute rolling windows...")
-        window_size = 30  # 30 minutes
+        logger.info(f"Processing {len(file_metadata)} files in memory-efficient batches...")
 
-        # Rolling sum along time dimension
-        # At index i, this gives the sum of minutes [i-29, i-28, ..., i-1, i]
-        # So the value at time T represents the window ENDING at time T
-        rolling_30min = time_series.rolling(time=window_size, min_periods=window_size).sum()
+        # First, read one file to get the spatial grid
+        first_file = file_metadata[0]['path']
+        with xr.open_dataset(first_file) as ds_template:
+            # Find FED variable name
+            var_name = None
+            if 'flash_extent_density' in ds_template.data_vars:
+                var_name = 'flash_extent_density'
+            elif 'FED' in ds_template.data_vars:
+                var_name = 'FED'
+            else:
+                possible_names = [v for v in ds_template.data_vars if 'fed' in v.lower() or 'flash' in v.lower()]
+                if possible_names:
+                    var_name = possible_names[0]
 
-        # Filter to only keep windows that END on the target date
-        logger.info(f"Filtering to windows ending on {target_date}...")
-        target_start = pd.Timestamp(target_date)  # 00:00:00
-        target_end = target_start + pd.Timedelta(days=1)  # 00:00:00 next day
+            if var_name is None:
+                logger.error("✗ Could not find FED variable in files")
+                shutil.rmtree(temp_dir, ignore_errors=True)
+                return None
 
-        # Select only windows ending between target_start and target_end
-        rolling_target_day = rolling_30min.sel(
-            time=slice(target_start, target_end - pd.Timedelta(seconds=1))
+            # Get spatial shape
+            template_da = ds_template[var_name]
+            spatial_shape = template_da.shape
+            y_coords = ds_template.y.values if 'y' in ds_template.coords else ds_template.latitude.values
+            x_coords = ds_template.x.values if 'x' in ds_template.coords else ds_template.longitude.values
+            logger.info(f"  Spatial grid: {spatial_shape} (y={len(y_coords)}, x={len(x_coords)})")
+
+        # Initialize running max array (in memory, one 2D grid)
+        global_max = np.full(spatial_shape, -np.inf, dtype=np.float32)
+        global_max_time = np.full(spatial_shape, pd.Timestamp('1970-01-01').value, dtype='int64')
+
+        # Group files into 30-minute bins based on their timestamps
+        # Then compute max for each bin and update running max
+        logger.info(f"Grouping {len(file_metadata)} files into 30-minute bins...")
+
+        # Create bins for target date (00:00, 00:30, 01:00, ..., 23:30)
+        target_start = pd.Timestamp(target_date)
+        bin_edges = pd.date_range(target_start, target_start + pd.Timedelta(days=1), freq='30min')
+
+        # Group files by their 30-minute bin
+        files_by_bin = {bin_start: [] for bin_start in bin_edges[:-1]}
+
+        for meta in file_metadata:
+            ts = meta['timestamp']
+            # Find which bin this file belongs to
+            for i, bin_start in enumerate(bin_edges[:-1]):
+                bin_end = bin_edges[i + 1]
+                if bin_start <= ts < bin_end:
+                    files_by_bin[bin_start].append(meta)
+                    break
+
+        # Count non-empty bins
+        non_empty_bins = [(t, files) for t, files in files_by_bin.items() if files]
+        logger.info(f"  {len(non_empty_bins)} bins have data (out of 48 possible)")
+
+        # Process each bin
+        for bin_idx, (bin_time, bin_files) in enumerate(non_empty_bins):
+            if not bin_files:
+                continue
+
+            if (bin_idx + 1) % 12 == 0 or bin_idx == 0:
+                logger.info(f"  Processing bin {bin_idx + 1}/{len(non_empty_bins)}: {bin_time} ({len(bin_files)} files)")
+
+            # Sum all FED values in this bin (memory efficient - one file at a time)
+            bin_sum = np.zeros(spatial_shape, dtype=np.float32)
+
+            for meta in bin_files:
+                try:
+                    with xr.open_dataset(meta['path']) as ds:
+                        fed_data = ds[var_name].values
+                        # Replace NaN with 0 for summing
+                        fed_data = np.nan_to_num(fed_data, nan=0.0)
+                        bin_sum += fed_data.astype(np.float32)
+                except Exception as e:
+                    logger.warning(f"    Failed to read {meta['path'].name}: {e}")
+                    continue
+
+            # Update running max where this bin's sum is larger
+            mask = bin_sum > global_max
+            global_max[mask] = bin_sum[mask]
+            global_max_time[mask] = bin_time.value  # Store as int64 nanoseconds
+
+        logger.info(f"  ✓ Processed all {len(non_empty_bins)} bins")
+
+        # Convert results to xarray
+        max_30min_fed = xr.DataArray(
+            global_max,
+            dims=['y', 'x'],
+            coords={'y': y_coords, 'x': x_coords}
         )
 
-        num_windows = len(rolling_target_day.time)
-        logger.info(f"  Kept {num_windows} windows ending on {target_date}")
-
-        # Find maximum 30-min window for each grid cell (among windows ending on target date)
-        logger.info(f"Finding maximum 30-minute window per grid cell...")
-        max_30min_fed = rolling_target_day.max(dim='time')
-
-        # Find the time index of maximum for each grid cell
-        max_time_idx = rolling_target_day.argmax(dim='time')
-
-        # Convert time index to actual timestamp
-        target_timestamps = rolling_target_day.time.values
         max_timestamp = xr.DataArray(
-            [target_timestamps[int(idx)] if int(idx) < len(target_timestamps) else target_timestamps[0]
-             for idx in max_time_idx.values.flat],
-            dims=max_time_idx.dims,
-            coords=max_time_idx.coords
-        ).reshape(max_time_idx.shape)
+            global_max_time.astype('datetime64[ns]'),
+            dims=['y', 'x'],
+            coords={'y': y_coords, 'x': x_coords}
+        )
 
-        logger.info(f"✓ Calculated maximum 30-minute windows for {target_date}")
+        # Replace -inf with NaN (no data)
+        max_30min_fed = max_30min_fed.where(max_30min_fed > -np.inf)
+
+        logger.info(f"✓ Calculated maximum 30-minute fixed bin for {target_date}")
 
         # Create output dataset
         output_ds = xr.Dataset({
@@ -484,16 +544,17 @@ def download_glm_fed_daily(
         })
 
         # Add metadata
-        output_ds.attrs['title'] = f"GLM Flash Extent Density - Maximum 30-Minute Window"
+        output_ds.attrs['title'] = f"GLM Flash Extent Density - Maximum 30-Minute Fixed Bin"
         output_ds.attrs['date'] = target_date.strftime('%Y-%m-%d')
         output_ds.attrs['source'] = f"GOES-{satellite.replace('G', '')} GLM"
-        output_ds.attrs['processing'] = f"Maximum 30-minute rolling window from {files_loaded} minute files"
-        output_ds.attrs['window_size'] = "30 minutes"
-        output_ds.attrs['window_assignment'] = "Windows belong to the day when they END"
-        output_ds.attrs['midnight_crossing'] = f"Windows cross midnight from {prev_date} 23:31 to {target_date} 23:59"
-        output_ds.attrs['description'] = f"Maximum flash extent density in any 30-minute window ending on {target_date}"
+        output_ds.attrs['processing'] = f"Fixed 30-minute bins aggregated from {len(downloaded_files)} minute files"
+        output_ds.attrs['bin_size'] = "30 minutes"
+        output_ds.attrs['bin_method'] = "Fixed bins (00:00-00:30, 00:30-01:00, ..., 23:30-00:00 UTC)"
+        output_ds.attrs['aggregation'] = "Sum of flash extent density within each 30-minute bin"
+        output_ds.attrs['description'] = f"Maximum flash extent density in any fixed 30-minute bin on {target_date}"
         output_ds.attrs['provider'] = "NASA GHRC DAAC"
         output_ds.attrs['doi'] = "10.5067/GLM/GRIDDED/DATA101"
+        output_ds.attrs['note'] = "Uses fixed time bins as standard in research papers, not rolling windows"
 
         # Add time coordinate for the date (not the specific 30-min window)
         output_ds = output_ds.expand_dims(time=[pd.Timestamp(target_date)])
@@ -503,7 +564,7 @@ def download_glm_fed_daily(
             output_file,
             engine='netcdf4',
             encoding={
-                'flash_extent_density': {
+                'flash_extent_density_30min_max': {
                     'zlib': True,
                     'complevel': 5,
                     'dtype': 'float32'
@@ -564,16 +625,104 @@ def process_glm_fed_to_geotiff(
         if 'time' in fed_data.dims:
             fed_data = fed_data.squeeze('time', drop=True)
 
-        # Ensure CRS is set
-        if not fed_data.rio.crs:
-            fed_data = fed_data.rio.write_crs("EPSG:4326")
+        # GLM data is in GOES geostationary projection with x,y in radians
+        # Convert to meters and set proper CRS before reprojecting
+        if 'x' in fed_data.dims and 'y' in fed_data.dims:
+            logger.info("Converting GOES projection to WGS84...")
 
-        # Clip to Latin America bbox
-        bbox = settings_obj.latam_bbox_raster  # (W, S, E, N)
-        fed_clipped = fed_data.rio.clip_box(*bbox)
+            # Determine satellite from file metadata
+            satellite_name = ds.attrs.get('source', 'GOES-19 GLM')
+            if 'GOES-16' in satellite_name or 'G16' in satellite_name:
+                sat_lon = -75.2
+            elif 'GOES-18' in satellite_name or 'G18' in satellite_name:
+                sat_lon = -137.2
+            elif 'GOES-19' in satellite_name or 'G19' in satellite_name:
+                sat_lon = -75.2
+            else:
+                logger.warning(f"Unknown satellite in source: {satellite_name}, defaulting to -75.2°W")
+                sat_lon = -75.2
+
+            sat_height = 35786023.0  # Geostationary orbit height in meters
+            logger.info(f"  Using satellite longitude: {sat_lon}°W")
+
+            # Convert x,y from radians to meters
+            x_meters = ds.x.values * sat_height
+            y_meters = ds.y.values * sat_height
+
+            # Create new DataArray with meters
+            fed_geo = xr.DataArray(
+                fed_data.values,
+                coords={'y': y_meters, 'x': x_meters},
+                dims=['y', 'x']
+            )
+
+            # Set GOES geostationary CRS
+            goes_crs = CRS.from_cf({
+                'grid_mapping_name': 'geostationary',
+                'perspective_point_height': sat_height,
+                'longitude_of_projection_origin': sat_lon,
+                'semi_major_axis': 6378137.0,
+                'semi_minor_axis': 6356752.31414,
+                'sweep_angle_axis': 'x'
+            })
+            fed_geo = fed_geo.rio.write_crs(goes_crs)
+
+            # Reproject to WGS84
+            fed_data = fed_geo.rio.reproject("EPSG:4326")
+            logger.info(f"  Reprojected to WGS84: {fed_data.shape}")
+        else:
+            # Already in lat/lon
+            if not fed_data.rio.crs:
+                fed_data = fed_data.rio.write_crs("EPSG:4326")
+
+        # Clip to Brazil using shapefile
+        import geopandas as gpd
+        brazil_shp = settings_obj.BRAZIL_SHAPEFILE
+
+        if Path(brazil_shp).exists():
+            logger.info(f"  Clipping to Brazil shapefile: {brazil_shp}")
+            brazil_gdf = gpd.read_file(brazil_shp)
+            # Ensure shapefile is in WGS84
+            if brazil_gdf.crs != "EPSG:4326":
+                brazil_gdf = brazil_gdf.to_crs("EPSG:4326")
+
+            # Clip using shapefile geometry
+            fed_clipped = fed_data.rio.clip(brazil_gdf.geometry.values, brazil_gdf.crs, drop=True, all_touched=False)
+            logger.info(f"  Clipped to Brazil shapefile: {fed_clipped.shape}")
+        else:
+            logger.warning(f"  Brazil shapefile not found: {brazil_shp}")
+            logger.info(f"  Falling back to bounding box clipping")
+            bbox = settings_obj.brazil_bbox_raster  # (W, S, E, N)
+            fed_clipped = fed_data.rio.clip_box(*bbox)
+            logger.info(f"  Clipped to Brazil bbox: {fed_clipped.shape}")
+
+        # Normalize to flashes/km²/30min
+        # GLM FED grid is ~0.029° in EPSG:4326, pixel area varies with latitude
+        logger.info("  Normalizing to flashes/km²/30min...")
+
+        # Get transform to calculate pixel size
+        transform = fed_clipped.rio.transform()
+        pixel_width = abs(transform.a)  # lon spacing in degrees
+        pixel_height = abs(transform.e)  # lat spacing in degrees
+
+        # Create latitude array for normalization
+        rows, cols = fed_clipped.shape
+        lats = np.zeros((rows, cols))
+        for row in range(rows):
+            lat = transform.f + (row * transform.e) + (transform.e / 2)
+            lats[row, :] = lat
+
+        # Calculate pixel area in km² (varies with latitude)
+        km_per_deg_lat = 111.32
+        km_per_deg_lon = 111.32 * np.cos(np.radians(lats))
+        pixel_area_km2 = (pixel_height * km_per_deg_lat) * (pixel_width * km_per_deg_lon)
+
+        # Normalize: convert from total flashes to flashes/km²/30min
+        fed_normalized = fed_clipped / pixel_area_km2
+        logger.info(f"  Normalized: mean = {float(fed_normalized.mean()):.2f} flashes/km²/30min")
 
         # Write to Cloud Optimized GeoTIFF
-        fed_clipped.rio.to_raster(
+        fed_normalized.rio.to_raster(
             output_file,
             driver="COG",
             compress="LZW",
@@ -599,7 +748,12 @@ def append_to_yearly_historical_fed(
     daily_netcdf: Path,
     target_date: date
 ) -> Optional[Path]:
-    """Append GLM FED data to yearly historical NetCDF."""
+    """
+    Append GLM FED data to yearly historical NetCDF.
+
+    NOTE: Now builds historical from GeoTIFF files instead of raw NetCDF
+    to ensure consistent resolution and normalization.
+    """
     logger = get_run_logger()
     settings_obj = get_settings()
 
@@ -610,122 +764,95 @@ def append_to_yearly_historical_fed(
     year_file = hist_dir / f"glm_fed_{year}.nc"
 
     try:
-        # Load the daily NetCDF
-        daily_ds = xr.open_dataset(daily_netcdf)
+        # Load from GeoTIFF instead of raw NetCDF to ensure consistency
+        geotiff_dir = Path(settings_obj.DATA_DIR) / "glm_fed"
+        geotiff_file = geotiff_dir / f"glm_fed_{target_date.strftime('%Y%m%d')}.tif"
 
-        if 'flash_extent_density_30min_max' not in daily_ds.data_vars:
-            logger.error(f"Variable 'flash_extent_density_30min_max' not found in {daily_netcdf}")
-            daily_ds.close()
+        if not geotiff_file.exists():
+            logger.warning(f"GeoTIFF not found: {geotiff_file.name}, skipping historical append")
             return None
 
-        # Ensure time dimension exists
-        if 'time' not in daily_ds.dims:
-            daily_ds = daily_ds.expand_dims(time=[pd.Timestamp(target_date)])
+        # Load GeoTIFF as xarray Dataset
+        import rasterio
+        with rasterio.open(geotiff_file) as src:
+            data = src.read(1)
+            transform = src.transform
 
-        # Rename variable to simpler name for storage
-        daily_ds = daily_ds.rename({
-            'flash_extent_density_30min_max': 'fed_30min_max',
-            'max_30min_timestamp': 'fed_30min_time'
-        })
+            # Get coordinates from transform
+            height, width = data.shape
 
-        # Apply Latin America bounding box
-        bbox = settings_obj.latam_bbox_raster  # (W, S, E, N)
-        W, S, E, N = bbox
+            # Generate coordinates for first row (longitudes) and first column (latitudes)
+            # Use pixel centers (0.5 offset)
+            lons = np.array([transform * (col + 0.5, 0.5) for col in range(width)])[:, 0]
+            lats = np.array([transform * (0.5, row + 0.5) for row in range(height)])[:, 1]
 
-        # Get coordinate names (might be 'latitude'/'longitude' or 'lat'/'lon')
-        lat_name = 'latitude' if 'latitude' in daily_ds.dims else 'lat'
-        lon_name = 'longitude' if 'longitude' in daily_ds.dims else 'lon'
-
-        # Clip to bbox
-        daily_ds_clipped = daily_ds.sel(
-            {lat_name: slice(S, N), lon_name: slice(W, E)}
+        # Create xarray Dataset from GeoTIFF
+        daily_ds = xr.Dataset(
+            {
+                'fed_30min_max': (['latitude', 'longitude'], data)
+            },
+            coords={
+                'latitude': lats,
+                'longitude': lons,
+                'time': pd.Timestamp(target_date)
+            }
         )
 
+        # Expand time dimension
+        daily_ds = daily_ds.expand_dims('time')
+
+        logger.info(f"Loaded from GeoTIFF: {daily_ds.dims}")
+
+        # NOTE: GeoTIFF data is normalized to flashes/km²/30min during creation
+        # And already in WGS84 projection with correct resolution
+        # So we just need to append to the yearly file
+
+        if 'latitude' not in daily_ds.dims or 'longitude' not in daily_ds.dims:
+            logger.error(f"Missing latitude/longitude dimensions in dataset")
+            return None
+
+        # Data is ready - just need to append or create new file
         if year_file.exists():
             # Append to existing file
             logger.info(f"Appending to existing file: {year_file.name}")
 
-            # Open existing file
-            existing_ds = xr.open_dataset(year_file, chunks='auto')
+            # Data loaded from GeoTIFF is already in WGS84 with lat/lon coordinates
+            # No reprojection needed - just append directly
+            try:
+                with xr.open_dataset(year_file) as existing_ds:
+                    # Concatenate along time dimension
+                    combined_ds = xr.concat([existing_ds, daily_ds], dim='time')
 
-            # Check if date already exists
-            existing_times = pd.to_datetime(existing_ds.time.values)
-            target_time = pd.Timestamp(target_date)
+                    # Sort by time
+                    combined_ds = combined_ds.sortby('time')
 
-            if target_time in existing_times:
-                logger.info(f"  Date {target_date} already exists in historical file")
-                existing_ds.close()
-                daily_ds.close()
-                return year_file
+                    # Save with compression
+                    encoding = {var: {'zlib': True, 'complevel': 4} for var in combined_ds.data_vars}
+                    combined_ds.to_netcdf(year_file, encoding=encoding)
 
-            # Concatenate along time dimension
-            combined = xr.concat([existing_ds, daily_ds_clipped], dim='time')
-
-            # Sort by time
-            combined = combined.sortby('time')
-
-            existing_ds.close()
-
-            # Write back with chunking
-            combined.to_netcdf(
-                year_file,
-                mode='w',
-                engine='netcdf4',
-                encoding={
-                    'fed_30min_max': {
-                        'zlib': True,
-                        'complevel': 5,
-                        'dtype': 'float32',
-                        'chunksizes': (1, 20, 20)  # time, lat, lon
-                    },
-                    'fed_30min_time': {
-                        'zlib': True,
-                        'complevel': 5,
-                        'dtype': 'int64',
-                        'chunksizes': (1, 20, 20)
-                    },
-                    'time': {'dtype': 'int64'},
-                    lat_name: {'dtype': 'float32'},
-                    lon_name: {'dtype': 'float32'}
-                }
-            )
-
-            combined.close()
-            logger.info(f"✓ Appended {target_date} to {year_file.name}")
-
+                    logger.info(f"✓ Appended to historical NetCDF: {year_file.name}")
+                    return year_file
+            except Exception as e:
+                logger.error(f"✗ Failed to append to historical NetCDF: {e}")
+                logger.error(traceback.format_exc())
+                return None
         else:
             # Create new file
-            logger.info(f"Creating new yearly file: {year_file.name}")
+            logger.info(f"Creating new historical file: {year_file.name}")
 
-            daily_ds_clipped.to_netcdf(
-                year_file,
-                engine='netcdf4',
-                encoding={
-                    'fed_30min_max': {
-                        'zlib': True,
-                        'complevel': 5,
-                        'dtype': 'float32',
-                        'chunksizes': (1, 20, 20)
-                    },
-                    'fed_30min_time': {
-                        'zlib': True,
-                        'complevel': 5,
-                        'dtype': 'int64',
-                        'chunksizes': (1, 20, 20)
-                    },
-                    'time': {'dtype': 'int64'},
-                    lat_name: {'dtype': 'float32'},
-                    lon_name: {'dtype': 'float32'}
-                }
-            )
-
-            logger.info(f"✓ Created {year_file.name}")
-
-        daily_ds.close()
-        return year_file
+            # Save with compression
+            encoding = {var: {'zlib': True, 'complevel': 4} for var in daily_ds.data_vars}
+            try:
+                daily_ds.to_netcdf(year_file, encoding=encoding)
+                logger.info(f"✓ Created new historical NetCDF: {year_file.name}")
+                return year_file
+            except Exception as e:
+                logger.error(f"✗ Failed to create historical NetCDF: {e}")
+                logger.error(traceback.format_exc())
+                return None
 
     except Exception as e:
-        logger.error(f"✗ Failed to append to historical NetCDF: {e}")
+        logger.error(f"✗ Failed to process GLM historical data: {e}")
         logger.exception(e)
         return None
 
@@ -738,13 +865,22 @@ def append_to_yearly_historical_fed(
 )
 def glm_fed_flow(
     start_date: Optional[date] = None,
-    end_date: Optional[date] = None
+    end_date: Optional[date] = None,
+    rolling_step_minutes: int = 10
 ):
     """
     GLM FED data processing flow.
-    
+
     Downloads minute-level GLM FED data from NASA GHRC DAAC
     and aggregates to daily GeoTIFF + NetCDF files.
+
+    Args:
+        start_date: Start date for processing
+        end_date: End date for processing
+        rolling_step_minutes: Step size for rolling windows (default 10).
+                              With 30-minute windows:
+                              - step=1 → 1440 windows/day (every minute)
+                              - step=10 → 144 windows/day (every 10 minutes)
     """
     logger = get_run_logger()
     
@@ -779,14 +915,17 @@ def glm_fed_flow(
     logger.info(f"Processing {len(missing_download)} missing dates")
     
     processed_files = []
-    
-    for target_date in missing_download:
-        logger.info(f"\nProcessing date: {target_date}")
+    total_dates = len(missing_download)
+
+    for idx, target_date in enumerate(missing_download, 1):
+        logger.info(f"\n{'='*80}")
+        logger.info(f"Processing date {idx}/{total_dates}: {target_date}")
+        logger.info(f"{'='*80}")
         
         try:
             # Download and aggregate daily
-            daily_nc = download_glm_fed_daily(target_date, username, password)
-            
+            daily_nc = download_glm_fed_daily(target_date, username, password, rolling_step_minutes)
+
             if daily_nc is None:
                 logger.warning(f"  ⊘ Skipping {target_date} - download not implemented yet")
                 continue
@@ -795,10 +934,17 @@ def glm_fed_flow(
             geotiff = process_glm_fed_to_geotiff(daily_nc, target_date)
             if geotiff:
                 processed_files.append(geotiff)
-            
-            # Append to historical
-            hist_file = append_to_yearly_historical_fed(daily_nc, target_date)
-            
+
+            # Append to yearly historical NetCDF for fast time-series queries
+            # Wrapped in try-except to continue processing even if historical append fails
+            try:
+                hist_file = append_to_yearly_historical_fed(daily_nc, target_date)
+                if hist_file:
+                    logger.info(f"  ✓ Historical NetCDF updated")
+            except Exception as e:
+                logger.warning(f"  ⚠ Failed to append to historical NetCDF (continuing anyway): {e}")
+                # Continue processing - GeoTIFF is the critical output
+
         except Exception as e:
             logger.error(f"  ✗ Failed to process {target_date}: {e}")
             continue

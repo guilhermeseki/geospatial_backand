@@ -109,7 +109,7 @@ def check_data_availability(date: date, source: DataSource) -> bool:
 
     # Fallback: check remote server
     if source == DataSource.CHIRPS:
-        url = f"https://data.chc.ucsb.edu/products/CHIRPS/v3.0/daily/final/IMERGlate-v07/{date.year}/chirps-v3.0.{date.strftime('%Y.%m.%d')}.tif"
+        url = f"https://data.chc.ucsb.edu/products/CHIRPS/v3.0/daily/final/sat/{date.year}/chirps-v3.0.sat.{date.strftime('%Y.%m.%d')}.tif"
     elif source == DataSource.MERGE:
         url = f"https://ftp.cptec.inpe.br/modelos/tempo/MERGE/GPM/DAILY/{date.year}/{date.strftime('%m')}/MERGE_CPTEC_{date.strftime('%Y%m%d')}.grib2"
 
@@ -132,7 +132,7 @@ def download_data(date: date, source: DataSource) -> Path:
     """Download the raw data file to a temporary location"""
     logger = get_run_logger()
     if source == DataSource.CHIRPS:
-        url = f"https://data.chc.ucsb.edu/products/CHIRPS/v3.0/daily/final/IMERGlate-v07/{date.year}/chirps-v3.0.{date.strftime('%Y.%m.%d')}.tif"
+        url = f"https://data.chc.ucsb.edu/products/CHIRPS/v3.0/daily/final/sat/{date.year}/chirps-v3.0.sat.{date.strftime('%Y.%m.%d')}.tif"
         suffix = ".tif"
     elif source == DataSource.MERGE:
         url = f"https://ftp.cptec.inpe.br/modelos/tempo/MERGE/GPM/DAILY/{date.year}/{date.strftime('%m')}/MERGE_CPTEC_{date.strftime('%Y%m%d')}.grib2"
@@ -210,22 +210,45 @@ def process_data(
 
         ds = ds.rio.clip_box(*bbox)
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        #ds.rio.to_raster(output_path, driver="GTiff")
 
-        #Convert to a Cloud-Optimized GeoTIFF (COG)
-        #A COG is the preferred GeoTIFF format for web visualization as it is more efficient for GeoServer
-        #Python
-
-        # 4Write the COG file
+        # Write to temporary file first
+        temp_output = output_path.parent / f"{output_path.stem}_temp.tif"
         ds.rio.to_raster(
-            output_path,
+            temp_output,
             driver="COG",
             tiled=True,
             compress="LZW",
-            overview_level=5 # or another level
+            overview_level=5
         )
 
-        logger.info(f"Processed TIFF saved to {output_path}")
+        # Clip with Brazil shapefile if it exists (preserves grid alignment)
+        shapefile = Path("/opt/geospatial_backend/data/shapefiles/br_shp/brazil_b10km.shp")
+        if shapefile.exists():
+            import subprocess
+            try:
+                result = subprocess.run([
+                    "gdalwarp",
+                    "-q",
+                    "-cutline", str(shapefile),
+                    "-crop_to_cutline",
+                    "-dstnodata", "nan",
+                    "-overwrite",
+                    str(temp_output),
+                    str(output_path)
+                ], capture_output=True, text=True, timeout=30, check=True)
+                temp_output.unlink()  # Remove temp file
+                logger.info(f"Processed & clipped with shapefile: {output_path}")
+            except subprocess.CalledProcessError as e:
+                logger.warning(f"Shapefile clipping failed, using bbox-only clip: {e.stderr[:100]}")
+                temp_output.rename(output_path)
+            except Exception as e:
+                logger.warning(f"Shapefile clipping error, using bbox-only clip: {e}")
+                if temp_output.exists():
+                    temp_output.rename(output_path)
+        else:
+            # No shapefile, just use temp file (bbox-only clip)
+            temp_output.rename(output_path)
+            logger.info(f"Processed TIFF saved to {output_path}")
 
         # Delete temporary raw file
         if input_path.exists():

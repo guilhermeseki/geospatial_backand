@@ -1,0 +1,5 @@
+local,latitude,longitude
+São Paulo,-23.5505,-46.6333
+Fora do Brasil,10.5,-46.6333
+Sem Latitude,,-46.6333
+Valor Invalido,abc,-46.6333

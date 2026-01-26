@@ -1,0 +1,4 @@
+local,latitude,longitude,variavel,fonte,periodo,limiar,numero_eventos,eventos/ano
+Brasília,-15.8,-47.9,Precipitação,CHIRPS,01/01/2024-31/12/2024,50.0,0,0.0
+São Paulo,-23.5,-46.6,Precipitação,CHIRPS,01/01/2024-31/12/2024,50.0,0,0.0
+Rio de Janeiro,-22.9,-43.2,Precipitação,CHIRPS,01/01/2024-31/12/2024,50.0,0,0.0

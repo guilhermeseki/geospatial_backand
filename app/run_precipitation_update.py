@@ -8,7 +8,7 @@ MERGE: Checks ONLY last 30 days (daily release, 1-2 day lag)
 
 Run daily via systemd timer or cron: 0 2 * * *
 """
-from app.workflows.data_processing.flows import (
+from app.workflows.data_processing.precipitation_flow import (
     chirps_daily_flow,
     merge_daily_flow
 )

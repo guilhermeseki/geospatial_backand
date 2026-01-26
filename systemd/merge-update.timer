@@ -1,0 +1,20 @@
+[Unit]
+Description=MERGE Precipitation Data Daily Update Timer
+Requires=merge-update.service
+
+[Timer]
+# Run daily at 8:00 AM (after INPE typically updates data)
+OnCalendar=daily
+OnCalendar=*-*-* 08:00:00
+
+# Run 1 hour after system boot if timer was missed
+OnBootSec=1h
+
+# If a run is missed (system was down), run immediately on next start
+Persistent=true
+
+# Add randomization to avoid thundering herd (±15 min)
+RandomizedDelaySec=900
+
+[Install]
+WantedBy=timers.target

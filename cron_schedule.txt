@@ -1,0 +1,21 @@
+# Geospatial Backend - Cron Schedule
+#
+# To install this cron schedule:
+# 1. Edit your crontab: crontab -e
+# 2. Add the lines below (uncomment them)
+# 3. Save and exit
+#
+# Note: Logs are written to /opt/geospatial_backend/logs/daily_updates.log
+
+# Daily data updates at 2:00 AM (CHIRPS, MERGE, ERA5 Temperature, ERA5 Wind, GLM)
+# Runs every day at 2:00 AM local time
+0 2 * * * /opt/geospatial_backend/run_daily_updates_2am.sh >> /opt/geospatial_backend/logs/daily_updates.log 2>&1
+
+# Optional: Log rotation to prevent log file from growing too large
+# Keep last 30 days of logs
+0 3 * * 0 find /opt/geospatial_backend/logs -name "daily_updates.log" -mtime +30 -exec rm {} \;
+
+# Optional: NDVI updates (runs separately, not at 2 AM)
+# Uncomment if you want to schedule NDVI separately at a different time
+# Example: Run NDVI at 4:00 AM on Mondays and Thursdays
+# 0 4 * * 1,4 /usr/bin/python3 /opt/geospatial_backend/app/run_ndvi.py >> /opt/geospatial_backend/logs/ndvi_updates.log 2>&1

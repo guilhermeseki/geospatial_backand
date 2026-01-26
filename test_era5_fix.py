@@ -69,14 +69,9 @@ def test_era5_small_batch():
             var = var_config['variable']
             stat = var_config['statistic']
 
-            # Determine directory name
-            if var == '2m_temperature':
-                if stat == 'daily_maximum':
-                    dir_name = 'temp_max'
-                elif stat == 'daily_minimum':
-                    dir_name = 'temp_min'
-                else:
-                    dir_name = 'temp'
+            # Determine directory name from centralized config
+            from app.config.data_sources import ERA5_VARIABLE_MAPPING
+            dir_name = ERA5_VARIABLE_MAPPING.get(var, {}).get(stat, 'unknown')
 
             hist_file = Path(settings.DATA_DIR) / f"{dir_name}_hist" / "historical.nc"
 

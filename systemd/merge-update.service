@@ -1,0 +1,31 @@
+[Unit]
+Description=MERGE Precipitation Data Daily Update
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=guilherme
+Group=guilherme
+WorkingDirectory=/opt/geospatial_backend
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+Environment="PYTHONPATH=/opt/geospatial_backend"
+
+# Run the operational update script
+ExecStart=/usr/bin/python3 /opt/geospatial_backend/app/run_merge_operational.py
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=merge-update
+
+# Resource limits
+MemoryMax=8G
+CPUQuota=400%
+
+# Restart on failure with exponential backoff
+Restart=on-failure
+RestartSec=300
+
+[Install]
+WantedBy=multi-user.target

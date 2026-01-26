@@ -1,0 +1,100 @@
+{
+  "dataset": "GLM Flash Extent Density",
+  "unit": "events",
+  "description": "Maximum lightning flash events in any 30-minute window",
+  "note": "Values represent raw flash events per pixel (not normalized by area). Pixel size is approximately 10.41 km² (3.23km × 3.23km) after WGS84 reprojection.",
+  "colormap": [
+    {
+      "value": 0,
+      "color": "#000000",
+      "opacity": 0.0,
+      "label": "None",
+      "range": "0"
+    },
+    {
+      "value": 1,
+      "color": "#1a0033",
+      "opacity": 0.3,
+      "label": "Very Low",
+      "range": "1-5 events"
+    },
+    {
+      "value": 5,
+      "color": "#330066",
+      "opacity": 0.5,
+      "label": "Low",
+      "range": "5-10 events"
+    },
+    {
+      "value": 10,
+      "color": "#4d0099",
+      "opacity": 0.7,
+      "label": "Moderate Low",
+      "range": "10-20 events"
+    },
+    {
+      "value": 20,
+      "color": "#6600cc",
+      "opacity": 0.8,
+      "label": "Moderate",
+      "range": "20-50 events"
+    },
+    {
+      "value": 50,
+      "color": "#0000ff",
+      "opacity": 0.85,
+      "label": "Moderate High",
+      "range": "50-100 events"
+    },
+    {
+      "value": 100,
+      "color": "#00ccff",
+      "opacity": 0.9,
+      "label": "High",
+      "range": "100-200 events"
+    },
+    {
+      "value": 200,
+      "color": "#00ff99",
+      "opacity": 0.95,
+      "label": "Very High",
+      "range": "200-400 events"
+    },
+    {
+      "value": 400,
+      "color": "#ffff00",
+      "opacity": 0.95,
+      "label": "Intense",
+      "range": "400-800 events"
+    },
+    {
+      "value": 800,
+      "color": "#ff9900",
+      "opacity": 1.0,
+      "label": "Very Intense",
+      "range": "800-1500 events"
+    },
+    {
+      "value": 1500,
+      "color": "#ff0000",
+      "opacity": 1.0,
+      "label": "Extreme",
+      "range": ">1500 events"
+    }
+  ],
+  "comparison_with_literature": {
+    "note": "To compare with published studies (which use flashes/km²), divide pixel values by 10.41 km²",
+    "conversion": "flashes/km² = events / 10.41",
+    "typical_values": {
+      "low_activity": "10-100 events - Background activity",
+      "moderate_storm": "100-1000 events - Typical thunderstorm",
+      "intense_storm": "1000-5000 events - Severe thunderstorm",
+      "extreme_storm": ">5000 events - Exceptional convective activity"
+    }
+  },
+  "implementation": {
+    "backend": "Raw pixel values (not normalized)",
+    "frontend": "Use values directly as events per pixel",
+    "colormap_type": "Linear ramp interpolation between values"
+  }
+}

@@ -3,7 +3,15 @@
 Pydantic schemas for Lightning (GLM FED) API endpoints
 """
 from pydantic import BaseModel, Field
-from typing import Literal
+from typing import Literal, Optional
+
+
+class LightningMapRequest(BaseModel):
+    """Request schema for lightning WMS GetFeatureInfo queries"""
+    source: str = Field(..., description="Lightning source (e.g., 'goes19', 'glm_fed')")
+    date: str = Field(..., description="Date (YYYY-MM-DD)")
+    lat: Optional[float] = Field(None, ge=-90, le=90, description="Latitude")
+    lon: Optional[float] = Field(None, ge=-180, le=180, description="Longitude")
 
 
 class LightningRequest(BaseModel):

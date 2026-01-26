@@ -1,0 +1,14 @@
+[Unit]
+Description=Geospatial Data Daily Updates (All Datasets)
+After=network.target
+
+[Service]
+Type=oneshot
+User=guilherme
+WorkingDirectory=/opt/geospatial_backend
+ExecStart=/opt/geospatial_backend/run_daily_updates_2am.sh
+StandardOutput=append:/opt/geospatial_backend/logs/daily_updates.log
+StandardError=append:/opt/geospatial_backend/logs/daily_updates.log
+
+[Install]
+WantedBy=multi-user.target

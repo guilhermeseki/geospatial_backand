@@ -78,18 +78,9 @@ def setup_geoserver_indexers_flow(
     
     # Default list of directories that contain TIF files
     if directories is None:
-        directories = [
-            'temp_max',
-            'temp_min',
-            'temp',
-            'chirps',
-            'chirps_historical',
-            'merge',
-            'merge_historical',
-            'temp_hist',
-            'temp_max_hist',
-            'temp_min_hist'
-        ]
+        # Import centralized configuration
+        from app.config.data_sources import get_geoserver_mosaic_dirs
+        directories = get_geoserver_mosaic_dirs()
     
     logger.info(f"Setting up GeoServer indexers in: {base_path}")
     logger.info(f"Force recreate: {force}")

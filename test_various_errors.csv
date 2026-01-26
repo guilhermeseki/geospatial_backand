@@ -1,0 +1,11 @@
+local,latitude,longitude
+Valid Location,-23.5505,-46.6333
+Missing Latitude Name,,-46.6333
+Missing Longitude Name,-23.5505,
+Invalid Lat Text,invalid,-46.6333
+Invalid Lon Text,-23.5505,invalid
+Outside Brazil North,10.5,-46.6333
+Outside Brazil South,-35.0,-46.6333
+Outside Brazil East,-23.5505,-30.0
+Outside Brazil West,-23.5505,-80.0
+,-23.5505,-46.6333

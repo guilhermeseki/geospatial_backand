@@ -8,6 +8,8 @@ logger = logging.getLogger(__name__)
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8', extra='ignore')
+
     GEOSERVER_ADMIN_PASSWORD: str = "todosabordo25!"
     DATA_DIR: str = "/mnt/workwork/geoserver_data/"
     ENVIRONMENT: str = "development"
@@ -40,17 +42,28 @@ class Settings(BaseSettings):
     max_lat: float = 6.5     # North (Roraima + buffer)
     
     # Different bbox formats for different libraries
-    latam_bbox: Tuple[float, float, float, float] = (-35.0, -75.0, 6.5, -33.5)  # (S, W, N, E)
-    latam_bbox_raster: Tuple[float, float, float, float] = (-75.0, -35.0, -33.5, 6.5)  # (W, S, E, N)
-    latam_bbox_cds: List[float] = [6.5, -75.0, -35.0, -33.5]  # [N, W, S, E]
+    # LATIN AMERICA (full region)
+    latam_bbox: Tuple[float, float, float, float] = (-53.0, -94.0, 25.0, -34.0)  # (S, W, N, E) - Full Latin America
+    latam_bbox_raster: Tuple[float, float, float, float] = (-94.0, -53.0, -34.0, 25.0)  # (W, S, E, N) - For rasterio
+    latam_bbox_cds: List[float] = [25.0, -94.0, -53.0, -34.0]  # [N, W, S, E] - For CDS API
+
+    # BRAZIL (focused region with buffer)
+    brazil_bbox: Tuple[float, float, float, float] = (-35.0, -75.0, 6.5, -33.5)  # (S, W, N, E) - Brazil with buffer
+    brazil_bbox_raster: Tuple[float, float, float, float] = (-75.0, -35.0, -33.5, 6.5)  # (W, S, E, N) - For rasterio/GLM
+    brazil_bbox_cds: List[float] = [6.55, -75.05, -35.05, -33.45]  # [N, W, S, E] - For ERA5 CDS API (exactly 416×416 grid)
     
     geoserver_local_url: str = "http://127.0.0.1:8080/geoserver"
     geoserver_timeout: int = 30
     
-    BRAZIL_SHAPEFILE: str = "/opt/geospatial_backend/data/shapefiles/BR_Pais_2024/BR_Pais_2024.shp"
+    BRAZIL_SHAPEFILE: str = "/opt/geospatial_backend/data/shapefiles/br_shp/brazil_b10km.shp"
+    BRAZIL_GEOJSON: str = "/opt/geospatial_backend/data/shapefiles/br_shp/brazil.geojson"
     
     COPERNICUS_USERNAME: str = "guilhermeseki@gmail.com"
     COPERNICUS_PASSWORD: str = "Seentregueaoamor25!"
+
+    # NASA Earthdata credentials
+    EARTHDATA_USERNAME: str = Field(default="")
+    EARTHDATA_PASSWORD: str = Field(default="")
 
 settings = Settings()
 logger.debug(f"Settings loaded: DATA_DIR={settings.DATA_DIR}")

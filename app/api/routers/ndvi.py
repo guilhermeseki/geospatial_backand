@@ -13,6 +13,7 @@ from app.utils.polygon import PolygonProcessor
 from app.utils.geo import haversine_distance, retry_on_failure, DEGREES_TO_KM
 from app.api.schemas.ndvi import NDVIRequest, NDVIHistoryRequest, NDVITriggerRequest, NDVITriggerAreaRequest
 from app.config.settings import get_settings
+from app.config.data_sources import LAYER_DIMENSIONS, LAYER_BBOXES
 from datetime import datetime
 import httpx
 import time
@@ -30,6 +31,39 @@ geoserver = GeoServerService()
 settings = get_settings()
 
 GEOSERVER_WMS = f"{geoserver.base_url}/wms"
+
+
+# --- OPTIONS ENDPOINTS FOR CORS ---
+
+@router.options("/history")
+async def options_history():
+    """OPTIONS endpoint for CORS preflight - /history"""
+    return {}
+
+@router.options("/triggers")
+async def options_triggers():
+    """OPTIONS endpoint for CORS preflight - /triggers"""
+    return {}
+
+@router.options("/area_triggers")
+async def options_area_triggers():
+    """OPTIONS endpoint for CORS preflight - /area_triggers"""
+    return {}
+
+@router.options("/wms")
+async def options_wms():
+    """OPTIONS endpoint for CORS preflight - /wms"""
+    return {}
+
+@router.options("/featureinfo")
+async def options_featureinfo():
+    """OPTIONS endpoint for CORS preflight - /featureinfo"""
+    return {}
+
+@router.options("/polygon")
+async def options_polygon():
+    """OPTIONS endpoint for CORS preflight - /polygon"""
+    return {}
 
 
 # --- SYNCHRONOUS HELPER FOR POINT QUERIES ---
@@ -317,10 +351,13 @@ async def get_ndvi_featureinfo(request: NDVIRequest):
         raise HTTPException(status_code=400, detail=f"Invalid source: {request.source}")
 
     layer_name = f"{geoserver.workspace}:{layer_suffix}"
-    miny, minx, maxy, maxx = settings.latam_bbox
-    width, height = request.width, request.height
-    x = int((request.lon - minx) / (maxx - minx) * width)
-    y = int((maxy - request.lat) / (maxy - miny) * height)
+
+    # Get actual bbox and dimensions for this specific layer
+    west, south, east, north = LAYER_BBOXES.get(request.source, (-94.0, -53.0, -34.0, 25.0))
+    width, height = LAYER_DIMENSIONS.get(request.source, (1200, 1560))
+
+    x = int((request.lon - west) / (east - west) * width)
+    y = int((north - request.lat) / (north - south) * height)
 
     wms_params = {
         "service": "WMS",
@@ -329,7 +366,7 @@ async def get_ndvi_featureinfo(request: NDVIRequest):
         "layers": layer_name,
         "query_layers": layer_name,
         "styles": "",
-        "bbox": f"{minx},{miny},{maxx},{maxy}",
+        "bbox": f"{west},{south},{east},{north}",
         "width": width,
         "height": height,
         "srs": "EPSG:4326",

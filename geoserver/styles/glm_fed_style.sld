@@ -4,49 +4,57 @@
   xmlns:ogc="http://www.opengis.net/ogc"
   xmlns:xlink="http://www.w3.org/1999/xlink"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opengis.net/sld http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd">
+  xsi:schemaLocation="http://www.opengis.net/sld
+  http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd">
+
   <NamedLayer>
-    <Name>GLM Flash Extent Density</Name>
+    <Name>glm_fed</Name>
     <UserStyle>
-      <Title>Lightning Flash Extent Density</Title>
-      <Abstract>Color ramp for GLM Flash Extent Density - Dark purple to white representing increasing lightning activity</Abstract>
+      <Title>Densidade de Descargas Elétricas (GLM)</Title>
+      <Abstract>Densidade máxima de descargas em 30 minutos</Abstract>
+
       <FeatureTypeStyle>
+
         <Rule>
           <RasterSymbolizer>
-            <ColorMap type="ramp">
-              <!-- No lightning: Transparent -->
-              <ColorMapEntry color="#000000" quantity="0" opacity="0" label="No Lightning"/>
+            <Opacity>1.0</Opacity>
 
-              <!-- Very low activity: Dark purple -->
-              <ColorMapEntry color="#1a0033" quantity="1" opacity="0.3" label="Very Low"/>
-              <ColorMapEntry color="#330066" quantity="5" opacity="0.5" label="Low"/>
+            <ColorMap type="intervals">
 
-              <!-- Low-moderate: Purple to blue -->
-              <ColorMapEntry color="#4d0099" quantity="10" opacity="0.7" label="Moderate Low"/>
-              <ColorMapEntry color="#6600cc" quantity="20" opacity="0.8" label="Moderate"/>
+              <ColorMapEntry color="#000000" opacity="0.0" quantity="0" label="0 – Sem descargas"/>
 
-              <!-- Moderate: Blue -->
-              <ColorMapEntry color="#0000ff" quantity="50" opacity="0.85" label="Moderate High"/>
+              <ColorMapEntry color="#16002b" opacity="0.25" quantity="1" label="1 – Muito fraca"/>
+              <ColorMapEntry color="#24004d" opacity="0.35" quantity="3" label="3 – Fraca"/>
+              <ColorMapEntry color="#330066" opacity="0.45" quantity="5" label="5 – Fraca"/>
 
-              <!-- Moderate-high: Cyan -->
-              <ColorMapEntry color="#00ccff" quantity="100" opacity="0.9" label="High"/>
+              <ColorMapEntry color="#3f0080" opacity="0.55" quantity="8" label="8 – Fraca a moderada"/>
+              <ColorMapEntry color="#4d0099" opacity="0.65" quantity="12" label="12 – Moderada fraca"/>
 
-              <!-- High: Yellow-green -->
-              <ColorMapEntry color="#00ff99" quantity="200" opacity="0.95" label="Very High"/>
-              <ColorMapEntry color="#ffff00" quantity="400" opacity="0.95" label="Intense"/>
+              <ColorMapEntry color="#5c00b3" opacity="0.75" quantity="20" label="20 – Moderada"/>
+              <ColorMapEntry color="#0000cc" opacity="0.82" quantity="35" label="35 – Moderada a forte"/>
 
-              <!-- Very high: Orange -->
-              <ColorMapEntry color="#ff9900" quantity="800" opacity="1.0" label="Very Intense"/>
+              <ColorMapEntry color="#0033ff" opacity="0.85" quantity="50" label="50 – Moderada a forte"/>
+              <ColorMapEntry color="#0066ff" opacity="0.88" quantity="75" label="75 – Forte"/>
 
-              <!-- Extreme: Red -->
-              <ColorMapEntry color="#ff0000" quantity="1500" opacity="1.0" label="Extreme"/>
+              <ColorMapEntry color="#0099ff" opacity="0.90" quantity="100" label="100 – Forte"/>
+              <ColorMapEntry color="#00ccff" opacity="0.92" quantity="150" label="150 – Muito forte"/>
 
-              <!-- Exceptional: Bright red to white -->
-              <ColorMapEntry color="#ff66ff" quantity="3000" opacity="1.0" label="Exceptional"/>
-              <ColorMapEntry color="#ffffff" quantity="5000" opacity="1.0" label="Extraordinary"/>
+              <ColorMapEntry color="#00ffcc" opacity="0.94" quantity="200" label="200 – Muito forte"/>
+              <ColorMapEntry color="#66ff66" opacity="0.95" quantity="300" label="300 – Tempestade forte"/>
+
+              <ColorMapEntry color="#ccff33" opacity="0.96" quantity="400" label="400 – Tempestade intensa"/>
+              <ColorMapEntry color="#ffff00" opacity="0.97" quantity="600" label="600 – Muito intensa"/>
+
+              <ColorMapEntry color="#ffcc00" opacity="0.98" quantity="800" label="800 – Tempestade severa"/>
+              <ColorMapEntry color="#ff9900" opacity="0.99" quantity="1100" label="1100 – Severidade elevada"/>
+
+              <ColorMapEntry color="#ff3300" opacity="1.0" quantity="1500" label="1500 – Extrema"/>
+              <ColorMapEntry color="#cc0000" opacity="1.0" quantity="2000" label="≥2000 – Extrema (MCS/Supercélula)"/>
+
             </ColorMap>
           </RasterSymbolizer>
         </Rule>
+
       </FeatureTypeStyle>
     </UserStyle>
   </NamedLayer>

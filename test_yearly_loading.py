@@ -65,10 +65,10 @@ if __name__ == "__main__":
     results.append(test_source("precipitation", "chirps", "chirps_hist", "chirps_*.nc"))
     results.append(test_source("precipitation", "merge", "merge_hist", "merge_*.nc"))
 
-    # Test temperature
-    results.append(test_source("temperature", "temp_max", "temp_max_hist", "temp_max_*.nc"))
-    results.append(test_source("temperature", "temp_min", "temp_min_hist", "temp_min_*.nc"))
-    results.append(test_source("temperature", "temp", "temp_hist", "temp_*.nc"))
+    # Test temperature (using centralized config)
+    from app.config.data_sources import TEMPERATURE_HIST_DIRS
+    for source, hist_dir in TEMPERATURE_HIST_DIRS.items():
+        results.append(test_source("temperature", source, hist_dir, f"{source}_*.nc"))
 
     # Filter out None results (sources that don't have files yet)
     results = [r for r in results if r is not None]

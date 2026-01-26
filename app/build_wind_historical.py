@@ -97,6 +97,9 @@ def build_wind_speed_historical(data_dir: str = "/mnt/workwork/geoserver_data"):
                     # Rename spatial coordinates
                     da = da.rename({'x': 'longitude', 'y': 'latitude'})
 
+                    # GeoTIFFs are already in km/h (converted during build_wind_speed.py)
+                    # No conversion needed here
+
                     # Store
                     datasets.append(da)
                     dates.append(file_date)
@@ -121,13 +124,13 @@ def build_wind_speed_historical(data_dir: str = "/mnt/workwork/geoserver_data"):
             # Add metadata
             ds.attrs['title'] = f'Wind Speed Daily Maximum {year}'
             ds.attrs['source'] = 'ERA5 Land (calculated from u and v components)'
-            ds.attrs['units'] = 'm/s'
-            ds.attrs['description'] = 'Daily maximum wind speed at 10m, calculated as sqrt(u² + v²)'
+            ds.attrs['units'] = 'km/h'
+            ds.attrs['description'] = 'Daily maximum wind speed at 10m, calculated as sqrt(u² + v²), converted to km/h'
             ds.attrs['created'] = datetime.now().isoformat()
 
             # Set variable attributes
             ds['wind_speed'].attrs['long_name'] = 'Wind Speed'
-            ds['wind_speed'].attrs['units'] = 'm/s'
+            ds['wind_speed'].attrs['units'] = 'km/h'
             ds['wind_speed'].attrs['standard_name'] = 'wind_speed'
 
             # Encoding for efficient storage

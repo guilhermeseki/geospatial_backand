@@ -48,6 +48,7 @@ class PolygonRequest(BaseModel):
     end_date: str  # "YYYY-MM-DD"
     trigger: Optional[float] = None  # Optional: threshold for trigger calculations
     statistic: Optional[str] = None  # Optional: "mean", "sum", "max", "min", "pctl_50", etc.
+    consecutive_days: Optional[int] = 1  # Optional: minimum consecutive days for trigger (default=1)
     
     @field_validator('coordinates')
     @classmethod

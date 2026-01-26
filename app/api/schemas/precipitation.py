@@ -26,6 +26,7 @@ class TriggerRequest(BaseModel):
     start_date: str
     end_date: str
     trigger: float
+    consecutive_days: Optional[int] = 1
 
 class TriggerAreaRequest(BaseModel):
     source: str
@@ -35,3 +36,4 @@ class TriggerAreaRequest(BaseModel):
     end_date: str
     trigger: float
     radius: float
+    consecutive_days: Optional[int] = 1

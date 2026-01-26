@@ -3,3 +3,7 @@ data/
 
 # Ignore the large log file
 prefect-agent.log
+backups/*.nc
+logs/*.log
+*.pyc
+__pycache__/

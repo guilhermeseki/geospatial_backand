@@ -4,7 +4,7 @@ Daily Precipitation Update Script
 Downloads yesterday's data and updates yearly historical files
 Used by systemd timer for automated daily updates
 """
-from app.workflows.data_processing.flows import precipitation_batch_flow
+from app.workflows.data_processing.precipitation_flow import precipitation_batch_flow
 from app.workflows.data_processing.schemas import DataSource
 from datetime import date, timedelta
 

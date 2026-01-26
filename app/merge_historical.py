@@ -32,18 +32,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Variable name mapping (output_name -> original_variable)
-VARIABLE_REVERSE_MAPPING = {
-    "temp_max": ("2m_temperature", "daily_maximum"),
-    "temp_min": ("2m_temperature", "daily_minimum"),
-    "temp": ("2m_temperature", "daily_mean"),
-    "wind_u": ("10m_u_component_of_wind", "daily_mean"),
-    "wind_u_max": ("10m_u_component_of_wind", "daily_maximum"),
-    "wind_u_min": ("10m_u_component_of_wind", "daily_minimum"),
-    "wind_v": ("10m_v_component_of_wind", "daily_mean"),
-    "wind_v_max": ("10m_v_component_of_wind", "daily_maximum"),
-    "wind_v_min": ("10m_v_component_of_wind", "daily_minimum"),
-}
+# Import centralized configuration
+from app.config.data_sources import VARIABLE_REVERSE_MAPPING
 
 
 def find_raw_files_for_variable(variable: str, year: Optional[int] = None) -> List[Path]:

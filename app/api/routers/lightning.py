@@ -15,9 +15,11 @@ from app.api.schemas.lightning import (
     LightningRequest,
     LightningHistoryRequest,
     LightningTriggerRequest,
-    LightningTriggerAreaRequest
+    LightningTriggerAreaRequest,
+    LightningMapRequest
 )
 from app.config.settings import get_settings
+from app.config.data_sources import LAYER_DIMENSIONS, LAYER_BBOXES
 from datetime import datetime
 import httpx
 import time
@@ -36,6 +38,39 @@ settings = get_settings()
 GEOSERVER_WMS = f"{geoserver.base_url}/wms"
 
 
+# --- OPTIONS ENDPOINTS FOR CORS ---
+
+@router.options("/history")
+async def options_history():
+    """OPTIONS endpoint for CORS preflight - /history"""
+    return {}
+
+@router.options("/triggers")
+async def options_triggers():
+    """OPTIONS endpoint for CORS preflight - /triggers"""
+    return {}
+
+@router.options("/triggers/area")
+async def options_triggers_area():
+    """OPTIONS endpoint for CORS preflight - /triggers/area"""
+    return {}
+
+@router.options("/wms")
+async def options_wms():
+    """OPTIONS endpoint for CORS preflight - /wms"""
+    return {}
+
+@router.options("/polygon")
+async def options_polygon():
+    """OPTIONS endpoint for CORS preflight - /polygon"""
+    return {}
+
+@router.options("/featureinfo")
+async def options_featureinfo():
+    """OPTIONS endpoint for CORS preflight - /featureinfo"""
+    return {}
+
+
 # --- SYNCHRONOUS HELPER FOR POINT QUERIES ---
 def _query_lightning_point_data_sync(
     historical_ds: xr.Dataset,
@@ -49,6 +84,17 @@ def _query_lightning_point_data_sync(
     start_date = pd.to_datetime(request.start_date)
     end_date = pd.to_datetime(request.end_date)
 
+    # Validate requested dates are within available data range
+    data_start = pd.Timestamp(historical_ds.time.min().values)
+    data_end = pd.Timestamp(historical_ds.time.max().values)
+
+    if end_date < data_start or start_date > data_end:
+        # Requested range is completely outside available data
+        raise ValueError(
+            f"Requested date range ({start_date.date()} to {end_date.date()}) is outside "
+            f"available data range ({data_start.date()} to {data_end.date()})"
+        )
+
     ts = historical_ds.sel(
         latitude=request.lat,
         longitude=request.lon,
@@ -59,15 +105,31 @@ def _query_lightning_point_data_sync(
     # Get the fed_30min_max variable (maximum 30-minute window)
     ts_values = ts['fed_30min_max'].compute().squeeze()
 
-    data_vals = np.atleast_1d(ts_values.values)
+    # Convert from total flashes per pixel to flashes/km²/30min
+    # GLM FED grid is ~0.029° × ~0.029° in geographic projection (EPSG:4326)
+    # Pixel area varies with latitude: area = (deg_lat * 111.32) * (deg_lon * 111.32 * cos(lat))
+    actual_lat = float(ts_values.latitude.values)
+    lat_spacing = 0.029069  # degrees
+    lon_spacing = 0.029069  # degrees
+
+    km_per_deg_lat = 111.32
+    km_per_deg_lon = 111.32 * np.cos(np.radians(actual_lat))
+
+    pixel_area_km2 = (lat_spacing * km_per_deg_lat) * (lon_spacing * km_per_deg_lon)
+
+    # Convert values to flashes/km²/30min
+    data_vals = np.atleast_1d(ts_values.values) / pixel_area_km2
     time_vals = np.atleast_1d(ts_values.time.values)
 
     if is_trigger:
         # Trigger logic - FED threshold exceedances
+        # Filter out NaN and inf values before comparison
+        valid_mask = np.isfinite(data_vals)
+
         if request.trigger_type == "above":
-            exceedances = data_vals > request.trigger
+            exceedances = valid_mask & (data_vals > request.trigger)
         else:  # below
-            exceedances = data_vals < request.trigger
+            exceedances = valid_mask & (data_vals < request.trigger)
 
         times = pd.to_datetime(time_vals)
         exceeded_dates = times[exceedances]
@@ -88,9 +150,9 @@ def _query_lightning_point_data_sync(
             "exceedances": exceedance_list,
         }
     else:
-        # History logic
+        # History logic - convert NaN to 0 (no lightning activity)
         history = {
-            str(pd.Timestamp(t).date()): (round(float(v), 2) if not np.isnan(v) else None)
+            str(pd.Timestamp(t).date()): (round(float(v), 2) if np.isfinite(v) else 0.0)
             for t, v in zip(time_vals, data_vals)
         }
         return {
@@ -132,6 +194,9 @@ async def get_lightning_history(request: LightningHistoryRequest):
             False
         )
         return result
+    except ValueError as e:
+        # Date range validation errors (user error)
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         logger.error(f"Error querying lightning history: {e}")
         logger.error(traceback.format_exc())
@@ -160,6 +225,9 @@ async def get_lightning_triggers(request: LightningTriggerRequest):
             True
         )
         return result
+    except ValueError as e:
+        # Date range validation errors (user error)
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         logger.error(f"Error querying lightning triggers: {e}")
         logger.error(traceback.format_exc())
@@ -186,14 +254,40 @@ def _calculate_lightning_area_exceedances_sync(
     start_date = pd.to_datetime(request.start_date).date()
     end_date = pd.to_datetime(request.end_date).date()
 
+    # Validate requested dates are within available data range
+    data_start = pd.Timestamp(historical_ds.time.min().values).date()
+    data_end = pd.Timestamp(historical_ds.time.max().values).date()
+
+    if end_date < data_start or start_date > data_end:
+        raise ValueError(
+            f"Requested date range ({start_date} to {end_date}) is outside "
+            f"available data range ({data_start} to {data_end})"
+        )
+
     # Slice the bounding box
+    # GLM FED has increasing latitude coordinates (south to north)
     ds_slice = historical_ds.sel(
-        latitude=slice(lat_min, lat_max),
+        latitude=slice(lat_min, lat_max),  # Standard order for increasing coords
         longitude=slice(lon_min, lon_max),
         time=slice(start_date, end_date)
     )
 
     fed_data = ds_slice['fed_30min_max']
+
+    # Convert from total flashes per pixel to flashes/km²/30min
+    # GLM FED grid is ~0.029° × ~0.029° in geographic projection (EPSG:4326)
+    # Pixel area varies with latitude
+    lat_spacing = 0.029069  # degrees
+    lon_spacing = 0.029069  # degrees
+    km_per_deg_lat = 111.32
+
+    # Create a 2D array of pixel areas based on latitude
+    lats_2d = ds_slice.latitude
+    km_per_deg_lon_2d = 111.32 * np.cos(np.radians(lats_2d))
+    pixel_area_km2_2d = (lat_spacing * km_per_deg_lat) * (lon_spacing * km_per_deg_lon_2d)
+
+    # Convert FED values to flashes/km²/30min
+    fed_data_converted = fed_data / pixel_area_km2_2d
 
     # Compute circular distance mask
     distances_km = haversine_distance(
@@ -204,14 +298,14 @@ def _calculate_lightning_area_exceedances_sync(
     )
     circular_mask = (distances_km <= request.radius).compute()
 
-    # Apply trigger condition
+    # Apply trigger condition (now using converted values)
     if request.trigger_type == "above":
-        trigger_mask_3D = (fed_data > request.trigger) & circular_mask
+        trigger_mask_3D = (fed_data_converted > request.trigger) & circular_mask
     else:  # below
-        trigger_mask_3D = (fed_data < request.trigger) & circular_mask
+        trigger_mask_3D = (fed_data_converted < request.trigger) & circular_mask
 
-    # Extract values
-    exceeding_values = fed_data.where(trigger_mask_3D)
+    # Extract values (use converted values for output)
+    exceeding_values = fed_data_converted.where(trigger_mask_3D)
     exceeding_flat = exceeding_values.stack(point=['time', 'latitude', 'longitude'])
 
     # Compute and convert
@@ -222,6 +316,10 @@ def _calculate_lightning_area_exceedances_sync(
     grouped_exceedances = {}
 
     for index, value in exceeding_flat_computed.items():
+        # Skip inf values
+        if not np.isfinite(value):
+            continue
+
         time_val, lat_val, lon_val = index
         date_str = str(pd.Timestamp(time_val).date())
 
@@ -271,6 +369,9 @@ async def get_lightning_area_triggers(request: LightningTriggerAreaRequest):
             "exceedances_by_date": grouped_exceedances
         }
 
+    except ValueError as e:
+        # Date range validation errors (user error)
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         logger.error(f"Error calculating lightning area triggers: {e}")
         logger.error(traceback.format_exc())
@@ -310,6 +411,32 @@ async def proxy_lightning_wms(request: Request):
         raise HTTPException(status_code=502, detail="Failed to fetch WMS data from GeoServer")
 
 
+def _calculate_lightning_polygon_sync(
+    ds: xr.Dataset,
+    request: PolygonRequest
+):
+    """Synchronous helper for lightning polygon processing."""
+    # Create polygon
+    polygon = PolygonProcessor.create_polygon_from_coords(request.coordinates)
+
+    # Variable name for lightning (fed_30min_max)
+    variable_name = "fed_30min_max"
+
+    # Process request
+    result = PolygonProcessor.process_polygon_request(
+        ds=ds,
+        polygon=polygon,
+        variable_name=variable_name,
+        start_date=request.start_date,
+        end_date=request.end_date,
+        statistic=request.statistic,
+        trigger=request.trigger,
+        consecutive_days=request.consecutive_days
+    )
+
+    return result
+
+
 @router.post("/polygon")
 @retry_on_failure(max_retries=2, exceptions=(RuntimeError, ValueError, KeyError))
 async def get_lightning_polygon(request: PolygonRequest):
@@ -325,11 +452,10 @@ async def get_lightning_polygon(request: PolygonRequest):
         )
 
     try:
-        # Use PolygonProcessor for computation
-        processor = PolygonProcessor(historical_ds, 'fed_30min_max')
-
+        # Run polygon processing in thread pool
         result = await asyncio.to_thread(
-            processor.calculate_polygon_stats,
+            _calculate_lightning_polygon_sync,
+            historical_ds,
             request
         )
 
@@ -339,3 +465,148 @@ async def get_lightning_polygon(request: PolygonRequest):
         logger.error(f"Error calculating lightning polygon stats: {e}")
         logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail="Error calculating polygon statistics")
+
+
+@router.post("/featureinfo")
+@retry_on_failure(max_retries=2, exceptions=(httpx.HTTPError, httpx.TimeoutException))
+async def get_lightning_featureinfo(request: LightningMapRequest):
+    """
+    Get lightning FED value for a specific location and date from GeoServer raster.
+
+    Query the lightning FED value at a single point for a specific date.
+    Uses GeoServer's WMS GetFeatureInfo to extract pixel values from GeoTIFF mosaics.
+
+    **Note:** This endpoint queries GeoTIFF mosaics (slower) while `/history` queries
+    NetCDF files (faster). Use `/history` for time-series queries.
+
+    **Example Request:**
+    ```json
+    {
+        "source": "glm_fed",
+        "lat": -15.8,
+        "lon": -47.9,
+        "date": "2025-11-30"
+    }
+    ```
+
+    **Example Response:**
+    ```json
+    {
+        "lat": -15.8,
+        "lon": -47.9,
+        "date": "2024-04-05",
+        "source": "glm_fed",
+        "value": 2.5
+    }
+    ```
+    """
+    if request.lat is None or request.lon is None:
+        raise HTTPException(status_code=400, detail="lat and lon are required")
+
+    # CRITICAL: Validate that the requested date actually exists in GeoTIFF mosaics
+    # GeoServer returns "nearest" date by default, which is misleading
+    from pathlib import Path
+    geotiff_dir = Path(settings.DATA_DIR) / "glm_fed"
+    expected_file = geotiff_dir / f"glm_fed_{request.date.replace('-', '')}.tif"
+
+    if not expected_file.exists():
+        # Get available date range from historical dataset
+        historical_ds = get_dataset('lightning', 'glm_fed')
+        if historical_ds is not None:
+            data_start = pd.Timestamp(historical_ds.time.min().values).date()
+            data_end = pd.Timestamp(historical_ds.time.max().values).date()
+            return {
+                "lat": request.lat,
+                "lon": request.lon,
+                "date": request.date,
+                "source": request.source,
+                "value": None,
+                "message": f"No data available for {request.date}. Available range: {data_start} to {data_end}"
+            }
+        else:
+            return {
+                "lat": request.lat,
+                "lon": request.lon,
+                "date": request.date,
+                "source": request.source,
+                "value": None,
+                "message": f"No data available for {request.date}"
+            }
+
+    # Map source to layer name (glm_fed is the main layer, goes19 might be an alias)
+    layer_name = f"glm_ws:{request.source}"
+
+    # Get actual bbox and dimensions for this specific layer
+    west, south, east, north = LAYER_BBOXES.get(request.source, settings.latam_bbox_cds)
+    width, height = LAYER_DIMENSIONS.get(request.source, (1200, 1560))
+
+    # Calculate pixel coordinates
+    x = int((request.lon - west) / (east - west) * width)
+    y = int((north - request.lat) / (north - south) * height)
+
+    wms_params = {
+        "service": "WMS",
+        "version": "1.1.1",
+        "request": "GetFeatureInfo",
+        "layers": layer_name,
+        "query_layers": layer_name,
+        "styles": "",
+        "bbox": f"{west},{south},{east},{north}",
+        "width": width,
+        "height": height,
+        "srs": "EPSG:4326",
+        "format": "image/png",
+        "info_format": "application/json",
+        "x": x,
+        "y": y,
+        "time": request.date
+    }
+
+    try:
+        async with httpx.AsyncClient(auth=geoserver.auth, timeout=3.0) as client:
+            resp = await client.get(GEOSERVER_WMS, params=wms_params)
+
+        if "ServiceExceptionReport" in resp.text:
+            return {
+                "lat": request.lat,
+                "lon": request.lon,
+                "date": request.date,
+                "source": request.source,
+                "value": None,
+                "message": "No data at requested location"
+            }
+
+        try:
+            data = resp.json()
+        except ValueError as e:
+            logger.error(f"Invalid JSON from GeoServer: {resp.text[:200]}")
+            raise HTTPException(status_code=502, detail="Invalid response from GeoServer")
+
+        features = data.get("features", [])
+
+        if features and len(features) > 0:
+            pixel_value = features[0].get("properties", {}).get("GRAY_INDEX")
+            if pixel_value is not None:
+                # GeoTIFF files are now normalized to flashes/km²/30min
+                pixel_value = round(float(pixel_value), 2)
+        else:
+            pixel_value = None
+
+        return {
+            "lat": request.lat,
+            "lon": request.lon,
+            "date": request.date,
+            "source": request.source,
+            "value": pixel_value
+        }
+
+    except (httpx.HTTPError, httpx.TimeoutException) as e:
+        logger.warning(f"HTTP error fetching feature info: {e}")
+        raise
+
+    except HTTPException:
+        raise
+
+    except Exception as e:
+        logger.error(f"Unexpected error in featureinfo: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Error processing feature info request")

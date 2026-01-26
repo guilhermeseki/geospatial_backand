@@ -1,0 +1,12 @@
+local,latitude,longitude
+São Paulo,-23.5505,-46.6333
+Rio de Janeiro,-22.9068,-43.1729
+Missing Lat,,-46.6333
+Missing Lon,-23.5505,
+Missing Name,,-23.5505,-46.6333
+Invalid Lat,abc,-46.6333
+Invalid Lon,-23.5505,xyz
+North Outside,10.5,-46.6333
+South Outside,-35.0,-46.6333
+East Outside,-23.5505,-30.0
+West Outside,-23.5505,-80.0

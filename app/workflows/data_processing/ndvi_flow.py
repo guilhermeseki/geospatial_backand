@@ -86,19 +86,37 @@ def check_missing_dates(
     
     logger.info(f"Found {len(existing_geotiff_dates)} existing GeoTIFF files")
     
-    # Check historical NetCDF
+    # Check historical NetCDF (both single historical.nc and yearly files)
     existing_hist_dates = set()
-    if hist_file.exists():
+
+    # Check for yearly files first (ndvi_modis_2024.nc, ndvi_s2_2024.nc, etc.)
+    yearly_files = list(hist_dir.glob(f"{dir_name}_*.nc"))
+
+    if yearly_files:
+        logger.info(f"Found {len(yearly_files)} yearly historical file(s)")
+        for yearly_file in yearly_files:
+            try:
+                ds = xr.open_dataset(yearly_file, chunks='auto')
+                if 'ndvi' in ds.data_vars:
+                    file_dates = set(pd.to_datetime(ds['ndvi'].time.values).date)
+                    existing_hist_dates.update(file_dates)
+                    logger.info(f"  {yearly_file.name}: {len(file_dates)} dates")
+                ds.close()
+            except Exception as e:
+                logger.warning(f"Could not read {yearly_file.name}: {e}")
+        logger.info(f"Total dates in yearly historical files: {len(existing_hist_dates)}")
+    elif hist_file.exists():
+        # Fallback: check for single historical.nc file
         try:
             ds = xr.open_dataset(hist_file, chunks='auto')
             if 'ndvi' in ds.data_vars:
                 existing_hist_dates = set(pd.to_datetime(ds['ndvi'].time.values).date)
-                logger.info(f"Found {len(existing_hist_dates)} dates in historical NetCDF")
+                logger.info(f"Found {len(existing_hist_dates)} dates in historical.nc")
             ds.close()
         except Exception as e:
             logger.warning(f"Could not read historical file: {e}")
     else:
-        logger.info("Historical NetCDF does not exist yet")
+        logger.info("No historical NetCDF files found yet")
     
     # Calculate missing dates
     requested_dates_set = set(requested_dates)
@@ -449,8 +467,8 @@ def download_modis_batch(
         # MEMORY: Each composite ~381.5 MB, so 15 items = ~5.7 GB RAM (safe for 8GB systems)
         # Allow test script to override max_items (for testing single composite)
         import app.workflows.data_processing.ndvi_flow as this_module
-        max_items = getattr(this_module, '_TEST_MAX_ITEMS', 15)  # Default: 15, test can set to 1
-        if len(items) > max_items:
+        max_items = getattr(this_module, '_TEST_MAX_ITEMS', None)  # Default: None (unlimited), test can set to limit
+        if max_items and len(items) > max_items:
             # Sort by date (most recent first) and limit
             # MODIS composites use start_datetime instead of datetime
             def get_item_time(item):
@@ -464,10 +482,10 @@ def download_modis_batch(
             items = sorted(items, key=get_item_time, reverse=True)[:max_items]
             logger.info(f"Limited to {max_items} most recent composites to reduce processing time")
 
-        ndvi_data_list = []
-        time_list = []
-        composite_dates_seen = set()  # Track composite dates to avoid duplicates
-        
+        # Group tiles by composite date for merging
+        # Key: composite_date, Value: list of (ndvi_array, composite_datetime)
+        tiles_by_date = {}
+
         # Define common grid from bbox at native MODIS 250m resolution
         # OPTIMIZATION: Use actual MODIS resolution instead of oversampling
         lat_range = north - south
@@ -594,25 +612,16 @@ def download_modis_batch(
                     continue
                 
                 # MODIS composites don't have single datetime
-                # Use END date of composite period and deduplicate overlapping tiles
+                # Use END date of composite period for grouping tiles
                 import dateutil.parser
                 composite_dt = None
-                
+
                 if item.datetime:
                     composite_dt = item.datetime
                 elif 'start_datetime' in item.properties:
                     start_dt = dateutil.parser.isoparse(item.properties['start_datetime'])
-                    composite_date = start_dt.date()  # Use date for deduplication
-                    
-                    # DEDUPLICATION: Skip if we've already processed this composite date
-                    # Multiple overlapping tiles (h12v08, h12v09, etc.) share same composite date
-                    if composite_date in composite_dates_seen:
-                        logger.info(f"  Skipping duplicate composite date: {composite_date} (item: {item.id[:50]}...)")
-                        skipped_count += 1
-                        continue
-                    
-                    composite_dates_seen.add(composite_date)
-                    
+                    composite_date = start_dt.date()  # Use date for grouping tiles
+
                     # Use END date of composite period (not midpoint)
                     if 'end_datetime' in item.properties:
                         end_dt = dateutil.parser.isoparse(item.properties['end_datetime'])
@@ -621,22 +630,25 @@ def download_modis_batch(
                         # Fallback: add 15 days (end of 16-day composite period)
                         from datetime import timedelta
                         composite_dt = start_dt + timedelta(days=15)
-                    
+
                     # Remove timezone for NetCDF compatibility
                     if composite_dt.tzinfo:
                         composite_dt = composite_dt.replace(tzinfo=None)
                 else:
                     raise ValueError(f"No datetime found for item {item.id}")
-                
-                # Store data and timestamp
-                ndvi_data_list.append(ndvi)
-                time_list.append(composite_dt)
-                logger.info(f"  ✓ Processed composite date {composite_date} (datetime: {composite_dt})")
+
+                # GROUP tiles by composite date instead of skipping duplicates
+                # Multiple tiles (h12v08, h12v09, etc.) cover different regions of same date
+                if composite_date not in tiles_by_date:
+                    tiles_by_date[composite_date] = []
+
+                tiles_by_date[composite_date].append((ndvi, composite_dt))
+                logger.info(f"  ✓ Added tile to composite date {composite_date} (datetime: {composite_dt})")
 
                 processed_count += 1
 
                 valid_pct = 100 * np.sum(~np.isnan(ndvi)) / ndvi.size
-                logger.info(f"  ✓ Processed successfully ({valid_pct:.1f}% valid pixels)")
+                logger.info(f"  ✓ Tile has {valid_pct:.1f}% valid pixels")
 
             except Exception as e:
                 logger.error(f"  Failed: {e}")
@@ -647,38 +659,48 @@ def download_modis_batch(
         # Summary
         logger.info(f"\nProcessing summary:")
         logger.info(f"  Total composites found: {len(items)}")
-        logger.info(f"  Successfully processed: {processed_count}")
+        logger.info(f"  Successfully processed tiles: {processed_count}")
         logger.info(f"  Skipped (no overlap): {skipped_count}")
         logger.info(f"  Failed: {len(items) - processed_count - skipped_count}")
+        logger.info(f"  Unique composite dates: {len(tiles_by_date)}")
 
-        if len(ndvi_data_list) == 0:
+        if len(tiles_by_date) == 0:
             raise RuntimeError("All composites failed or were skipped")
-        
-        # VALIDATION: Check for duplicate timestamps and warn
-        if len(time_list) != len(set(time_list)):
-            duplicates = [t for t in set(time_list) if time_list.count(t) > 1]
-            logger.warning(f"⚠️  Found {len(duplicates)} duplicate timestamps: {duplicates[:5]}...")
-            logger.warning(f"   This may cause issues. Total unique timestamps: {len(set(time_list))} of {len(time_list)}")
-        
-        ndvi_array = np.stack(ndvi_data_list)
 
-        # Create time coordinates - ensure unique if there were duplicates
+        # MERGE tiles by composite date
+        logger.info(f"\n🔀 Merging {processed_count} tiles into {len(tiles_by_date)} composite mosaics...")
+
+        ndvi_data_list = []
+        time_list = []
+
+        for composite_date, tiles in sorted(tiles_by_date.items()):
+            logger.info(f"  Merging {len(tiles)} tiles for {composite_date}...")
+
+            # Memory-efficient mean computation: accumulate sum and count instead of stacking
+            sum_array = np.zeros((n_lat, n_lon), dtype=np.float64)
+            count_array = np.zeros((n_lat, n_lon), dtype=np.int32)
+
+            for tile_ndvi, _ in tiles:
+                # Add non-NaN values to sum
+                valid_mask = ~np.isnan(tile_ndvi)
+                sum_array[valid_mask] += tile_ndvi[valid_mask]
+                count_array[valid_mask] += 1
+
+            # Compute mean: sum / count (set to NaN where count == 0)
+            merged_ndvi = np.full((n_lat, n_lon), np.nan, dtype=np.float32)
+            valid_pixels = count_array > 0
+            merged_ndvi[valid_pixels] = (sum_array[valid_pixels] / count_array[valid_pixels]).astype(np.float32)
+
+            # Calculate coverage after merging
+            valid_pct = 100 * np.sum(valid_pixels) / valid_pixels.size
+            logger.info(f"    ✓ Merged mosaic: {valid_pct:.1f}% valid pixels")
+
+            ndvi_data_list.append(merged_ndvi)
+            # Use the datetime from first tile (they should all be the same for a composite date)
+            time_list.append(tiles[0][1])
+
+        ndvi_array = np.stack(ndvi_data_list)
         time_coords = pd.to_datetime(time_list)
-        if len(time_coords) != len(set(time_coords)):
-            logger.warning("⚠️  Duplicate timestamps detected in time coordinates, ensuring uniqueness...")
-            # Add small increments to make them unique while preserving order
-            unique_times = []
-            seen = {}
-            for t in time_coords:
-                base_time = t
-                offset = timedelta(microseconds=0)
-                while base_time + offset in seen:
-                    offset += timedelta(microseconds=1)
-                unique_time = base_time + offset
-                seen[unique_time] = True
-                unique_times.append(unique_time)
-            time_coords = pd.to_datetime(unique_times)
-            logger.info(f"✓ Made {len(time_coords)} timestamps unique")
 
         ds = xr.Dataset(
             {'ndvi': (['time', 'latitude', 'longitude'], ndvi_array)},
@@ -694,8 +716,9 @@ def download_modis_batch(
             }
         )
         
-        logger.info(f"✓ Created dataset with {len(time_coords)} unique time steps")
+        logger.info(f"✓ Created dataset with {len(time_coords)} merged composite mosaics")
         logger.info(f"   Time range: {time_coords.min()} to {time_coords.max()}")
+        logger.info(f"   Each mosaic combines multiple MODIS tiles for complete coverage")
 
         # FUSE FIX: Write to /tmp first, then copy to FUSE filesystem
         import tempfile
@@ -1022,12 +1045,14 @@ def append_to_yearly_historical_ndvi(
                     new_dates_set = set(new_dates)
                     new_dates_mask = [pd.Timestamp(t).date() in new_dates_set for t in year_da.time.values]
                     year_da_filtered = year_da.isel(time=new_dates_mask)
-                    
+
                     # Compute existing data before closing to avoid lazy evaluation issues
                     existing_da_loaded = existing_da.load()
                     existing.close()
-                    
-                    combined = xr.concat([existing_da_loaded, year_da_filtered], dim='time').sortby('time')
+
+                    # Use join='outer' to handle slight grid differences from reprojection
+                    # This creates a union of coordinates and fills missing values with NaN
+                    combined = xr.concat([existing_da_loaded, year_da_filtered], dim='time', join='outer').sortby('time')
                 else:
                     logger.info(f"    Creating new year file with {len(year_dates)} dates")
                     combined = year_da

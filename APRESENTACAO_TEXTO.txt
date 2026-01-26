@@ -1,0 +1,508 @@
+PLATAFORMA DE MONITORAMENTO CLIMÁTICO - APRESENTAÇÃO EXECUTIVA (5 MINUTOS)
+
+=================================================================================
+SLIDE 1 - TÍTULO
+=================================================================================
+
+PLATAFORMA DE MONITORAMENTO CLIMÁTICO
+Transformando dados em decisões estratégicas para gestão de risco
+
+=================================================================================
+SLIDE 2 - O PROBLEMA
+=================================================================================
+
+POR QUE PRECISAMOS DISSO?
+
+• Sinistros climáticos custam bilhões ao setor de resseguros anualmente
+• Decisões de subscrição tomadas com dados desatualizados ou incompletos
+• Falta de visibilidade em tempo real sobre eventos climáticos em andamento
+• Análise retrospectiva acontece APÓS o prejuízo já estar consumado
+• Risco climático é invisível até que seja tarde demais
+
+O DESAFIO ATUAL:
+Sem ferramentas adequadas, levamos 2-3 dias para analisar manualmente o impacto climático de uma região. Quando terminamos a análise, o evento já passou e o sinistro já aconteceu.
+
+=================================================================================
+SLIDE 3 - A SOLUÇÃO
+=================================================================================
+
+PLATAFORMA DE MONITORAMENTO EM TEMPO REAL
+
+O QUE FAZ:
+• Monitora variáveis climáticas 24/7 em qualquer região do Brasil e América Latina
+• Detecta anomalias e eventos extremos automaticamente
+• Alerta equipes de subscrição e sinistros proativamente
+• Fornece histórico completo desde 1981 para análise de tendências
+• Suporta consultas por ponto, área ou polígono customizado
+
+COMO FUNCIONA:
+• API REST moderna com dados atualizados diariamente
+• Visualização geográfica via mapas interativos (WMS)
+• Integração simples com sistemas existentes
+• Dados de fontes oficiais científicas (NASA, NOAA, ESA, ECMWF)
+
+RESULTADO:
+Redução de tempo de análise de DIAS para MINUTOS
+
+=================================================================================
+SLIDE 4 - VARIÁVEIS IMPLEMENTADAS (PARTE 1)
+=================================================================================
+
+1. PRECIPITAÇÃO (CHIRPS + MERGE)
+
+POR QUE IMPORTA:
+• Base fundamental para análise de secas e enchentes
+• Impacto financeiro direto em múltiplas linhas de negócio
+
+APLICAÇÕES PRÁTICAS:
+• Detectar estiagem prolongada = risco de quebra de safra
+• Identificar chuvas extremas = risco de inundação urbana/rural
+• Acionar gatilhos automáticos de cobertura paramétrica
+• Validar sinistros reportados vs. dados reais de chuva
+
+LINHAS DE NEGÓCIO IMPACTADAS:
+Agro, Property, Garantia & Crédito, Climático
+
+---
+
+2. TEMPERATURA (Máxima, Mínima, Média)
+
+POR QUE IMPORTA:
+• Ondas de calor e geadas causam perdas massivas e súbitas
+• Eventos extremos de temperatura têm aumentado em frequência
+
+APLICAÇÕES PRÁTICAS:
+• Geada = morte instantânea de plantações (café, laranja, cana)
+• Calor extremo = estresse térmico em gado, aumento de mortalidade humana
+• Temperatura sustentada fora do ideal = redução de produtividade
+• Monitorar thresholds críticos para cada cultura
+
+LINHAS DE NEGÓCIO IMPACTADAS:
+Agro, Vida e AP, Property, Garantia & Crédito, Climático
+
+=================================================================================
+SLIDE 5 - VARIÁVEIS IMPLEMENTADAS (PARTE 2)
+=================================================================================
+
+
+4. VENTO (Velocidade e Direção)
+
+POR QUE IMPORTA:
+• Ventos fortes causam danos estruturais e interrupção de operações
+• Essencial para avaliação de risco em estruturas e transporte
+
+APLICAÇÕES PRÁTICAS:
+• Vendavais = destelhamentos, queda de torres e estruturas
+• Furacões e ciclones = evacuações e interrupção de negócios
+• Operações marítimas e portuárias = riscos de navegação
+• Avaliação de resistência estrutural vs. vento histórico
+
+LINHAS DE NEGÓCIO IMPACTADAS:
+Property, Engenharia, Marine & Transporte, Aeronáutico
+
+=================================================================================
+SLIDE 6 - VARIÁVEIS IMPLEMENTADAS (PARTE 3)
+=================================================================================
+
+5. NDVI (Índice de Vegetação - Sentinel-2 e MODIS)
+
+POR QUE IMPORTA:
+• Mede a saúde e vigor da vegetação em tempo real
+• Detecta problemas antes que sejam visíveis a olho nu
+
+APLICAÇÕES PRÁTICAS:
+• NDVI baixo = estresse hídrico, ataque de pragas ou doenças
+• Monitoramento de recuperação pós-sinistro (geada, seca, granizo)
+• Validação de área plantada vs. área declarada na apólice
+• Detecção precoce de problemas = intervenção antes do sinistro
+
+LINHAS DE NEGÓCIO IMPACTADAS:
+Agro, Garantia & Crédito, ESG, Climático
+
+---
+
+6. RADIAÇÃO SOLAR (Em implementação)
+
+POR QUE IMPORTA:
+• Essencial para projetos de energia solar e produtividade agrícola
+• Permite avaliar viabilidade e performance de investimentos
+
+APLICAÇÕES PRÁTICAS:
+• Avaliar viabilidade econômica de projetos solares
+• Calcular perdas financeiras por baixa insolação
+• Prever produtividade de culturas fotossensíveis
+• Análise de performance vs. expectativa em energia renovável
+
+LINHAS DE NEGÓCIO IMPACTADAS:
+Engenharia, Agro, Financial Lines, ESG
+
+=================================================================================
+SLIDE 7 - RELEVÂNCIA POR LINHA DE NEGÓCIO
+=================================================================================
+
+CONEXÃO COM AS ÁREAS DE ATUAÇÃO DA EMPRESA:
+
+AGRO:
+• Variáveis críticas: Precipitação, Temperatura, NDVI, Raios
+• Casos de uso: Seguro paramétrico, avaliação rápida de sinistros, precificação dinâmica baseada em risco climático atual
+
+PROPERTY & ENGENHARIA:
+• Variáveis críticas: Precipitação, Vento, Raios, Temperatura
+• Casos de uso: Análise de risco de localização, resposta imediata a eventos extremos, validação de sinistros
+
+GARANTIA & CRÉDITO:
+• Variáveis críticas: Precipitação, Temperatura, NDVI
+• Casos de uso: Monitoramento contínuo de performance de safra, early warning de inadimplência, ajuste de exposição
+
+VIDA E AP:
+• Variáveis críticas: Temperatura, Raios
+• Casos de uso: Eventos de mortalidade em massa (ondas de calor), análise de causa mortis relacionada a clima
+
+RESPONSABILIDADE CIVIL:
+• Variáveis críticas: Raios, Vento, Precipitação
+• Casos de uso: Validação de eventos que causam danos a terceiros, análise de causalidade
+
+MARINE & TRANSPORTE:
+• Variáveis críticas: Vento, Precipitação, Raios
+• Casos de uso: Avaliação de condições marítimas, planejamento de rotas seguras, análise de sinistros em trânsito
+
+CLIMÁTICO:
+• Variáveis críticas: TODAS
+• Casos de uso: Cobertura paramétrica, cálculo de índices de gatilho, monitoramento automático de thresholds
+
+ESG:
+• Variáveis críticas: NDVI, Radiação Solar
+• Casos de uso: Monitoramento de compromissos ambientais, validação de práticas sustentáveis, reporting ESG
+
+=================================================================================
+SLIDE 8 - CASO DE USO PRÁTICO
+=================================================================================
+
+DEMONSTRAÇÃO: SECA NO CENTRO-OESTE (CENÁRIO REAL)
+
+SITUAÇÃO:
+Cliente reporta possível quebra de safra por estiagem em fazenda no Mato Grosso
+
+PROCESSO TRADICIONAL (SEM PLATAFORMA):
+1. Solicitar dados climáticos históricos (1 dia)
+2. Coletar manualmente de múltiplas fontes (1 dia)
+3. Processar em planilhas e fazer análise (1 dia)
+4. TOTAL: 2-3 dias úteis
+5. Resultado: Análise chega tarde, sinistro já consolidado
+
+PROCESSO COM A PLATAFORMA:
+1. Consultar precipitação acumulada dos últimos 90 dias (30 segundos)
+2. Comparar automaticamente com média histórica 1981-2010 (30 segundos)
+3. Identificar municípios com déficit superior a 50% (1 minuto)
+4. Cruzar com NDVI para confirmar estresse de vegetação (2 minutos)
+5. Gerar lista georreferenciada de apólices em risco na região (5 minutos)
+6. Exportar relatório com mapas e gráficos (5 minutos)
+7. TOTAL: 15 minutos
+
+AÇÕES PROATIVAS POSSÍVEIS:
+• Contatar segurados antecipadamente
+• Ajustar reservas técnicas antes do aviso de sinistro
+• Preparar equipe de regulação com dados objetivos
+• Oferecer suporte técnico ao produtor (mitigação de danos)
+
+RESULTADO:
+Transformação de postura REATIVA em PROATIVA
+
+=================================================================================
+SLIDE 9 - PRÓXIMA EVOLUÇÃO: ÍNDICES DE ANOMALIA
+=================================================================================
+
+O QUE SÃO ÍNDICES DE ANOMALIA?
+
+Métricas padronizadas que quantificam o quão anormal está uma condição climática em relação ao histórico da região.
+
+EXEMPLOS DE ÍNDICES A IMPLEMENTAR:
+
+1. SPI (Standardized Precipitation Index)
+   • Mede severidade de secas de forma padronizada
+   • Escala: -3 (seca extrema) a +3 (chuva extrema)
+   • Permite comparar diferentes regiões objetivamente
+
+2. DESVIO PADRONIZADO DE TEMPERATURA
+   • Identifica ondas de calor e frio anômalas
+   • Quantifica intensidade em desvios-padrão
+   • Correlação com mortalidade e perdas agrícolas
+
+3. ANOMALIA DE NDVI
+   • Detecta estresse de vegetação vs. média histórica
+   • Identifica problemas antes de sintomas visuais
+   • Early warning de quebra de produtividade
+
+4. FREQUÊNCIA DE RAIOS ANÔMALA
+   • Preditor de temporadas de tempestades severas
+   • Correlação com risco de incêndios florestais
+   • Padrões de convecção atmosférica intensa
+
+POR QUE ÍNDICES DE ANOMALIA SÃO IMPORTANTES:
+
+• Transformam dados brutos em SINAIS ACIONÁVEIS
+• Permitem ALERTAS AUTOMÁTICOS quando anomalia ultrapassa threshold crítico
+• Facilitam COMUNICAÇÃO COM CLIENTES (ex: "Região está em seca severa - SPI -2.5")
+• Base para MODELOS PREDITIVOS de sinistralidade
+• Padronização permite COMPARAÇÃO entre regiões e períodos diferentes
+
+=================================================================================
+SLIDE 10 - VALOR E BENEFÍCIOS
+=================================================================================
+
+VALOR IMEDIATO PARA O NEGÓCIO:
+
+EFICIÊNCIA OPERACIONAL:
+• Redução de tempo de análise de sinistros: dias → minutos (98% mais rápido)
+• Automação de tarefas manuais repetitivas
+• Escalabilidade: analisar centenas de localizações simultaneamente
+
+GESTÃO DE RISCO APRIMORADA:
+• Suporte a decisões de subscrição baseadas em dados atuais (não históricos defasados)
+• Identificação proativa de exposições em risco antes do evento
+• Ajuste dinâmico de reservas técnicas
+
+DIFERENCIAL COMPETITIVO:
+• Capacidade de oferecer produtos paramétricos avançados
+• Precificação mais precisa baseada em risco real
+• Resposta mais rápida a clientes em situações de sinistro
+
+INTELIGÊNCIA DE MERCADO:
+• Visibilidade proativa sobre riscos climáticos emergentes
+• Análise de tendências de longo prazo (mudanças climáticas)
+• Base de dados para modelagem atuarial
+
+INVESTIMENTO:
+• Plataforma já implementada e operacional
+• Custo incremental baixo (infraestrutura cloud + APIs públicas gratuitas)
+• ROI positivo desde o primeiro sinistro evitado ou melhor precificado
+• Custo operacional estimado: R$ 500-1.000/mês
+
+RETORNO:
+• Um único sinistro de grande porte mal avaliado custa milhões
+• Precificação 5% mais precisa = impacto direto em rentabilidade
+• Redução de tempo de regulação = redução de custos administrativos
+
+=================================================================================
+SLIDE 11 - CONFIABILIDADE DOS DADOS
+=================================================================================
+
+FONTES DE DADOS (TODAS OFICIAIS E CIENTÍFICAS):
+
+PRECIPITAÇÃO:
+• CHIRPS (Climate Hazards Group - UCSB/NASA)
+  - Padrão global para monitoramento de precipitação
+  - Validado por 40+ anos de dados de estações terrestres
+  - Usado por FAO, Banco Mundial, USAID
+
+• MERGE (INPE - Instituto Nacional de Pesquisas Espaciais)
+  - Dados específicos para América do Sul
+  - Combina satélite + estações pluviométricas brasileiras
+  - Alta resolução espacial (0.1° ~ 10km)
+
+TEMPERATURA E VENTO:
+• ERA5 (ECMWF - European Centre for Medium-Range Weather Forecasts)
+  - Reanálise climática mais avançada do mundo
+  - Assimila bilhões de observações de múltiplas fontes
+  - Padrão ouro para estudos climáticos científicos
+
+RAIOS:
+• GLM - Geostationary Lightning Mapper (NOAA/NASA)
+  - Satélite GOES-16 dedicado
+  - Cobre todo o hemisfério oeste continuamente
+  - Precisão espacial de 8-10 km, temporal de 2 milissegundos
+
+VEGETAÇÃO:
+• Sentinel-2 (ESA - European Space Agency)
+  - Resolução de 10 metros, mais detalhada disponível gratuitamente
+  - Revisita a cada 5 dias
+
+• MODIS (NASA)
+  - 23 anos de histórico consistente
+  - Padrão científico para estudos de vegetação
+
+TODOS OS DADOS SÃO:
+• Públicos e gratuitos (sem custos de licenciamento)
+• Atualizados automaticamente
+• Auditáveis e rastreáveis
+• Aceitos pela comunidade científica internacional
+
+=================================================================================
+SLIDE 12 - INTEGRAÇÃO E ESCALABILIDADE
+=================================================================================
+
+INTEGRAÇÃO COM SISTEMAS EXISTENTES:
+
+ARQUITETURA:
+• API REST moderna seguindo padrões OpenAPI
+• Documentação interativa (Swagger/ReDoc)
+• Autenticação via token seguro
+• Respostas em JSON (formato universal)
+
+CAPACIDADES DE INTEGRAÇÃO:
+• Consumo direto por sistemas web/mobile
+• Integração com BI (Power BI, Tableau, etc.)
+• Webhooks para alertas automáticos
+• Export de dados para análise offline (CSV, Excel, GeoJSON)
+
+ESCALABILIDADE:
+• Infraestrutura cloud escalável automaticamente
+• Processamento paralelo de consultas complexas
+• Cobertura atual: Brasil e América Latina completos
+• Expansão geográfica possível (dados globais disponíveis)
+
+TIPOS DE CONSULTA SUPORTADOS:
+1. Ponto específico (coordenada lat/lon)
+2. Área retangular (bounding box)
+3. Polígono customizado (área de fazenda, município, bacia hidrográfica)
+4. Múltiplos pontos em batch (portfolio completo)
+
+FORMATOS DE RESPOSTA:
+• Séries temporais (gráficos de evolução)
+• Mapas georreferenciados (WMS para GIS)
+• Estatísticas agregadas (médias, máximas, mínimas, percentis)
+• Alertas de threshold (valores que ultrapassam limites definidos)
+
+=================================================================================
+SLIDE 13 - ROADMAP E PRÓXIMOS PASSOS
+=================================================================================
+
+IMPLEMENTAÇÕES FUTURAS (CURTO PRAZO - 3 MESES):
+
+1. ÍNDICES DE ANOMALIA
+   • SPI, desvios padronizados de temperatura e NDVI
+   • Alertas automáticos configuráveis por cliente
+   • Dashboard executivo com semáforo de riscos
+
+2. SISTEMA DE ALERTAS PROATIVOS
+   • Notificações via email e webhook
+   • Regras customizáveis por apólice/região
+   • Integração com sistemas de CRM/ERP
+
+3. DASHBOARD EXECUTIVO
+   • Visão consolidada de exposições climáticas
+   • KPIs de risco em tempo real
+   • Mapas de calor de sinistralidade potencial
+
+IMPLEMENTAÇÕES MÉDIAS (6 MESES):
+
+4. INTEGRAÇÃO COM SISTEMA DE APÓLICES
+   • Matching automático de apólices com dados climáticos
+   • Alertas direcionados por contrato
+   • Relatórios customizados por segurado
+
+5. MODELOS PREDITIVOS
+   • Machine learning para previsão de sinistralidade
+   • Scoring de risco climático por localização
+   • Otimização de precificação
+
+6. HISTÓRICO EXPANDIDO
+   • Extensão para 50+ anos (análise de ciclos climáticos)
+   • Dados de eventos extremos raros
+   • Benchmarking histórico robusto
+
+VISÃO DE LONGO PRAZO (12+ MESES):
+
+7. INTELIGÊNCIA ARTIFICIAL
+   • Detecção automática de padrões anômalos
+   • Recomendações de ação automáticas
+   • Análise preditiva de tendências
+
+8. EXPANSÃO GLOBAL
+   • Cobertura para outras regiões de interesse
+   • Análise de resseguros internacionais
+   • Comparação de risco entre mercados
+
+=================================================================================
+SLIDE 14 - CALL TO ACTION
+=================================================================================
+
+PRÓXIMOS PASSOS CONCRETOS:
+
+PARA A EMPRESA:
+
+1. PILOTOS IMEDIATOS
+   • Selecionar 3-5 apólices de alto valor para monitoramento piloto
+   • Testar alertas automáticos em cenário real
+   • Medir tempo de resposta e qualidade de análise
+
+2. TREINAMENTO
+   • Sessão técnica detalhada para equipes de subscrição (2 horas)
+   • Workshop para equipe de sinistros (2 horas)
+   • Documentação e tutoriais em vídeo
+
+3. INTEGRAÇÃO
+   • Avaliar pontos de integração com sistemas atuais
+   • Definir fluxos de trabalho otimizados
+   • Implementar em ambiente de homologação
+
+DEMONSTRAÇÃO TÉCNICA:
+• Agendar sessão de 30 minutos com demonstração ao vivo
+• Consultas reais em apólices anonimizadas
+• Q&A técnico com desenvolvedores
+
+AVALIAÇÃO DE ROI:
+• Análise de casos históricos usando a plataforma
+• Estimativa de tempo economizado por caso
+• Projeção de impacto financeiro em 12 meses
+
+CONTATO:
+• Documentação completa: http://localhost:8000/docs
+• Repositório técnico: /opt/geospatial_backend
+• Time disponível para dúvidas e suporte
+
+=================================================================================
+SLIDE 15 - PERGUNTAS E RESPOSTAS
+=================================================================================
+
+PERGUNTAS FREQUENTES ANTECIPADAS:
+
+P: Os dados são atualizados com que frequência?
+R: Diariamente. Precipitação e temperatura: D+1. Raios: tempo real. NDVI: a cada 5-16 dias (dependendo da fonte).
+
+P: Posso confiar nos dados para decisões financeiras?
+R: Sim. Todas as fontes são referências científicas globais usadas por governos, bancos multilaterais e resseguradoras internacionais.
+
+P: Quanto tempo leva para implementar?
+R: Integração básica: 1 semana. Integração completa com sistemas: 4-6 semanas. Pilotos podem começar imediatamente.
+
+P: E se o cliente discordar dos dados?
+R: Dados são auditáveis e rastreáveis até as fontes oficiais. Fornecemos relatórios com metadados completos e referências.
+
+P: A plataforma substitui peritos e reguladores?
+R: Não. Ela COMPLEMENTA o trabalho técnico, fornecendo dados objetivos que aceleram análises e fortalecem decisões.
+
+P: Quem mais usa plataformas assim?
+R: Resseguradoras globais (Swiss Re, Munich Re), bancos (índices climáticos para crédito rural), seguradoras paramétricas, governos (planejamento agrícola).
+
+P: Custos escalam com o uso?
+R: Não significativamente. Custo é principalmente fixo (infraestrutura). Consultas adicionais têm custo marginal baixíssimo.
+
+P: E se houver um evento climático extremo sem precedentes?
+R: A plataforma captura o evento em tempo real e compara com 40+ anos de histórico, permitindo quantificar exatamente quão raro/extremo ele é.
+
+=================================================================================
+MENSAGEM FINAL
+=================================================================================
+
+RESUMO EXECUTIVO:
+
+O RISCO CLIMÁTICO JÁ É REALIDADE.
+A questão não é SE vamos precisar dessas ferramentas, mas QUANDO.
+
+Empresas que adotam monitoramento climático proativo:
+• Reagem mais rápido a eventos
+• Precificam melhor
+• Protegem melhor seus segurados
+• Reduzem custos operacionais
+• Ganham vantagem competitiva
+
+A PLATAFORMA JÁ ESTÁ PRONTA.
+Os dados já estão fluindo.
+A infraestrutura já está operacional.
+
+Agora precisamos transformar tecnologia em DECISÕES MELHORES e RESULTADOS CONCRETOS.
+
+OBRIGADO!
+
+Contatos para demonstração e dúvidas: [inserir contatos]

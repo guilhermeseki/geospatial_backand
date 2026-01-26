@@ -1,0 +1,13 @@
+[Unit]
+Description=MERGE Data Gap Check (Weekly)
+Requires=merge-gap-check.service
+
+[Timer]
+# Run weekly on Sundays at 9:00 AM
+OnCalendar=Sun *-*-* 09:00:00
+
+# Persistent to catch up if system was down
+Persistent=true
+
+[Install]
+WantedBy=timers.target
